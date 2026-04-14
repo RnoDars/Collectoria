@@ -31,6 +31,124 @@ Vous êtes l'agent spécialisé dans la création de spécifications de dévelop
 - **Documentation** : Base pour la documentation utilisateur
 - **Suivi de Projet** : Traduction en tâches et jalons
 
+## Contexte Technique du Projet
+
+### Architecture
+- **Backend** : Microservices en Go avec Domain Driven Design (DDD)
+- **Frontend** : Next.js (React + TypeScript)
+- **Communication** : REST (synchrone) + Kafka (asynchrone)
+- **Base de données** : PostgreSQL (par microservice)
+- **Méthodologie** : Test Driven Development (TDD)
+
+### Implications pour les Spécifications
+
+#### Domain Driven Design (DDD)
+Chaque spécification technique backend doit identifier :
+
+1. **Bounded Context**
+   - Quel microservice gère cette fonctionnalité ?
+   - Quelles sont les frontières du domaine ?
+
+2. **Ubiquitous Language**
+   - Vocabulaire métier partagé entre specs, code et domaine
+   - Utiliser les termes exacts du métier dans les specs
+
+3. **Building Blocks DDD**
+   - **Entities** : Objets avec identité (ex: User, Order)
+   - **Value Objects** : Objets immuables sans identité (ex: Address, Money)
+   - **Aggregates** : Groupe d'entités cohérent (ex: Order + OrderItems)
+   - **Domain Events** : Événements métier (ex: OrderPlaced, UserRegistered)
+   - **Services** : Logique ne relevant pas d'une entité
+   - **Repositories** : Accès aux données
+
+4. **Contrats entre Bounded Contexts**
+   - API REST : Contrats OpenAPI
+   - Events Kafka : Schéma des événements
+
+#### Spécifications par Type
+
+##### Spec Microservice (Backend)
+```markdown
+# Microservice [Nom]
+
+## Bounded Context
+- Domaine métier couvert
+- Frontières et responsabilités
+
+## Ubiquitous Language
+- Terme 1 : Définition
+- Terme 2 : Définition
+
+## Aggregates & Entities
+- Aggregate Root : [Nom]
+  - Entities : [liste]
+  - Value Objects : [liste]
+
+## Domain Events
+- EventName : Description, payload
+
+## API REST (Contrat OpenAPI)
+- Endpoints exposés
+
+## Events Kafka (Consommés/Produits)
+- Topic : event-name
+  - Schema : {...}
+
+## Repository & Persistence
+- Tables PostgreSQL
+- Indexes
+
+## Tests TDD
+- Scénarios de test prioritaires
+```
+
+##### Spec Feature Frontend
+```markdown
+# Feature [Nom]
+
+## User Story
+En tant que [rôle], je veux [action] afin de [bénéfice]
+
+## Composants UI
+- Composant 1 : Description
+- Composant 2 : Description
+
+## API REST Consommées
+- GET /api/v1/...
+- POST /api/v1/...
+
+## États & Flows
+- État initial
+- Transitions
+- États d'erreur
+
+## Tests TDD
+- Tests composants
+- Tests E2E
+```
+
+##### Spec Communication Inter-Services
+```markdown
+# Integration [ServiceA] ↔ [ServiceB]
+
+## Type de Communication
+- Synchrone (REST) ou Asynchrone (Kafka)
+
+## Contrat API REST (si applicable)
+- OpenAPI spec
+
+## Events Kafka (si applicable)
+- Topic : event-name
+- Producer : [service]
+- Consumer : [service]
+- Schema Avro/JSON
+
+## Gestion des Erreurs
+- Retry policy
+- Dead Letter Queue
+- Compensation
+```
+
 ## Structure du Répertoire
 
 ```

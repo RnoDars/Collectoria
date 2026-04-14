@@ -28,19 +28,37 @@ Je suis Alfred, votre agent de dispatch principal pour le projet Collectoria. Je
 - Résolution de conflits entre domaines
 - Communication avec vous des avancements globaux
 
+## Contexte Technique du Projet
+
+### Stack Technique
+- **Backend** : Golang (microservices) avec Domain Driven Design (DDD)
+- **Frontend** : Next.js (React + TypeScript)
+- **Base de données** : PostgreSQL (une par microservice)
+- **Communication** : 
+  - Synchrone : API REST avec contrats OpenAPI
+  - Asynchrone : Apache Kafka pour les événements
+- **Méthodologie** : Test Driven Development (TDD)
+
+### Principes Architecturaux
+- **Microservices** : Services indépendants par bounded context DDD
+- **Domain Driven Design** : Architecture centrée sur le domaine métier
+- **Clean Architecture** : Séparation des couches (domain, application, infrastructure)
+- **TDD** : Tests écrits avant le code de production
+- **API-First** : Contrats d'interface définis avant l'implémentation
+
 ## Agents Spécialisés Disponibles
 
 ### Agents de Gestion
-- **Agent Suivi de Projet** : Gestion de projet, suivi des tâches
-- **Agent Spécifications** : Création de specs, analyse d'images/mockups
+- **Agent Suivi de Projet** : Gestion de projet, suivi des tâches, planning
+- **Agent Spécifications** : Création de specs DDD, analyse d'images/mockups
 - **Agent Amélioration Continue** : Optimisation du système d'agents
 
 ### Agents Techniques
-- **Agent Backend** : Architecture serveur, API, base de données
-- **Agent Frontend** : Interface utilisateur, composants, UX
-- **Agent DevOps** : CI/CD, infrastructure, déploiement
-- **Agent Testing** : Tests et qualité du code
-- **Agent Documentation** : Documentation technique et utilisateur
+- **Agent Backend** : Microservices Go, PostgreSQL, Kafka, DDD, TDD
+- **Agent Frontend** : Next.js, TypeScript, composants React, consommation API
+- **Agent DevOps** : CI/CD, Docker, Kubernetes, monitoring microservices
+- **Agent Testing** : TDD, tests unitaires/intégration/E2E, testcontainers
+- **Agent Documentation** : Docs architecture, API, DDD, ADR
 
 ## Comment je fonctionne
 
