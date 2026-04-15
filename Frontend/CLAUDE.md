@@ -12,6 +12,79 @@ Vous êtes l'agent Frontend pour Collectoria. Votre mission est de concevoir et 
 - Responsive design et accessibilité
 - Expérience utilisateur (UX)
 
+## Design System - "The Digital Curator"
+
+**⚠️ CRITIQUE : Tous les composants doivent respecter l'Ethos de design de Collectoria.**
+
+### Document Fondateur
+📖 **Lire impérativement** : `Design/design-system/Ethos-V1-2026-04-15.md`
+
+Ce document définit :
+- La philosophie de design "The Digital Curator"
+- Le système de couleurs complet
+- La hiérarchie typographique (Manrope + Inter)
+- Les règles de composition
+- Les specs de tous les composants
+
+### Principes Clés à Appliquer
+
+#### 1. The "No-Line" Rule
+❌ **JAMAIS** de bordures 1px solides pour sectionner le contenu.
+✅ Utiliser **Tonal Layering** : changements de surface et transitions tonales.
+
+**Hiérarchie de surfaces** :
+- `surface` (#f8f9fa) - Base
+- `surface-container-low` (#f3f4f5) - Groupes
+- `surface-container-lowest` (#ffffff) - Cartes/éléments interactifs
+- `surface-container-highest` (#e1e3e4) - États actifs
+
+#### 2. Typography: Dual-Type System
+- **Manrope** : Headlines, Display (voice "Editorial")
+- **Inter** : Body, Labels, Metadata (voice "Utility")
+
+**Règle** : Toujours pairer `headline-md` (Manrope) avec `body-md` (Inter).
+
+#### 3. Glass & Gradient
+Le gradient violet (#667eea → #764ba2) est utilisé **avec parcimonie** :
+- CTAs héros (angle 15°)
+- Glassmorphism : 70% opacité + 24px backdrop-blur
+- Progress bars (avec inner-glow)
+
+#### 4. Elevation: Tonal Layering
+Éviter les ombres lourdes. Privilégier la superposition de surfaces tonales.
+
+**Shadow ambiant** (si nécessaire) : `0px 12px 32px rgba(25, 28, 29, 0.06)`
+
+#### 5. Espacement Généreux
+L'espace blanc est un élément de design à part entière.
+**Règle d'or** : "When in doubt, add more whitespace and remove a line."
+
+#### 6. Border Radius
+Toujours `lg` (1rem / 16px) ou `xl` (1.5rem / 24px) pour maintenir la douceur signature.
+
+### Do's and Don'ts
+
+✅ **DO** :
+- Utiliser des marges asymétriques pour un effet éditorial
+- Utiliser l'espace vertical comme séparateur principal
+- `display-lg` typography pour les états vides
+- Tonal Layering pour la profondeur
+
+❌ **DON'T** :
+- ❌ Bordures 1px solides (sauf accessibilité critique)
+- ❌ Pure black (#000000) pour le texte → utiliser `on-surface` (#191c1d)
+- ❌ Surcharger l'écran → privilégier l'espace blanc
+- ❌ Drop shadows standards → utiliser Tonal Layering d'abord
+
+### Validation Avant Commit
+
+Chaque composant doit répondre OUI à :
+- [ ] Utilise Tonal Layering (pas de bordures) ?
+- [ ] Respecte le Dual-Type System ?
+- [ ] A un espacement généreux ?
+- [ ] Gradient utilisé avec parcimonie ?
+- [ ] Évite le pure black ?
+
 ## Stack technique
 
 ### Framework et Langage
