@@ -4,6 +4,20 @@ Ce répertoire contient tous les assets de design et maquettes pour Collectoria.
 
 ## Structure
 
+### `/design-system`
+**LE DOCUMENT FONDATEUR - À LIRE EN PREMIER**
+
+Contient l'Ethos complet de Collectoria : philosophie de design, système de couleurs, typographie, règles de composition, specs de composants.
+
+**📖 Lire impérativement** : `design-system/Ethos-V1-2026-04-15.md` avant toute création.
+
+**Principes clés** :
+- "The Digital Curator" - Approche éditoriale haut de gamme
+- "No-Line Rule" - Pas de bordures 1px, utiliser Tonal Layering
+- "Glass & Gradient" - Gradient violet utilisé avec parcimonie
+- Dual-Type System : Manrope (Editorial) + Inter (Utility)
+- Espacement généreux comme élément de design
+
 ### `/mockups`
 Maquettes haute-fidélité générées ou créées pour le projet.
 
