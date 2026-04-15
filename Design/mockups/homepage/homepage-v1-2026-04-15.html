@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Collectoria Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#b9c3ff",
+                    "surface-container": "#edeeef",
+                    "surface-bright": "#f8f9fa",
+                    "tertiary-fixed-dim": "#9bcbff",
+                    "outline": "#757684",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#005f9c",
+                    "primary-container": "#546cd7",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#d9dadb",
+                    "primary-fixed-dim": "#b9c3ff",
+                    "surface-container-high": "#e7e8e9",
+                    "primary-fixed": "#dde1ff",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "on-background": "#191c1d",
+                    "on-tertiary-fixed-variant": "#004a7a",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#2c0051",
+                    "on-secondary-fixed-variant": "#5c3187",
+                    "error-container": "#ffdad6",
+                    "primary": "#3953bd",
+                    "on-surface": "#191c1d",
+                    "outline-variant": "#c5c5d5",
+                    "background": "#f8f9fa",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-container": "#0079c3",
+                    "on-primary-fixed-variant": "#1f3ba6",
+                    "surface-tint": "#3c55bf",
+                    "surface": "#f8f9fa",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-tertiary-container": "#fdfcff",
+                    "on-secondary-container": "#5a3086",
+                    "surface-container-low": "#f3f4f5",
+                    "secondary-fixed": "#f0dbff",
+                    "on-primary-fixed": "#001356",
+                    "inverse-surface": "#2e3132",
+                    "on-surface-variant": "#444653",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#ce9ffd",
+                    "on-tertiary-fixed": "#001d34",
+                    "secondary": "#754aa1",
+                    "secondary-fixed-dim": "#dcb8ff",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#d0e4ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1rem",
+                    "3xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .premium-gradient {
+            background: linear-gradient(15deg, #667eea 0%, #764ba2 100%);
+        }
+        .inner-glow {
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/70 dark:bg-slate-900/70 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="Professional headshot of a curator in a clean, minimalist setting with soft natural lighting and neutral colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDehZKcU0LfE_YArrkjFAOl4NpiA9aS7fZE691564CvdKl7_izKMLpDd82NEvhxbXTh1ZJ9wOdzJJvwLfwt-j6Vg93o8BkBFoPML-EwD6gy6wO28_Vin5v5TdWysTizoqVHCxpbGc9xFHgS__MEKznsN6bLeruumRUJEPlxZO4E1jyqSRueprEiQJ3Nk05y1kK4mpVqaA_N-IFMwB_1VczKQ-fC8e26LWvyy-sFw5eRknmEIDtM8Ur2mbQeWYXlLBahIofKytSazQ"/>
+</div>
+<span class="text-indigo-600 dark:text-indigo-400 font-extrabold tracking-tighter text-xl font-['Manrope']">The Gallery</span>
+</div>
+<button class="text-indigo-600 dark:text-indigo-400 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">search</span>
+</button>
+</header>
+<main class="mt-20 px-6 space-y-8">
+<!-- Hero Section: Total Progress -->
+<section class="premium-gradient rounded-3xl p-8 text-on-primary relative overflow-hidden shadow-xl">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">analytics</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline font-bold text-lg opacity-90 mb-1">Total Collection Progress</h2>
+<div class="flex items-baseline gap-2 mb-6">
+<span class="text-6xl font-headline font-extrabold tracking-tighter">68%</span>
+<span class="text-lg font-body font-medium opacity-80">completed</span>
+</div>
+<!-- Liquid Progress Bar -->
+<div class="w-full h-3 bg-white/20 rounded-full mb-4 relative overflow-hidden">
+<div class="absolute inset-0 w-[68%] bg-white rounded-full inner-glow"></div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">style</span>
+<p class="font-body text-sm font-medium">2,733 Cards Owned</p>
+</div>
+</div>
+</section>
+<!-- Quick Actions -->
+<section>
+<div class="flex justify-between items-center overflow-x-auto gap-4 py-2 no-scrollbar">
+<button class="flex-none flex items-center gap-2 bg-primary text-on-primary px-6 py-4 rounded-xl font-body font-semibold shadow-md active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add_circle</span>
+<span>Add Card</span>
+</button>
+<button class="flex-none flex items-center gap-2 bg-surface-container-lowest text-primary px-6 py-4 rounded-xl font-body font-semibold shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined">bookmark</span>
+<span>Wishlist</span>
+</button>
+<button class="flex-none flex items-center gap-2 bg-surface-container-lowest text-primary px-6 py-4 rounded-xl font-body font-semibold shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined">publish</span>
+<span>Import</span>
+</button>
+</div>
+</section>
+<!-- Collections Grid (Vertical Stack) -->
+<section class="space-y-4">
+<h3 class="font-headline font-bold text-xl tracking-tight px-1">Your Collections</h3>
+<!-- Collection Item 1 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-5 shadow-[0px_4px_16px_rgba(25,28,29,0.04)]">
+<div class="w-16 h-16 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+<span class="material-symbols-outlined text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">castle</span>
+</div>
+<div class="flex-1 space-y-1">
+<div class="flex justify-between items-start">
+<h4 class="font-headline font-bold text-on-surface">MECCG (Middle Earth)</h4>
+<span class="text-xs font-label text-primary font-bold bg-primary-fixed/30 px-2 py-0.5 rounded-full">Fantasy</span>
+</div>
+<p class="text-sm font-body text-outline">1,678 cards owned</p>
+<div class="pt-2">
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full w-[82%] premium-gradient"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Collection Item 2 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-5 shadow-[0px_4px_16px_rgba(25,28,29,0.04)]">
+<div class="w-16 h-16 rounded-xl bg-secondary-fixed/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<div class="flex-1 space-y-1">
+<div class="flex justify-between items-start">
+<h4 class="font-headline font-bold text-on-surface">Doomtrooper</h4>
+<span class="text-xs font-label text-secondary font-bold bg-secondary-fixed/30 px-2 py-0.5 rounded-full">Sci-Fi</span>
+</div>
+<p class="text-sm font-body text-outline">1,055 cards owned</p>
+<div class="pt-2">
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full w-[45%] premium-gradient"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Activity -->
+<section class="bg-surface-container-low rounded-3xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline font-bold text-lg">Recent Activity</h3>
+<span class="material-symbols-outlined text-outline">history</span>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4 items-start">
+<div class="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+<div>
+<p class="text-sm font-body text-on-surface">Added <span class="font-bold">Gandalf</span> to MECCG</p>
+<p class="text-xs font-body text-outline mt-0.5">2 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0"></div>
+<div>
+<p class="text-sm font-body text-on-surface">Set Milestone: <span class="font-bold">50% of Warzone Set</span></p>
+<p class="text-xs font-body text-outline mt-0.5">Yesterday</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+<div>
+<p class="text-sm font-body text-on-surface">Imported <span class="font-bold">142 cards</span> from CSV</p>
+<p class="text-xs font-body text-outline mt-0.5">3 days ago</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl rounded-t-3xl z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-2xl px-3 py-1.5 transition-transform scale-90 active:scale-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">Home</span>
+</a>
+<!-- Catalog -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1.5 hover:text-indigo-500 transition-colors" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">Catalog</span>
+</a>
+<!-- Collections -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1.5 hover:text-indigo-500 transition-colors" href="#">
+<span class="material-symbols-outlined">auto_awesome_motion</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">Collections</span>
+</a>
+<!-- Stats -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1.5 hover:text-indigo-500 transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">Stats</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1.5 hover:text-indigo-500 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+<!-- FAB Contextual Suppression: On a dashboard we might show it, but the Quick Actions already cover primary needs. Following "Contextual FAB Suppression" for focused dashboard UI. -->
+</body></html>
