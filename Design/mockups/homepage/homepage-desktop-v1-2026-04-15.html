@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed": "#f0dbff",
+                        "on-primary-fixed": "#001356",
+                        "inverse-surface": "#2e3132",
+                        "on-surface-variant": "#444653",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#ce9ffd",
+                        "on-tertiary-fixed": "#001d34",
+                        "secondary-fixed-dim": "#dcb8ff",
+                        "secondary": "#754aa1",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-fixed": "#d0e4ff",
+                        "on-error-container": "#93000a",
+                        "background": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#fffbff",
+                        "tertiary-container": "#0079c3",
+                        "on-primary-fixed-variant": "#1f3ba6",
+                        "surface-tint": "#3c55bf",
+                        "surface": "#f8f9fa",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-container": "#fdfcff",
+                        "on-secondary-container": "#5a3086",
+                        "surface-dim": "#d9dadb",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-fixed": "#dde1ff",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "on-tertiary-fixed-variant": "#004a7a",
+                        "on-background": "#191c1d",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#2c0051",
+                        "on-secondary-fixed-variant": "#5c3187",
+                        "error-container": "#ffdad6",
+                        "primary": "#3953bd",
+                        "on-surface": "#191c1d",
+                        "outline-variant": "#c5c5d5",
+                        "inverse-primary": "#b9c3ff",
+                        "surface-container": "#edeeef",
+                        "tertiary-fixed-dim": "#9bcbff",
+                        "surface-bright": "#f8f9fa",
+                        "outline": "#757684",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#005f9c",
+                        "primary-container": "#546cd7",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav { backdrop-filter: blur(24px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="text-on-background bg-background overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/70 backdrop-blur-xl h-20 flex justify-between items-center px-8 max-w-[1920px] mx-auto shadow-none">
+<div class="flex items-center gap-8 w-full">
+<span class="text-2xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">Collectoria</span>
+<div class="flex-1 max-w-xl">
+<div class="relative flex items-center bg-surface-container-low rounded-xl px-4 py-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-slate-500 mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-sm font-body text-on-surface-variant" placeholder="Search the archives..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-white/50 rounded-xl transition-all duration-300 scale-95 active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-white/50 rounded-xl transition-all duration-300 scale-95 active:scale-90">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-slate-200 overflow-hidden ml-2 shadow-sm ring-2 ring-white">
+<img alt="Curator Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional man with a friendly expression in a modern art gallery setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaItLYh80grjtd2fbhJVDF83IZr5GiTwg9I65uDmUI0lXt4pNQ61vZWpnYc4ElhCiyjyS4psyQCdK9gmzFgiH9FjHGuUhiMNGQDTbwQ-2XL27cqfObVjzY-KnAmAWnwHg5uci-ShAWCWMQ8Poer0zabDnPmeUNUiJqmxyVOEsFfelVY38G7SZc3TM4xPeeohYU5CjxiLrH3vSz8IxOxWcsLiMgcgGeytUieC4HVnOAA-OgzDD62OEDVvHZJcR7yECh-fRGtIiaqA"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-20 h-[calc(100vh-80px)] w-72 bg-slate-50 flex flex-col p-6 gap-y-2">
+<div class="mb-8 px-2">
+<h3 class="font-['Inter'] text-sm font-medium text-slate-400 uppercase tracking-widest">The Curator</h3>
+<p class="font-['Manrope'] font-bold text-slate-900">Premium Tier</p>
+</div>
+<nav class="flex flex-col gap-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-white text-indigo-600 rounded-xl shadow-sm font-['Inter'] text-sm font-medium hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span>Home</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl font-['Inter'] text-sm font-medium hover:translate-x-1 transition-transform duration-200 group" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span>Catalog</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl font-['Inter'] text-sm font-medium hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">auto_awesome_motion</span>
+<span>Collections</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl font-['Inter'] text-sm font-medium hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span>Statistics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl font-['Inter'] text-sm font-medium hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span>Wishlist</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-200/50 rounded-xl font-['Inter'] text-sm font-medium hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6">
+<button class="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold shadow-lg shadow-primary/20 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add</span>
+<span>Add New Exhibit</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 mt-20 p-12 min-h-screen bg-surface">
+<!-- Hero Section: Total Progress -->
+<section class="mb-12">
+<div class="bg-surface-container-lowest rounded-xl p-10 shadow-[0px_12px_32px_rgba(25,28,29,0.04)] relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-64 h-64 bg-secondary/5 rounded-full blur-3xl"></div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
+<div class="flex-1">
+<span class="text-primary font-semibold uppercase tracking-[0.2em] text-xs mb-4 block">Dashboard Overview</span>
+<h1 class="text-4xl font-extrabold text-on-surface mb-2 font-headline tracking-tight">Total Collection Progress</h1>
+<p class="text-on-surface-variant mb-8 text-lg font-body">Refining your museum-grade card collection.</p>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-5xl font-black text-on-surface font-headline">68%</span>
+<span class="text-slate-400 font-medium font-body uppercase text-sm tracking-widest">Completed</span>
+</div>
+<!-- Premium Progress Bar -->
+<div class="w-full h-4 bg-surface-container-highest rounded-full overflow-hidden mb-4">
+<div class="h-full bg-gradient-to-r from-primary to-secondary w-[68%] relative">
+<div class="absolute inset-0 opacity-30 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.4)_50%,transparent_100%)] animate-pulse"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 text-sm font-medium text-on-surface-variant font-body">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">style</span> 2,733 Cards Owned</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">history</span> Last updated 2h ago</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-bold font-headline text-sm shadow-md hover:translate-y-[-2px] transition-all active:translate-y-0">Add Card</button>
+<button class="bg-surface-container-high text-primary px-8 py-3 rounded-xl font-bold font-headline text-sm hover:bg-surface-container-highest transition-all">View Wishlist</button>
+<button class="bg-transparent text-slate-500 px-4 py-3 rounded-xl font-bold font-headline text-sm hover:text-primary transition-all">Import Data</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Collections Grid (Asymmetrical focus) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+<!-- MECCG Card -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(25,28,29,0.04)] group">
+<div class="h-48 bg-slate-200 relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Ethereal fantasy landscape with jagged mountains, ancient stone towers, and a dramatic purple twilight sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn_Z-o2ac9Wt8qeMQX2csNmOnEl0qfkpA2lb5x1aFYgR2QakhCM4bzqB2gNaqj4205j_dk8foOcVAFe_uyawDEAp9LMUP0PVY8tj4mU43j1cYQElttBztcMbfLxtAcIPZKfjumPHMnya9V_RMp3f0y3bWHJ4EuWsGlfyXqOHH18DAnh3kQFDn1DdbZsAQQR6R3TAP46AB30TiNRWgZ4HLb3VZPdd8ZA-gbjMu-3ActJqCGw8NzJmWZqEfQqqdtb1gdohOHAlE2aw"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur shadow-sm px-3 py-1 rounded-lg text-xs font-bold text-secondary uppercase tracking-widest">Fantasy</div>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-2xl font-bold font-headline text-on-surface mb-1">Middle-earth CCG</h3>
+<p class="text-sm text-on-surface-variant font-body">Iron Crown Enterprises (1995-1998)</p>
+</div>
+<div class="bg-secondary/10 p-3 rounded-xl">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">castle</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between text-sm font-medium font-body">
+<span class="text-on-surface">1,678 / 2,400 Cards</span>
+<span class="text-secondary">70%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[70%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Doomtrooper Card -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(25,28,29,0.04)] group">
+<div class="h-48 bg-slate-200 relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Futuristic sci-fi spacecraft orbiting a purple nebula-rich planet with cinematic high contrast lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCO5DFE3LhWeBgbv6FtoMOleCgiissIhwJmXhbUOX1meHGVXAZyWot6aUTu636i_pIo5B2j2uevlS-QykjzLkuSgkJAX0vVR6AV_kOCrX5Vybqo7Q8HmLikOda9MADU91249ulSwnrI0DdwznmGxGgljsAj_rq1XeVxoi8zA5gGAGMXPRCS6lGfkfdXy6Gtrn-w8Obsu_WQ_uhLWpMCYOd4HLLpMXEbR2IgY843woOaJgvROdl-RTuUQ67rhBS9I1-jyQ-57ILQXw"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur shadow-sm px-3 py-1 rounded-lg text-xs font-bold text-secondary uppercase tracking-widest">Sci-Fi</div>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-2xl font-bold font-headline text-on-surface mb-1">Doomtrooper</h3>
+<p class="text-sm text-on-surface-variant font-body">Target Games (1994-1999)</p>
+</div>
+<div class="bg-secondary/10 p-3 rounded-xl">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between text-sm font-medium font-body">
+<span class="text-on-surface">1,055 / 1,600 Cards</span>
+<span class="text-secondary">66%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[66%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Secondary Panels -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Recent Activity -->
+<div class="bg-surface-container-low rounded-xl p-8">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xl font-extrabold font-headline text-on-surface">Recent Activity</h2>
+<span class="material-symbols-outlined text-slate-400">more_horiz</span>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="h-10 w-10 bg-white rounded-lg flex items-center justify-center shadow-sm shrink-0">
+<span class="material-symbols-outlined text-primary text-xl">add_circle</span>
+</div>
+<div>
+<p class="text-sm text-on-surface font-semibold font-body">Added Gandalf to MECCG</p>
+<p class="text-xs text-slate-500 font-body">24 minutes ago · Rare Holofoil</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="h-10 w-10 bg-white rounded-lg flex items-center justify-center shadow-sm shrink-0">
+<span class="material-symbols-outlined text-primary text-xl">emoji_events</span>
+</div>
+<div>
+<p class="text-sm text-on-surface font-semibold font-body">Set Milestone: 50% of Warzone Set</p>
+<p class="text-xs text-slate-500 font-body">4 hours ago · Doomtrooper Collection</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="h-10 w-10 bg-white rounded-lg flex items-center justify-center shadow-sm shrink-0">
+<span class="material-symbols-outlined text-primary text-xl">cloud_upload</span>
+</div>
+<div>
+<p class="text-sm text-on-surface font-semibold font-body">Imported 142 cards from CSV</p>
+<p class="text-xs text-slate-500 font-body">Yesterday · Bulk Update</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Stats Chart Placeholder -->
+<div class="bg-surface-container-low rounded-xl p-8 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-xl font-extrabold font-headline text-on-surface">Growth Insight</h2>
+<div class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold">+12.4%</div>
+</div>
+<p class="text-xs text-slate-500 font-body mb-8 uppercase tracking-widest">Completion rate over 30 days</p>
+<div class="flex-1 flex items-end gap-2 px-2 pb-2">
+<!-- Simple Tonal Area Chart Mockup -->
+<div class="flex-1 h-[20%] bg-indigo-200/50 rounded-t-sm transition-all duration-500 hover:h-[30%]"></div>
+<div class="flex-1 h-[25%] bg-indigo-300/50 rounded-t-sm transition-all duration-500 hover:h-[35%]"></div>
+<div class="flex-1 h-[40%] bg-indigo-400/50 rounded-t-sm transition-all duration-500 hover:h-[50%]"></div>
+<div class="flex-1 h-[35%] bg-indigo-300/50 rounded-t-sm transition-all duration-500 hover:h-[45%]"></div>
+<div class="flex-1 h-[55%] bg-indigo-500/50 rounded-t-sm transition-all duration-500 hover:h-[65%]"></div>
+<div class="flex-1 h-[70%] bg-indigo-600/50 rounded-t-sm transition-all duration-500 hover:h-[80%]"></div>
+<div class="flex-1 h-[65%] bg-indigo-500/50 rounded-t-sm transition-all duration-500 hover:h-[75%]"></div>
+<div class="flex-1 h-[85%] bg-gradient-to-t from-primary to-secondary rounded-t-sm transition-all duration-500 hover:h-[95%] shadow-[0px_-4px_12px_rgba(57,83,189,0.2)]"></div>
+</div>
+<div class="flex justify-between mt-4 px-2">
+<span class="text-[10px] font-bold text-slate-400 font-body">OCT 01</span>
+<span class="text-[10px] font-bold text-slate-400 font-body">OCT 15</span>
+<span class="text-[10px] font-bold text-indigo-600 font-body">TODAY</span>
+</div>
+</div>
+</section>
+</main>
+</body></html>
