@@ -60,3 +60,8 @@ func (s *CollectionService) GetAllCollections(ctx context.Context) ([]domain.Col
 func (s *CollectionService) GetUserCollections(ctx context.Context, userID uuid.UUID) ([]domain.Collection, error) {
 	return s.collectionRepo.GetUserCollections(ctx, userID)
 }
+
+// GetAllCollectionsWithStats retourne toutes les collections avec leurs statistiques
+func (s *CollectionService) GetAllCollectionsWithStats(ctx context.Context, userID uuid.UUID) ([]domain.CollectionWithStats, error) {
+	return s.collectionRepo.GetAllWithStats(ctx, userID)
+}

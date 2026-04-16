@@ -53,6 +53,11 @@ func (m *MockCollectionRepository) GetTotalCardsOwned(ctx context.Context, userI
 	return args.Int(0), args.Error(1)
 }
 
+func (m *MockCollectionRepository) GetAllWithStats(ctx context.Context, userID uuid.UUID) ([]domain.CollectionWithStats, error) {
+	args := m.Called(ctx, userID)
+	return args.Get(0).([]domain.CollectionWithStats), args.Error(1)
+}
+
 // Mock CardRepository
 type MockCardRepository struct {
 	mock.Mock
@@ -182,6 +187,106 @@ func TestCollectionService_GetSummary(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, summary)
 		assert.Equal(t, "database error", err.Error())
+
+		mockCollectionRepo.AssertExpectations(t)
+	})
+}
+
+func TestCollectionService_GetAllCollectionsWithStats(t *testing.T) {
+	ctx := context.Background()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	meccgID := uuid.New()
+	doomtrooperID := uuid.New()
+
+	t.Run("Success with MECCG and Doomtrooper", func(t *testing.T) {
+		mockCollectionRepo := new(MockCollectionRepository)
+		mockCardRepo := new(MockCardRepository)
+
+		lastUpdated := domain.ParseTime("2026-04-16T10:30:00Z")
+		expectedCollections := []domain.CollectionWithStats{
+			{
+				ID:                   meccgID,
+				Name:                 "Middle-Earth CCG",
+				Slug:                 "meccg",
+				Description:          "The card game based on Tolkien's Middle-earth",
+				TotalCardsOwned:      24,
+				TotalCardsAvailable:  40,
+				CompletionPercentage: 60.0,
+				HeroImageURL:         "/images/collections/meccg-hero.jpg",
+				LastUpdated:          &lastUpdated,
+			},
+			{
+				ID:                   doomtrooperID,
+				Name:                 "Doomtrooper",
+				Slug:                 "doomtrooper",
+				Description:          "CCG based on the Mutant Chronicles universe",
+				TotalCardsOwned:      0,
+				TotalCardsAvailable:  0,
+				CompletionPercentage: 0.0,
+				HeroImageURL:         "/images/collections/doomtrooper-hero.jpg",
+				LastUpdated:          nil,
+			},
+		}
+
+		mockCollectionRepo.On("GetAllWithStats", ctx, userID).Return(expectedCollections, nil)
+
+		service := NewCollectionService(mockCollectionRepo, mockCardRepo)
+		collections, err := service.GetAllCollectionsWithStats(ctx, userID)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, collections)
+		assert.Len(t, collections, 2)
+
+		// Vérifier MECCG
+		assert.Equal(t, meccgID, collections[0].ID)
+		assert.Equal(t, "Middle-Earth CCG", collections[0].Name)
+		assert.Equal(t, "meccg", collections[0].Slug)
+		assert.Equal(t, 24, collections[0].TotalCardsOwned)
+		assert.Equal(t, 40, collections[0].TotalCardsAvailable)
+		assert.Equal(t, 60.0, collections[0].CompletionPercentage)
+		assert.NotNil(t, collections[0].LastUpdated)
+
+		// Vérifier Doomtrooper
+		assert.Equal(t, doomtrooperID, collections[1].ID)
+		assert.Equal(t, "Doomtrooper", collections[1].Name)
+		assert.Equal(t, "doomtrooper", collections[1].Slug)
+		assert.Equal(t, 0, collections[1].TotalCardsOwned)
+		assert.Equal(t, 0, collections[1].TotalCardsAvailable)
+		assert.Equal(t, 0.0, collections[1].CompletionPercentage)
+		assert.Nil(t, collections[1].LastUpdated)
+
+		mockCollectionRepo.AssertExpectations(t)
+	})
+
+	t.Run("Error from repository", func(t *testing.T) {
+		mockCollectionRepo := new(MockCollectionRepository)
+		mockCardRepo := new(MockCardRepository)
+
+		var nilCollections []domain.CollectionWithStats
+		mockCollectionRepo.On("GetAllWithStats", ctx, userID).Return(nilCollections, errors.New("database error"))
+
+		service := NewCollectionService(mockCollectionRepo, mockCardRepo)
+		collections, err := service.GetAllCollectionsWithStats(ctx, userID)
+
+		assert.Error(t, err)
+		assert.Nil(t, collections)
+		assert.Equal(t, "database error", err.Error())
+
+		mockCollectionRepo.AssertExpectations(t)
+	})
+
+	t.Run("User without collections", func(t *testing.T) {
+		mockCollectionRepo := new(MockCollectionRepository)
+		mockCardRepo := new(MockCardRepository)
+
+		mockCollectionRepo.On("GetAllWithStats", ctx, userID).Return([]domain.CollectionWithStats{}, nil)
+
+		service := NewCollectionService(mockCollectionRepo, mockCardRepo)
+		collections, err := service.GetAllCollectionsWithStats(ctx, userID)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, collections)
+		assert.Len(t, collections, 0)
 
 		mockCollectionRepo.AssertExpectations(t)
 	})

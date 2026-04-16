@@ -19,6 +19,7 @@ type CollectionRepository interface {
 	GetCollectionSummary(ctx context.Context, userID uuid.UUID) (*CollectionSummary, error)
 	GetTotalCardsAvailable(ctx context.Context) (int, error)
 	GetTotalCardsOwned(ctx context.Context, userID uuid.UUID) (int, error)
+	GetAllWithStats(ctx context.Context, userID uuid.UUID) ([]CollectionWithStats, error)
 }
 
 // CardRepository interface pour la persistance des cartes

@@ -130,3 +130,68 @@ func (r *CollectionRepository) GetTotalCardsOwned(ctx context.Context, userID uu
 
 	return count, nil
 }
+
+// GetAllWithStats retourne toutes les collections avec leurs statistiques pour un utilisateur
+func (r *CollectionRepository) GetAllWithStats(ctx context.Context, userID uuid.UUID) ([]domain.CollectionWithStats, error) {
+	query := `
+		WITH collection_stats AS (
+			SELECT
+				c.id,
+				c.name,
+				c.slug,
+				c.description,
+				COALESCE(COUNT(DISTINCT cards.id), 0) AS total_cards_available,
+				COALESCE(COUNT(DISTINCT CASE WHEN uc.is_owned = true THEN uc.card_id END), 0) AS total_cards_owned,
+				MAX(uc.updated_at) AS last_updated
+			FROM collections c
+			INNER JOIN user_collections user_coll ON c.id = user_coll.collection_id
+			LEFT JOIN cards ON c.id = cards.collection_id
+			LEFT JOIN user_cards uc ON cards.id = uc.card_id AND uc.user_id = $1
+			WHERE user_coll.user_id = $1
+			GROUP BY c.id, c.name, c.slug, c.description
+		)
+		SELECT
+			id,
+			name,
+			slug,
+			description,
+			total_cards_owned,
+			total_cards_available,
+			last_updated
+		FROM collection_stats
+		ORDER BY name
+	`
+
+	type queryResult struct {
+		ID                  uuid.UUID  `db:"id"`
+		Name                string     `db:"name"`
+		Slug                string     `db:"slug"`
+		Description         string     `db:"description"`
+		TotalCardsOwned     int        `db:"total_cards_owned"`
+		TotalCardsAvailable int        `db:"total_cards_available"`
+		LastUpdated         *time.Time `db:"last_updated"`
+	}
+
+	var results []queryResult
+	err := r.db.SelectContext(ctx, &results, query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	collections := make([]domain.CollectionWithStats, len(results))
+	for i, result := range results {
+		collections[i] = domain.CollectionWithStats{
+			ID:                  result.ID,
+			Name:                result.Name,
+			Slug:                result.Slug,
+			Description:         result.Description,
+			TotalCardsOwned:     result.TotalCardsOwned,
+			TotalCardsAvailable: result.TotalCardsAvailable,
+			HeroImageURL:        "/images/collections/" + result.Slug + "-hero.jpg",
+			LastUpdated:         result.LastUpdated,
+		}
+		collections[i].CalculateCompletionPercentage()
+	}
+
+	return collections, nil
+}
