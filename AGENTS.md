@@ -67,6 +67,13 @@ Ce projet utilise un système d'agents spécialisés basé sur des fichiers `CLA
 - **Spécialité** : Documentation technique, guides utilisateur, API docs
 - **Invocation** : Via Alfred pour les tâches de documentation
 
+### 9. Agent Sécurité
+- **Localisation** : `Security/`
+- **Fichier** : `Security/CLAUDE.md`
+- **Spécialité** : Audit de sécurité du code, vérification des vulnérabilités, audit des dépendances tierces
+- **Invocation** : Via Alfred pour les audits de sécurité
+- **Rôle** : Analyse le code pour les vulnérabilités OWASP Top 10, vérifie les versions des packages (npm audit, govulncheck), recommande des corrections
+
 ## Comment utiliser les agents
 
 ### Workflow Recommandé
@@ -84,6 +91,17 @@ Naviguez dans le répertoire d'un agent spécifique et travaillez directement. C
 Utilisez l'outil Agent avec le type approprié et référencez le contexte spécifique :
 - Pour exploration : `Agent tool avec subagent_type=Explore`
 - Pour planification : `Agent tool avec subagent_type=Plan`
+
+## Agents Spécialisés par Priorité
+
+### Agents Critiques (appelés systématiquement)
+1. **Agent Sécurité** : Appelé AVANT chaque commit majeur pour audit
+2. **Agent DevOps** : Appelé pour TOUS les tests locaux et déploiements
+3. **Agent Testing** : Appelé pour valider toute implémentation
+
+### Agents Consultatifs
+4. **Agent Amélioration Continue** : Consulté périodiquement
+5. **Agent Documentation** : Appelé après implémentation
 
 ## Création d'un nouvel agent
 
