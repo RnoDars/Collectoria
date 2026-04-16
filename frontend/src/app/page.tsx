@@ -46,7 +46,7 @@ export default function Home() {
           marginBottom: '2rem',
         }}>
           <Link
-            href="/test"
+            href="/test-backend"
             style={{
               padding: '1rem 1.5rem',
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -58,6 +58,30 @@ export default function Home() {
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            🚀 Test Backend Integration (HeroCard)
+          </Link>
+
+          <Link
+            href="/test"
+            style={{
+              padding: '1rem 1.5rem',
+              background: '#e8e9ea',
+              color: '#667eea',
+              borderRadius: '8px',
+              fontWeight: '600',
+              textAlign: 'center',
+              transition: 'all 0.2s',
+              border: '2px solid #e1e3e4',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#e1e3e4'
+              e.currentTarget.style.transform = 'scale(1.02)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#e8e9ea'
+              e.currentTarget.style.transform = 'scale(1)'
+            }}
           >
             🧪 Page de Test Interactive
           </Link>

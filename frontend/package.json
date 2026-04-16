@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.99.0",
     "next": "^15.1.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -17,9 +18,9 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "typescript": "^5.7",
     "eslint": "^9",
-    "eslint-config-next": "^15.1.3"
+    "eslint-config-next": "^15.1.3",
+    "typescript": "^5.7"
   },
   "overrides": {
     "eslint": "^9"
