@@ -44,10 +44,14 @@ func (s *Server) setupMiddleware() {
 	s.router.Use(middleware.Recoverer)
 	s.router.Use(middleware.Timeout(60 * time.Second))
 
-	// CORS pour localhost:3000 (frontend Next.js)
+	// CORS pour localhost (frontend Next.js en développement)
 	s.router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+			origin := r.Header.Get("Origin")
+			// Accepter localhost sur n'importe quel port en développement
+			if origin == "http://localhost:3000" || origin == "http://localhost:3001" {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+			}
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
