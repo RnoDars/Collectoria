@@ -1,6 +1,6 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-16 - Microservice Backend Phase 1 Complète  
+**Date** : 2026-04-16 - Intégration Frontend-Backend Complète  
 **Prochaine session** : 2026-04-17
 
 ---
@@ -197,6 +197,88 @@ Générées par Stitch, stockées dans `Design/mockups/homepage/` :
 - ✅ **IMPLEMENTATION_REPORT.md** : Rapport technique détaillé
 - ✅ **MOCK_CARDS_VALIDATION.md** : Validation des 40 cartes mock
 - ✅ **PROJECT_STATS.md** : Statistiques (fichiers, lignes, coverage)
+
+### 🔗 Intégration Frontend-Backend (16 avril) ⭐ NOUVEAU
+**Phase 1 COMPLÈTE** - Premier composant React connecté au backend !
+
+**13 fichiers créés/modifiés** pour l'intégration complète
+
+#### React Query - Data Fetching
+- ✅ **Provider configuré** : `frontend/src/app/providers.tsx`
+  - QueryClient avec cache 10 minutes
+  - staleTime 5 minutes pour optimisation
+- ✅ **Root Layout modifié** : `frontend/src/app/layout.tsx`
+  - Intégration Google Fonts (Manrope + Inter)
+  - Wrapper Providers pour React Query
+- ✅ **CSS Variables** : `frontend/src/app/globals.css`
+  - Toutes les couleurs Ethos V1 en variables CSS
+  - Système de surfaces pour Tonal Layering
+
+#### API Client - snake_case ↔ camelCase
+- ✅ **Client API** : `frontend/src/lib/api/collections.ts`
+  - Conversion automatique snake_case (Go) → camelCase (TS)
+  - Gestion erreurs HTTP
+  - Type-safe avec interfaces TypeScript
+  - Utilise NEXT_PUBLIC_API_BASE_URL
+- ✅ **Hook custom** : `frontend/src/hooks/useCollectionSummary.ts`
+  - Encapsule React Query
+  - Retourne { data, isLoading, error }
+  - Réutilisable dans tous les composants
+
+#### HeroCard Component
+- ✅ **Composant principal** : `frontend/src/components/homepage/HeroCard.tsx` (565 lignes)
+  - **Props** : CollectionSummary, isLoading, error
+  - **4 états UI** :
+    - Loading → Skeleton animé avec tonal layering
+    - Error → Message d'erreur styled
+    - Empty → État vide encourageant (0 cartes)
+    - Success → Affichage des données réelles
+  - **Design** : Respecte 100% Ethos V1
+    - No-Line Rule : Tonal Layering uniquement
+    - Dual-Type System : Manrope headlines + Inter body
+    - Gradient violet sur CTAs
+    - Border radius xl (24px)
+    - Espacement généreux
+  - **Accessibility** : ARIA roles, semantic HTML
+- ✅ **Page de test** : `frontend/src/app/test-backend/page.tsx`
+  - Consomme le hook useCollectionSummary
+  - Passe data/loading/error au HeroCard
+  - Lien depuis homepage "🚀 Test Backend Integration"
+- ✅ **Documentation** :
+  - `frontend/README-HEROCARD.md` (380 lignes)
+  - `frontend/INTEGRATION-CHECKLIST.md` (520 lignes)
+
+#### CORS - Configuration Backend
+- ✅ **Fix dynamique** : `backend/collection-management/internal/infrastructure/http/server.go`
+  - Accepte Origin `localhost:3000` ET `localhost:3001`
+  - Next.js peut démarrer sur port différent si 3000 occupé
+  - Headers CORS : Allow-Origin, Allow-Methods, Allow-Headers
+  - Gestion requêtes OPTIONS (preflight)
+
+#### Test Manuel Validé ✅
+- ✅ Frontend : `http://localhost:3001/test-backend`
+- ✅ Backend : `http://localhost:8080/api/v1/collections/summary`
+- ✅ PostgreSQL : Container Docker avec 40 cartes mock
+- ✅ Données affichées :
+  - **24 cartes** possédées / 40 disponibles
+  - **60% de complétion**
+  - Dernière mise à jour affichée
+- ✅ HeroCard responsive, animations fluides, design Ethos V1 respecté
+
+#### Agents Enrichis
+- ✅ **Agent Frontend** : Section "Architecture Implémentée"
+  - Pattern React Query documenté
+  - Pattern API Client snake_case/camelCase
+  - Pattern HeroCard (états UI)
+  - Environment variables
+- ✅ **Agent Backend** : Section "Architecture Implémentée"
+  - Chi Router configuration standard
+  - CORS dynamique Next.js
+  - Format JSON snake_case
+  - sqlx vs GORM justifié
+  - Tests TDD 91.7% coverage
+- ✅ **Agent Security** créé (`Security/CLAUDE.md`)
+- ✅ **Agent DevOps** enrichi avec scripts tests locaux
 
 #### Outils de Développement
 - ✅ **setup.sh** : Script setup automatique (Go, Docker, migrations, seed)
