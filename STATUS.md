@@ -1,7 +1,7 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-16 - Intégration Frontend-Backend Complète  
-**Prochaine session** : 2026-04-17
+**Date** : 2026-04-16 - Option 1 Homepage (Phase 1 & 2 complètes)  
+**Prochaine session** : Phase 3 - Test intégration + intégration homepage
 
 ---
 
@@ -280,6 +280,46 @@ Générées par Stitch, stockées dans `Design/mockups/homepage/` :
 - ✅ **Agent Security** créé (`Security/CLAUDE.md`)
 - ✅ **Agent DevOps** enrichi avec scripts tests locaux
 
+### 🎯 Option 1 : Compléter la Homepage (16 avril) ⭐ EN COURS
+**Objectif** : Homepage fonctionnelle avec HeroCard + Collections Grid
+
+**Phase 1 ✅** : Backend - Endpoint GET /api/v1/collections
+- ✅ **Endpoint REST** : `GET /api/v1/collections`
+  - Retourne liste des collections avec statistiques
+  - MECCG : 24/40 cartes (60%)
+  - Doomtrooper : 0/0 cartes (0%)
+- ✅ **Architecture TDD complète** :
+  - Domain : Entity CollectionWithStats
+  - Application : Service GetAllCollectionsWithStats (84.6% coverage)
+  - Infrastructure : Repository SQL avec jointures + Handler HTTP (64.3% coverage)
+- ✅ **12 tests** créés et passants
+- ✅ **Commit** : ad57147 "feat: add GET /api/v1/collections endpoint with stats"
+
+**Phase 2 ✅** : Frontend - Composant CollectionsGrid
+- ✅ **CollectionCard** : `frontend/src/components/homepage/CollectionCard.tsx`
+  - Carte individuelle pour une collection
+  - 3 états : Empty (0%), In Progress (1-99%), Complete (100%)
+  - Hero image avec gradient placeholder (vert MECCG, rouge/noir Doomtrooper)
+  - Progress bar avec gradient violet + inner glow
+  - Hover effect : scale(1.02) + shadow doux
+- ✅ **CollectionsGrid** : `frontend/src/components/homepage/CollectionsGrid.tsx`
+  - Grille responsive : 2 colonnes desktop / 1 colonne mobile
+  - 4 états : Loading (skeleton shimmer), Error, Empty, Success
+  - Gap 24px entre cartes
+- ✅ **Hook useCollections** : `frontend/src/hooks/useCollections.ts`
+  - React Query avec cache 5min
+  - Retourne { data, isLoading, error }
+- ✅ **API Client** : Fonction fetchCollections() avec conversion snake_case/camelCase
+- ✅ **Page test** : Section CollectionsGrid ajoutée dans `/test-backend`
+- ✅ **Design** : Respect 100% Ethos V1 (No-Line Rule, Tonal Layering, Dual-Type System)
+- ✅ **Build** : TypeScript compilation + production build réussis
+- ✅ **Commit** : 37bf556 "feat: add CollectionsGrid component with CollectionCard"
+
+**Phase 3 ⏸️** : Test d'intégration et intégration homepage
+- ⏸️ Test manuel de l'intégration complète (backend + frontend)
+- ⏸️ Intégration des composants dans la homepage réelle (`/`)
+- ⏸️ Validation visuelle et responsive
+
 #### Outils de Développement
 - ✅ **setup.sh** : Script setup automatique (Go, Docker, migrations, seed)
 - ✅ **Makefile** : Commandes utiles
@@ -556,12 +596,15 @@ Collectoria/
 - Tests : Infrastructure TDD en place
 
 ### Prochaines Priorités
-1. **Backend Phase 2** : Implémenter les 3 endpoints REST restants
-2. **Frontend Phase 1** : Composant HeroCard + intégration API
-3. **DevOps Phase 1** : Docker Compose multi-services
+1. **Option 1 Phase 3** : Tester intégration CollectionsGrid + intégrer dans homepage `/`
+2. **Backend Phase 2** : Implémenter les 2 endpoints REST restants (activities, statistics)
+3. **Frontend Phase 2** : Composants Dashboard Widgets (Activity + Growth)
 
 **Le MVP avance très bien !** 💪
+- ✅ Backend : 2 endpoints opérationnels (/summary, /collections)
+- ✅ Frontend : 2 composants majeurs (HeroCard, CollectionsGrid)
+- ⏸️ Homepage à 60% complète (manque widgets Dashboard)
 
 ---
 
-Prochaine session : Continuer Backend Phase 2 ou démarrer Frontend Phase 1 ? 🎯
+**Prochaine session** : Finaliser Option 1 Phase 3 (test + intégration homepage) 🎯
