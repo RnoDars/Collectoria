@@ -1,0 +1,256 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    COLLECTORIA - HOMEPAGE DESKTOP V1                         ║
+║                        Architecture Overview                                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              USER BROWSER                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     │ HTTPS
+                                     ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          NEXT.JS FRONTEND (SSR)                              │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │  Layout Layer                                                       │    │
+│  │  ┌──────────┐  ┌──────────────────────────────────────────────┐   │    │
+│  │  │ Sidebar  │  │  TopBar (search, notifications, avatar)       │   │    │
+│  │  │          │  └──────────────────────────────────────────────────┘   │    │
+│  │  │ • Home   │                                                         │    │
+│  │  │ • Activity│  ┌──────────────────────────────────────────────┐   │    │
+│  │  │ • Collections│  Content Area                              │   │    │
+│  │  │ • Wishlist│  │                                            │   │    │
+│  │  │ • Stats  │  │  ┌──────────────────────────────────────┐  │   │    │
+│  │  │ • Settings│  │  │  HeroCard                           │  │   │    │
+│  │  │          │  │  │  ┌────────────────────────────────┐ │  │   │    │
+│  │  └──────────┘  │  │  │  Total Collection Progress    │ │  │   │    │
+│  │                │  │  │  ┏━━━━━━━━━━━━━━━━━━━━━━━━┓  │ │  │   │    │
+│  │                │  │  │  ┃       68%              ┃  │ │  │   │    │
+│  │                │  │  │  ┃  ████████████░░░░░░░░  ┃  │ │  │   │    │
+│  │                │  │  │  ┗━━━━━━━━━━━━━━━━━━━━━━━━┛  │ │  │   │    │
+│  │                │  │  │  2,733 Cards | 0 to go      │ │  │   │    │
+│  │                │  │  └────────────────────────────────┘ │  │   │    │
+│  │                │  │                                      │  │   │    │
+│  │                │  │  ┌────────────┐  ┌────────────┐    │  │   │    │
+│  │                │  │  │  MECCG     │  │ Doomtrooper│    │  │   │    │
+│  │                │  │  │  [Hero]    │  │  [Hero]    │    │  │   │    │
+│  │                │  │  │  1,678/1,678│  │ 1,055/1,055│    │  │   │    │
+│  │                │  │  │  ████ 100% │  │  ████ 100% │    │  │   │    │
+│  │                │  │  └────────────┘  └────────────┘    │  │   │    │
+│  │                │  │                                      │  │   │    │
+│  │                │  │  ┌──────────────┐  ┌────────────┐  │  │   │    │
+│  │                │  │  │Recent        │  │Growth      │  │  │   │    │
+│  │                │  │  │Activity      │  │Insight     │  │  │   │    │
+│  │                │  │  │• Added card  │  │ ▁▃█▆▄▇     │  │  │   │    │
+│  │                │  │  │• Milestone   │  │ Jan..Jun   │  │  │   │    │
+│  │                │  │  │• Import      │  │ +24%       │  │  │   │    │
+│  │                │  │  └──────────────┘  └────────────┘  │  │   │    │
+│  │                │  └──────────────────────────────────────┘  │   │    │
+│  │                └──────────────────────────────────────────────┘   │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                            │
+│  State Management (React Query)                                           │
+│  ┌────────────┬────────────┬────────────┬────────────┐                   │
+│  │ Summary    │Collections │ Activities │   Growth   │                   │
+│  │ 5min cache │ 10min cache│ 1min cache │ 30min cache│                   │
+│  └────────────┴────────────┴────────────┴────────────┘                   │
+│                      │           │           │           │                 │
+└──────────────────────┼───────────┼───────────┼───────────┼────────────────┘
+                       │           │           │           │
+                       └───────────┴───────────┴───────────┘
+                                   │ REST API
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            API GATEWAY (Go)                                  │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  • Authentication (JWT validation)                                           │
+│  • Rate Limiting                                                             │
+│  • Request Routing                                                           │
+│  • Response Caching (Redis)                                                  │
+│                                                                               │
+└───────────────────────────┬────────────────────┬─────────────────────────────┘
+                            │                    │
+              ┌─────────────┘                    └─────────────┐
+              ▼                                                 ▼
+┌─────────────────────────────────────┐  ┌──────────────────────────────────────┐
+│  Collection Management Service      │  │  Statistics & Analytics Service      │
+│  (Go Microservice)                  │  │  (Go Microservice)                   │
+├─────────────────────────────────────┤  ├──────────────────────────────────────┤
+│                                     │  │                                      │
+│  Endpoints:                         │  │  Endpoints:                          │
+│  • GET /collections/summary         │  │  • GET /activities/recent            │
+│  • GET /collections                 │  │  • GET /statistics/growth            │
+│                                     │  │                                      │
+│  Domain (DDD):                      │  │  Domain (DDD):                       │
+│  ┌─────────────────────────────┐   │  │  ┌─────────────────────────────┐    │
+│  │ Collection (Aggregate Root) │   │  │  │ Activity                    │    │
+│  │ ├─ Card                     │   │  │  │ GrowthMetric                │    │
+│  │ ├─ UserCollection           │   │  │  │ CollectionSnapshot          │    │
+│  │ └─ UserCard                 │   │  │  └─────────────────────────────┘    │
+│  └─────────────────────────────┘   │  │                                      │
+│                                     │  │  Events (Kafka Consumer):            │
+│  Events (Kafka Producer):           │  │  • CollectionUpdated → Update metrics│
+│  • CollectionCreated                │  │  • CardAdded → Log activity          │
+│  • CardAdded                        │  │                                      │
+│  • CollectionCompleted              │  │                                      │
+│                                     │  │                                      │
+└──────────────┬──────────────────────┘  └──────────────┬───────────────────────┘
+               │                                        │
+               ▼                                        ▼
+┌──────────────────────────────┐           ┌──────────────────────────────┐
+│  PostgreSQL                  │           │  PostgreSQL                  │
+│  collections_db              │           │  analytics_db                │
+├──────────────────────────────┤           ├──────────────────────────────┤
+│                              │           │                              │
+│  Tables:                     │           │  Tables:                     │
+│  • collections               │           │  • activities                │
+│  • cards                     │           │  • growth_snapshots          │
+│  • user_collections          │           │  • collection_metrics        │
+│  • user_cards                │           │                              │
+│                              │           │                              │
+│  Indexes:                    │           │  Indexes:                    │
+│  • user_id                   │           │  • user_id + timestamp       │
+│  • collection_id             │           │  • created_at                │
+│  • card_id                   │           │                              │
+│                              │           │                              │
+└──────────────────────────────┘           └──────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              REDIS CACHE                                     │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  Cache Keys:                                                                 │
+│  • user:{id}:collections:summary     (TTL: 5min)                            │
+│  • user:{id}:collections:list        (TTL: 10min)                           │
+│  • user:{id}:activities:recent       (TTL: 1min)                            │
+│  • user:{id}:statistics:growth:6m    (TTL: 30min)                           │
+│                                                                               │
+│  Invalidation:                                                               │
+│  • On CardAdded event → Clear summary, collections, activities              │
+│  • On CollectionCompleted → Clear all user caches                           │
+│                                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          APACHE KAFKA (Event Bus)                            │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  Topics:                                                                     │
+│  • collectoria.collections.events                                           │
+│    ├─ CollectionCreated                                                     │
+│    ├─ CollectionUpdated                                                     │
+│    └─ CollectionCompleted                                                   │
+│                                                                               │
+│  • collectoria.cards.events                                                 │
+│    ├─ CardAdded                                                             │
+│    └─ CardRemoved                                                           │
+│                                                                               │
+│  Event Flow:                                                                 │
+│  Collection Svc → Kafka → Statistics Svc → Update metrics/activities       │
+│                                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+                              DATA FLOW EXAMPLE
+═══════════════════════════════════════════════════════════════════════════════
+
+1. User opens homepage
+   └─> Next.js SSR prefetches data
+
+2. Frontend makes 4 parallel API calls:
+   ├─> GET /api/v1/collections/summary
+   ├─> GET /api/v1/collections
+   ├─> GET /api/v1/activities/recent
+   └─> GET /api/v1/statistics/growth
+
+3. API Gateway validates JWT, checks Redis cache
+   ├─> Cache HIT → Return cached response
+   └─> Cache MISS → Route to microservice
+
+4. Microservices query PostgreSQL
+   ├─> Collection Service: Aggregate user_cards
+   └─> Statistics Service: Query activities, growth_snapshots
+
+5. Microservices return data + store in Redis
+
+6. Frontend receives responses
+   └─> React Query caches data
+       └─> Progressive rendering of components
+
+7. User adds a new card
+   └─> POST /api/v1/cards
+       └─> Collection Service processes
+           ├─> Update PostgreSQL
+           ├─> Publish CardAdded event to Kafka
+           └─> Invalidate Redis cache
+               └─> Statistics Service consumes event
+                   └─> Creates Activity record
+                       └─> Frontend re-fetches data
+
+═══════════════════════════════════════════════════════════════════════════════
+                           DESIGN SYSTEM TOKENS
+═══════════════════════════════════════════════════════════════════════════════
+
+Colors:
+  surface                  #f8f9fa  ░░░░░░░
+  surface-container-low    #f3f4f5  ▒▒▒▒▒▒▒
+  surface-container-lowest #ffffff  ███████
+  primary                  #667eea  ━━━━━━━ (violet gradient start)
+  primary-container        #764ba2  ━━━━━━━ (violet gradient end)
+  on-surface               #191c1d  (text)
+
+Typography:
+  Display    Manrope 900  72px   (Hero percentages)
+  Headline   Manrope 700  36px   (Section titles)
+  Body       Inter   400  16px   (Content text)
+  Label      Inter   500  14px   (Buttons, tags)
+
+Spacing:
+  xl  24px  ████████████████████████
+  lg  16px  ████████████████
+  md  12px  ████████████
+  sm   8px  ████████
+
+Border Radius:
+  xl  24px  ╭────────────────────────╮
+  lg  16px  ╭────────────────╮
+  md  12px  ╭────────────╮
+
+═══════════════════════════════════════════════════════════════════════════════
+                              PERFORMANCE METRICS
+═══════════════════════════════════════════════════════════════════════════════
+
+Frontend:
+  FCP (First Contentful Paint)      < 1.5s   ████████░░  80%
+  LCP (Largest Contentful Paint)    < 2.5s   ██████████ 100%
+  TTI (Time to Interactive)         < 3.5s   ██████████ 100%
+  CLS (Cumulative Layout Shift)     < 0.1    ██████████ 100%
+
+Backend:
+  API Response Time (P50)           < 100ms  ██████████ 100%
+  API Response Time (P95)           < 500ms  ████████░░  80%
+  API Response Time (P99)           < 1000ms ██████░░░░  60%
+
+Cache:
+  Redis Hit Rate                    > 80%    ██████████ 100%
+  React Query Hit Rate              > 60%    ████████░░  80%
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Legend:
+  ┌─┐  Component boundary
+  ├─┤  Service boundary
+  ═══  Major system boundary
+  ─>   Data flow
+  <─>  Bidirectional communication
+  ▼    Flow direction
+  ░    Light tonal layer
+  ▒    Medium tonal layer
+  █    Solid/Highest contrast
+
+Version: 1.0
+Date: 2026-04-15
+Spec: homepage-desktop-v1.md
