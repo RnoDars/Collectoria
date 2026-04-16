@@ -118,8 +118,8 @@ service-name/
 ## Outils et Bibliothèques Recommandés
 
 ### Framework et Routing
-- **Gin** ou **Echo** : Framework HTTP performant
-- **Chi** : Router léger et idiomatique
+- **Chi** : Router léger et idiomatique (✅ EN PLACE dans collection-management)
+- **Gin** ou **Echo** : Framework HTTP performant (alternatives)
 - **gorilla/mux** : Alternative mature
 
 ### Base de Données
@@ -145,8 +145,130 @@ service-name/
 - **jwt-go** : Authentification JWT
 - **oapi-codegen** : Génération de code depuis OpenAPI
 
+## Architecture Implémentée - Bonnes Pratiques
+
+### Microservice Collection Management (✅ Opérationnel)
+
+**Localisation** : `backend/collection-management/`
+
+**Structure validée par TDD** :
+```
+backend/collection-management/
+├── cmd/api/main.go                    # Entry point
+├── internal/
+│   ├── domain/
+│   │   └── collection.go              # Entities (Collection, Card)
+│   ├── application/
+│   │   └── collection_service.go      # Business logic
+│   └── infrastructure/
+│       ├── http/
+│       │   ├── server.go              # Chi router + CORS
+│       │   └── handlers/
+│       │       └── collection_handler.go
+│       └── postgres/
+│           └── collection_repository.go
+├── migrations/
+│   └── 001_create_collections_schema.sql
+└── testdata/
+    └── seed_meccg_mock.sql            # 40 mock cards
+```
+
+### Chi Router - Configuration Standard
+
+**✅ Implémenté** : `backend/collection-management/internal/infrastructure/http/server.go`
+
+**Pattern** :
+```go
+s.router.Route("/api/v1", func(r chi.Router) {
+    r.Get("/health", healthHandler)
+    
+    r.Route("/collections", func(r chi.Router) {
+        r.Get("/summary", handler.GetSummary)
+        r.Get("/", handler.GetAllCollections)
+    })
+})
+```
+
+**Middlewares standards** :
+- `middleware.RequestID`
+- `middleware.RealIP`
+- `middleware.Logger`
+- `middleware.Recoverer`
+- `middleware.Timeout(60 * time.Second)`
+
+### CORS - Configuration Next.js
+
+**⚠️ IMPORTANT** : Next.js peut démarrer sur différents ports (3000, 3001...).
+
+**✅ Solution implémentée** : CORS dynamique basé sur le header `Origin`
+```go
+// CORS pour localhost (frontend Next.js en développement)
+s.router.Use(func(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        origin := r.Header.Get("Origin")
+        // Accepter localhost sur n'importe quel port en développement
+        if origin == "http://localhost:3000" || origin == "http://localhost:3001" {
+            w.Header().Set("Access-Control-Allow-Origin", origin)
+        }
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+        if r.Method == "OPTIONS" {
+            w.WriteHeader(http.StatusOK)
+            return
+        }
+
+        next.ServeHTTP(w, r)
+    })
+})
+```
+
+**Pourquoi dynamique ?** : Le frontend peut démarrer sur port 3000 ou 3001 selon disponibilité. On vérifie le header `Origin` pour accepter les deux.
+
+### Format de Réponse API - snake_case
+
+**Convention Go** : Utiliser snake_case pour les JSON responses
+```go
+type CollectionSummary struct {
+    UserID              uuid.UUID `json:"user_id"`
+    TotalCardsOwned     int       `json:"total_cards_owned"`
+    TotalCardsAvailable int       `json:"total_cards_available"`
+    CompletionPercentage float64  `json:"completion_percentage"`
+    LastUpdated         time.Time `json:"last_updated"`
+}
+```
+
+**⚠️ Note** : Le frontend (TypeScript) convertira en camelCase. Ne pas faire la conversion côté backend.
+
+### sqlx vs GORM
+
+**✅ Choix fait** : sqlx (SQL pur)
+
+**Raison** : En DDD, on veut un contrôle total sur les queries. GORM peut créer des abstractions qui masquent les problèmes de performance.
+
+**Pattern repository avec sqlx** :
+```go
+func (r *postgresCollectionRepository) GetSummary(ctx context.Context, userID uuid.UUID) (*domain.CollectionSummary, error) {
+    query := `SELECT ... FROM ...`
+    var summary domain.CollectionSummary
+    err := r.db.GetContext(ctx, &summary, query, userID)
+    return &summary, err
+}
+```
+
+### Tests - Coverage 91.7%
+
+**✅ Validation** : 12 tests, couverture excellente
+
+**Pattern TDD appliqué** :
+1. Écrire test → Red
+2. Implémenter → Green
+3. Refactorer → Green
+
+**Tests d'intégration** : Utiliser testcontainers-go pour PostgreSQL (à venir).
+
 ## Interaction avec autres agents
-- **Frontend** : Définition des contrats API
-- **DevOps** : Configuration de déploiement
-- **Testing** : Stratégie de tests backend
+- **Frontend** : Définition des contrats API (snake_case backend, conversion camelCase frontend)
+- **DevOps** : Configuration de déploiement, tests locaux
+- **Testing** : Stratégie de tests backend, coverage >80%
 - **Documentation** : Documentation API (Swagger/OpenAPI)

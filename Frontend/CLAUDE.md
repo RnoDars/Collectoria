@@ -141,7 +141,10 @@ frontend/
 - **openapi-fetch** : Client HTTP type-safe
 
 ### Data Fetching
-- **SWR** ou **React Query** : Cache et synchronisation données
+- **React Query** : Cache et synchronisation données (✅ EN PLACE)
+  - Configuration : `staleTime: 5 * 60 * 1000` (5 minutes)
+  - Provider dans `src/app/providers.tsx`
+  - Hooks custom dans `src/hooks/`
 - **Server Components** : Fetching côté serveur (Next.js)
 
 ### Formulaires et Validation
@@ -162,8 +165,63 @@ frontend/
 ### Autres
 - **Storybook** : Documentation et développement de composants isolés
 
+## Architecture Implémentée - Bonnes Pratiques
+
+### React Query - Data Fetching
+**✅ Configuration en place** : `frontend/src/app/providers.tsx`
+```typescript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
+    },
+  },
+})
+```
+
+**Pattern de hook custom** : `frontend/src/hooks/useCollectionSummary.ts`
+- Un hook par endpoint
+- Gère loading, error, data
+- Type-safe avec interfaces TypeScript
+
+### API Client - snake_case ↔ camelCase
+**✅ Implémenté** : `frontend/src/lib/api/collections.ts`
+
+**Pattern** : Toujours convertir les réponses backend (snake_case) vers frontend (camelCase)
+```typescript
+// Backend retourne: { total_cards_owned: 24 }
+// Frontend reçoit: { totalCardsOwned: 24 }
+```
+
+**Raison** : Go (backend) utilise snake_case, TypeScript (frontend) utilise camelCase. La conversion se fait dans le client API pour respecter les conventions de chaque langage.
+
+### Structure des Composants - Pattern HeroCard
+
+**Fichier** : `frontend/src/components/homepage/HeroCard.tsx`
+
+**Pattern à suivre** :
+1. **Props Interface** : Type-safe avec toutes les données nécessaires
+2. **États gérés** : loading, error, empty state, success
+3. **Design System** : Respecte 100% Ethos V1
+4. **Accessibility** : Roles ARIA, semantic HTML
+
+**États UI** :
+- `isLoading=true` → Skeleton animé (tonal layering)
+- `error` → Message d'erreur styled
+- `data.totalCardsOwned === 0` → Empty state encourageant
+- `data` → Affichage des données
+
+### Environment Variables
+**✅ Documentation** : `frontend/.env.local.example`
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+```
+
+**Convention** : Toujours documenter les variables d'environnement avec un fichier `.example`.
+
 ## Interaction avec autres agents
-- **Backend** : Consommation des API
+- **Backend** : Consommation des API (pattern snake_case/camelCase établi)
 - **Testing** : Tests d'interface et E2E
 - **Documentation** : Guides utilisateur et storybook
 - **DevOps** : Build et déploiement frontend
