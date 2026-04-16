@@ -2,10 +2,13 @@
 
 import Link from 'next/link'
 import HeroCard from '@/components/homepage/HeroCard'
+import CollectionsGrid from '@/components/homepage/CollectionsGrid'
 import { useCollectionSummary } from '@/hooks/useCollectionSummary'
+import { useCollections } from '@/hooks/useCollections'
 
 export default function TestBackendPage() {
   const { data, isLoading, error, refetch } = useCollectionSummary()
+  const { data: collectionsData, isLoading: collectionsLoading, error: collectionsError } = useCollections()
 
   return (
     <main style={{
@@ -55,6 +58,39 @@ export default function TestBackendPage() {
           error={error as Error | null}
           onRetry={() => refetch()}
         />
+
+        {/* Collections Grid Section */}
+        <div style={{
+          marginTop: '3rem',
+        }}>
+          <h2 style={{
+            fontFamily: 'Manrope, sans-serif',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            color: '#191c1d',
+            marginBottom: '1rem',
+          }}>
+            Collections Grid
+          </h2>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '0.875rem',
+            color: '#43474e',
+            marginBottom: '1.5rem',
+          }}>
+            Testing connection to backend API at <code style={{
+              background: '#e8e9ea',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              fontFamily: 'monospace',
+            }}>http://localhost:8080/api/v1/collections</code>
+          </p>
+          <CollectionsGrid
+            collections={collectionsData}
+            isLoading={collectionsLoading}
+            error={collectionsError as Error | null}
+          />
+        </div>
 
         {/* Navigation */}
         <div style={{
