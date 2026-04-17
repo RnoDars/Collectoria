@@ -292,6 +292,51 @@ Quand Alfred demande "teste le microservice X" :
    - Retourne les résultats
 3. **DevOps nettoie** : Arrête les services et containers
 
+### Règles Opérationnelles Locales
+
+#### Docker sans sudo — utiliser `sg docker`
+
+L'utilisateur n'est pas forcément dans le groupe docker actif en session courante. Ne jamais utiliser `sudo docker`. Toujours préfixer avec `sg docker` :
+
+```bash
+# ✅ Correct
+sg docker -c "docker compose up -d"
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management < seed.sql"
+
+# ❌ Incorrect
+sudo docker compose up -d
+docker compose up -d  # échoue si groupe pas actif
+```
+
+#### Charger les données de seed via docker exec
+
+`psql` n'est pas forcément installé sur la machine hôte. Utiliser `docker exec` pour exécuter les commandes SQL :
+
+```bash
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" < testdata/seed_meccg_mock.sql
+```
+
+#### Lancer les services localement
+
+```bash
+# 1. PostgreSQL (via docker-compose du microservice)
+sg docker -c "docker compose -f backend/collection-management/docker-compose.yml up -d"
+
+# 2. Backend Go
+cd backend/collection-management && go run cmd/api/main.go &
+
+# 3. Frontend Next.js
+cd frontend && npm run dev
+```
+
+#### Ports par défaut
+- Frontend : http://localhost:3000
+- Backend API : http://localhost:8080
+- PostgreSQL : localhost:5432
+
+#### Seed de données
+Le fichier `backend/collection-management/testdata/seed_meccg_mock.sql` contient 40 cartes MECCG (1 collection, 60% de complétion).
+
 ### Prérequis pour Tests Locaux
 
 Les développeurs doivent avoir installé :

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go version *)",
+      "Bash(go test *)",
+      "Bash(go build *)",
+      "Bash(go run *)",
+      "Bash(npm --version *)",
+      "Bash(npm run dev *)",
+      "Bash(npm run build *)",
+      "Bash(npm install *)",
+      "Bash(npm install)",
+      "Bash(docker --version *)",
+      "Bash(docker compose version *)",
+      "Bash(docker compose up *)",
+      "Bash(docker compose down *)",
+      "Bash(docker compose ps *)",
+      "Bash(sg docker -c *)",
+      "Bash(curl *)",
+      "Bash(cat /home/rno/git/Collectoria/*)",
+      "Read(/home/rno/git/Collectoria/**)"
+    ]
+  }
+}
