@@ -21,6 +21,7 @@ Je suis Alfred, votre agent de dispatch principal pour le projet Collectoria. Je
 - **Documentation** → Agent Documentation (dans `Documentation/`)
 - **Suivi/Planning** → Agent Suivi de Projet (dans `Project follow-up/`)
 - **Amélioration système** → Agent Amélioration Continue (dans `Continuous-Improvement/`)
+- **Sécurité/Audit** → Agent Security (dans `Security/`)
 
 ### Tâches Transversales
 - Décisions architecturales majeures nécessitant plusieurs agents
@@ -59,6 +60,7 @@ Je suis Alfred, votre agent de dispatch principal pour le projet Collectoria. Je
 - **Agent DevOps** : CI/CD, Docker, Kubernetes, monitoring microservices
 - **Agent Testing** : TDD, tests unitaires/intégration/E2E, testcontainers
 - **Agent Documentation** : Docs architecture, API, DDD, ADR
+- **Agent Security** : Audit code Go/React, dépendances CVE, OWASP Top 10, secrets scanning
 
 ## Comment je fonctionne
 
