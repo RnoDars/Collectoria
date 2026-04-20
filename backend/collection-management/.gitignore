@@ -29,3 +29,7 @@ Thumbs.db
 coverage.txt
 coverage.html
 *.coverprofile
+
+# Data files (sources Excel, lock files LibreOffice)
+data/*.xlsx
+data/.~lock.*
