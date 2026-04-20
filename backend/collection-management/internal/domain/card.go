@@ -19,6 +19,31 @@ type Card struct {
 	UpdatedAt    time.Time
 }
 
+// CardWithOwnership représente une carte avec son statut de possession
+type CardWithOwnership struct {
+	Card
+	IsOwned bool
+}
+
+// CardFilter regroupe les critères de filtrage du catalogue
+type CardFilter struct {
+	Search string
+	Series string
+	Type   string
+	Rarity string
+	Owned  string // "true", "false", ou "" pour tout
+	Page   int
+	Limit  int
+}
+
+// CardPage représente une page de résultats du catalogue
+type CardPage struct {
+	Cards   []CardWithOwnership
+	Total   int
+	Page    int
+	HasMore bool
+}
+
 // UserCard représente la possession d'une carte par un utilisateur
 type UserCard struct {
 	UserID     uuid.UUID

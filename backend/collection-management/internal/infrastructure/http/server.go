@@ -17,16 +17,18 @@ import (
 type Server struct {
 	router            *chi.Mux
 	collectionService *application.CollectionService
+	catalogService    *application.CatalogService
 	activityService   *application.ActivityService
 	logger            zerolog.Logger
 	port              int
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, logger zerolog.Logger, port int) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, logger zerolog.Logger, port int) *Server {
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
+		catalogService:    catalogService,
 		activityService:   application.NewActivityService(),
 		logger:            logger,
 		port:              port,
@@ -87,6 +89,10 @@ func (s *Server) setupRoutes() {
 		activityHandler := handlers.NewActivityHandler(s.activityService, s.logger)
 		r.Get("/activities/recent", activityHandler.GetRecentActivities)
 		r.Get("/statistics/growth", activityHandler.GetGrowthStats)
+
+		// Catalog routes
+		catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
+		r.Get("/cards", catalogHandler.GetCards)
 	})
 }
 

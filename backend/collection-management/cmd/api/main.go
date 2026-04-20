@@ -42,12 +42,14 @@ func main() {
 
 	// Initialisation des repositories
 	collectionRepo := postgres.NewCollectionRepository(db)
+	cardRepo := postgres.NewCardRepository(db)
 
 	// Initialisation des services
-	collectionService := application.NewCollectionService(collectionRepo, nil)
+	collectionService := application.NewCollectionService(collectionRepo, cardRepo)
+	catalogService := application.NewCatalogService(cardRepo)
 
 	// Initialisation du serveur HTTP
-	server := http.NewServer(collectionService, log.Logger, cfg.Server.Port)
+	server := http.NewServer(collectionService, catalogService, log.Logger, cfg.Server.Port)
 
 	// Démarrage du serveur
 	log.Info().Msgf("Starting Collection Management Service on port %d", cfg.Server.Port)
