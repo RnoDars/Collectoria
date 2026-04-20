@@ -17,25 +17,48 @@ const SERIES_OPTIONS = [
   'Promo',
 ]
 
-const TYPE_OPTIONS = ['Character', 'Resource', 'Hazard', 'Site', 'Region']
+const TYPE_OPTIONS = [
+  'Héros / Personnage',
+  'Héros / Personnage / Sorcier',
+  'Héros / Personnage / Sorcier Déchu',
+  'Héros / Ressource / Allié',
+  'Héros / Ressource / Evènement',
+  'Héros / Ressource / Faction',
+  'Héros / Ressource / Objet',
+  'Héros / Site',
+  'Héros / Site / Abîme',
+  'Héros / Site / Havre',
+  'Héros / Sites',
+  'Péril / Créature',
+  'Péril / Evènement',
+  'Personnage / Agent',
+  'Région',
+  'Ressource Héros / Evènement',
+  'Séide / Personnage',
+  'Séide / Personnage / Agent',
+  'Séide / Personnage / Spectre',
+  'Séide / Ressource / Allié',
+  'Séide / Ressource / Evènement',
+  'Séide / Ressource / Faction',
+  'Séide / Ressource / Objet',
+  'Séide / Site',
+  'Stage / Ressource / Allié',
+  'Stage / Ressource / Evènement',
+  'Stage / Ressource / Faction',
+  'Stage / Site',
+]
 
-const RARITY_OPTIONS = ['C', 'U', 'R', 'F', 'P', '?']
+const RARITY_OPTIONS = [
+  { value: 'C', label: 'Commune' },
+  { value: 'U', label: 'Peu commune' },
+  { value: 'R', label: 'Rare' },
+  { value: 'F', label: 'Fixe' },
+  { value: 'Promo', label: 'Promo' },
+]
 
 type OwnedFilter = 'all' | 'true' | 'false'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function rarityLabel(r: string): string {
-  const map: Record<string, string> = {
-    C: 'Commune',
-    U: 'Peu commune',
-    R: 'Rare',
-    F: 'Fixe',
-    P: 'Promo',
-    '?': 'Inconnue',
-  }
-  return map[r] ?? r
-}
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -269,7 +292,7 @@ export default function CardsPage() {
             ? 'Chargement…'
             : isError
             ? 'Erreur de chargement'
-            : `${allCards.length.toLocaleString('fr-FR')} / ${total.toLocaleString('fr-FR')} carte${total > 1 ? 's' : ''}`}
+            : `${total.toLocaleString('fr-FR')} carte${total > 1 ? 's' : ''}`}
         </p>
 
         {/* Barre de filtres */}
@@ -314,8 +337,8 @@ export default function CardsPage() {
             aria-label="Filtrer par rareté"
           >
             <option value="">Toutes raretés</option>
-            {RARITY_OPTIONS.map((r) => (
-              <option key={r} value={r}>{rarityLabel(r)} ({r})</option>
+            {RARITY_OPTIONS.map(({ value, label }) => (
+              <option key={value} value={value}>{label}</option>
             ))}
           </select>
 

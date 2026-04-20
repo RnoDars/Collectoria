@@ -66,8 +66,8 @@ func (r *CardRepository) GetCardsCatalog(ctx context.Context, userID uuid.UUID, 
 		idx++
 	}
 	if filter.Rarity != "" {
-		where = append(where, fmt.Sprintf("c.rarity = $%d", idx))
-		args = append(args, filter.Rarity)
+		where = append(where, fmt.Sprintf("c.rarity LIKE $%d", idx))
+		args = append(args, filter.Rarity+"%")
 		idx++
 	}
 	if filter.Owned == "true" {
