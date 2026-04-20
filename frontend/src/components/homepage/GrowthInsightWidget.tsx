@@ -31,10 +31,10 @@ export default function GrowthInsightWidget({ stats, isLoading, error }: GrowthI
       }}>
         <div style={{ height: '1.25rem', width: '50%', background: 'var(--surface-container-low)', borderRadius: '8px', marginBottom: '1.5rem' }} />
         <div style={{ display: 'flex', gap: '6px', alignItems: 'flex-end', height: '80px' }}>
-          {[...Array(6)].map((_, i) => (
+          {[40, 65, 50, 75, 55, 70].map((h, i) => (
             <div key={i} style={{
               flex: 1,
-              height: `${30 + Math.random() * 50}%`,
+              height: `${h}%`,
               background: 'var(--surface-container-low)',
               borderRadius: '6px 6px 0 0',
             }} />
