@@ -20,33 +20,6 @@ export default function Home() {
         margin: '0 auto',
       }}>
 
-        {/* Header */}
-        <header style={{
-          marginBottom: '2.5rem',
-        }}>
-          <h1 style={{
-            fontFamily: 'Manrope, sans-serif',
-            fontSize: '2rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            margin: 0,
-            marginBottom: '0.25rem',
-          }}>
-            Collectoria
-          </h1>
-          <p style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '0.875rem',
-            color: 'var(--on-surface-variant)',
-            margin: 0,
-          }}>
-            Votre gestionnaire de collections personnel
-          </p>
-        </header>
-
         {/* HeroCard */}
         <section style={{ marginBottom: '2.5rem' }}>
           <HeroCard
