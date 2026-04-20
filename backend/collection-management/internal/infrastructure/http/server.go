@@ -17,6 +17,7 @@ import (
 type Server struct {
 	router            *chi.Mux
 	collectionService *application.CollectionService
+	activityService   *application.ActivityService
 	logger            zerolog.Logger
 	port              int
 }
@@ -26,6 +27,7 @@ func NewServer(collectionService *application.CollectionService, logger zerolog.
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
+		activityService:   application.NewActivityService(),
 		logger:            logger,
 		port:              port,
 	}
@@ -80,6 +82,11 @@ func (s *Server) setupRoutes() {
 			r.Get("/summary", collectionHandler.GetSummary)
 			r.Get("/", collectionHandler.GetAllCollections)
 		})
+
+		// Activities & Statistics routes
+		activityHandler := handlers.NewActivityHandler(s.activityService, s.logger)
+		r.Get("/activities/recent", activityHandler.GetRecentActivities)
+		r.Get("/statistics/growth", activityHandler.GetGrowthStats)
 	})
 }
 

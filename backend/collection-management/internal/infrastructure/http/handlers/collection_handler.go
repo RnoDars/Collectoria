@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"time"
 
@@ -88,7 +87,7 @@ func (h *CollectionHandler) GetSummary(w http.ResponseWriter, r *http.Request) {
 	summary, err := h.service.GetSummary(ctx, userID)
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Failed to get collection summary")
-		h.writeError(w, http.StatusInternalServerError, "INTERNAL_ERROR", "Failed to fetch collection summary")
+		writeJSONError(w, h.logger, http.StatusInternalServerError, "INTERNAL_ERROR", "Failed to fetch collection summary")
 		return
 	}
 
@@ -100,25 +99,23 @@ func (h *CollectionHandler) GetSummary(w http.ResponseWriter, r *http.Request) {
 		LastUpdated:          summary.LastUpdated,
 	}
 
-	h.writeJSON(w, http.StatusOK, response)
+	writeJSON(w, h.logger, http.StatusOK, response)
 }
 
 // GetAllCollections retourne toutes les collections avec leurs statistiques
 func (h *CollectionHandler) GetAllCollections(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// Pour l'instant, utiliser un userID fictif hardcodé
 	// TODO: Récupérer depuis le JWT token une fois l'authentification implémentée
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	collections, err := h.service.GetAllCollectionsWithStats(ctx, userID)
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Failed to get collections")
-		h.writeError(w, http.StatusInternalServerError, "INTERNAL_ERROR", "Failed to fetch collections")
+		writeJSONError(w, h.logger, http.StatusInternalServerError, "INTERNAL_ERROR", "Failed to fetch collections")
 		return
 	}
 
-	// Convertir en réponse JSON
 	collectionsResponse := make([]CollectionResponse, len(collections))
 	for i, coll := range collections {
 		collectionsResponse[i] = CollectionResponse{
@@ -134,30 +131,8 @@ func (h *CollectionHandler) GetAllCollections(w http.ResponseWriter, r *http.Req
 		}
 	}
 
-	response := CollectionsResponse{
+	writeJSON(w, h.logger, http.StatusOK, CollectionsResponse{
 		Collections:      collectionsResponse,
 		TotalCollections: len(collectionsResponse),
-	}
-
-	h.writeJSON(w, http.StatusOK, response)
-}
-
-// writeJSON écrit une réponse JSON
-func (h *CollectionHandler) writeJSON(w http.ResponseWriter, status int, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		h.logger.Error().Err(err).Msg("Failed to encode JSON response")
-	}
-}
-
-// writeError écrit une réponse d'erreur
-func (h *CollectionHandler) writeError(w http.ResponseWriter, status int, code, message string) {
-	response := ErrorResponse{
-		Error: ErrorDetail{
-			Code:    code,
-			Message: message,
-		},
-	}
-	h.writeJSON(w, status, response)
+	})
 }

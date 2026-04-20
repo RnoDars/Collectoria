@@ -1,0 +1,109 @@
+package application_test
+
+import (
+	"context"
+	"testing"
+
+	"collectoria/collection-management/internal/application"
+	"collectoria/collection-management/internal/domain"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestActivityService_GetRecentActivities_ReturnsMockData(t *testing.T) {
+	service := application.NewActivityService()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	feed, err := service.GetRecentActivities(context.Background(), userID, 10, 0)
+
+	require.NoError(t, err)
+	assert.NotNil(t, feed)
+	assert.NotEmpty(t, feed.Activities)
+	assert.LessOrEqual(t, len(feed.Activities), 10)
+}
+
+func TestActivityService_GetRecentActivities_RespectsLimit(t *testing.T) {
+	service := application.NewActivityService()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	feed, err := service.GetRecentActivities(context.Background(), userID, 3, 0)
+
+	require.NoError(t, err)
+	assert.LessOrEqual(t, len(feed.Activities), 3)
+}
+
+func TestActivityService_GetRecentActivities_ActivityHasRequiredFields(t *testing.T) {
+	service := application.NewActivityService()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	feed, err := service.GetRecentActivities(context.Background(), userID, 10, 0)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, feed.Activities)
+
+	for _, a := range feed.Activities {
+		assert.NotEqual(t, uuid.Nil, a.ID)
+		assert.NotEmpty(t, a.Type)
+		assert.NotEmpty(t, a.Title)
+		assert.NotZero(t, a.Timestamp)
+		assert.NotEmpty(t, a.Icon)
+	}
+}
+
+func TestActivityService_GetRecentActivities_HasValidActivityTypes(t *testing.T) {
+	service := application.NewActivityService()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	feed, err := service.GetRecentActivities(context.Background(), userID, 10, 0)
+
+	require.NoError(t, err)
+	validTypes := map[domain.ActivityType]bool{
+		domain.ActivityCardAdded:        true,
+		domain.ActivityMilestoneReached: true,
+		domain.ActivityImportCompleted:  true,
+	}
+	for _, a := range feed.Activities {
+		assert.True(t, validTypes[a.Type], "type invalide: %s", a.Type)
+	}
+}
+
+func TestActivityService_GetGrowthStats_ReturnsMockData(t *testing.T) {
+	service := application.NewActivityService()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	stats, err := service.GetGrowthStats(context.Background(), userID, "6m", "month")
+
+	require.NoError(t, err)
+	assert.NotNil(t, stats)
+	assert.Equal(t, "6m", stats.Period)
+	assert.Equal(t, "month", stats.Granularity)
+	assert.Len(t, stats.DataPoints, 6)
+}
+
+func TestActivityService_GetGrowthStats_DataPointsAreValid(t *testing.T) {
+	service := application.NewActivityService()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	stats, err := service.GetGrowthStats(context.Background(), userID, "6m", "month")
+
+	require.NoError(t, err)
+	for _, dp := range stats.DataPoints {
+		assert.NotEmpty(t, dp.Period)
+		assert.NotEmpty(t, dp.Label)
+		assert.GreaterOrEqual(t, dp.CardsAdded, 0)
+		assert.GreaterOrEqual(t, dp.TotalCards, 0)
+	}
+}
+
+func TestActivityService_GetGrowthStats_HasTrend(t *testing.T) {
+	service := application.NewActivityService()
+	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	stats, err := service.GetGrowthStats(context.Background(), userID, "6m", "month")
+
+	require.NoError(t, err)
+	validTrends := map[string]bool{"increasing": true, "decreasing": true, "stable": true}
+	assert.True(t, validTrends[stats.Trend], "trend invalide: %s", stats.Trend)
+}

@@ -1,0 +1,22 @@
+package handlers
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/rs/zerolog"
+)
+
+func writeJSON(w http.ResponseWriter, logger zerolog.Logger, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		logger.Error().Err(err).Msg("Failed to encode JSON response")
+	}
+}
+
+func writeJSONError(w http.ResponseWriter, logger zerolog.Logger, status int, code, message string) {
+	writeJSON(w, logger, status, ErrorResponse{
+		Error: ErrorDetail{Code: code, Message: message},
+	})
+}
