@@ -1,7 +1,7 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-16 - Option 1 Homepage (Phase 1 & 2 complètes)  
-**Prochaine session** : Phase 3 - Test intégration + intégration homepage
+**Date** : 2026-04-20 - Homepage complète (4 sections) + 4 endpoints REST opérationnels  
+**Prochaine session** : Import des vraies données MECCG (Google Sheets → PostgreSQL)
 
 ---
 
@@ -315,10 +315,27 @@ Générées par Stitch, stockées dans `Design/mockups/homepage/` :
 - ✅ **Build** : TypeScript compilation + production build réussis
 - ✅ **Commit** : 37bf556 "feat: add CollectionsGrid component with CollectionCard"
 
-**Phase 3 ⏸️** : Test d'intégration et intégration homepage
-- ⏸️ Test manuel de l'intégration complète (backend + frontend)
-- ⏸️ Intégration des composants dans la homepage réelle (`/`)
-- ⏸️ Validation visuelle et responsive
+**Phase 3 ✅** : Test d'intégration et intégration homepage (20 avril)
+- ✅ Intégration de HeroCard + CollectionsGrid dans la homepage réelle (`/`)
+- ✅ TopNav sticky persistante sur toutes les pages (liens vers pages de test)
+- ✅ Validation visuelle confirmée par l'utilisateur
+
+### 🎯 Dashboard Widgets (20 avril) ⭐ NOUVEAU
+
+**Backend — 2 nouveaux endpoints REST**
+- ✅ `GET /api/v1/activities/recent` — 5 activités mock (card_added, milestone_reached, import_completed), pagination limit/offset
+- ✅ `GET /api/v1/statistics/growth` — 6 mois de données mock, calcul trend (increasing/decreasing/stable), taux de croissance
+- ✅ 7 nouveaux tests TDD, tous verts
+- ✅ Refactoring : helpers JSON partagés entre handlers (`helpers.go`)
+- ✅ Commit : 3ea3cfd
+
+**Frontend — 2 nouveaux composants + hooks**
+- ✅ `RecentActivityWidget` : 5 activités avec icônes, temps relatif, 4 états UI (loading/error/empty/success)
+- ✅ `GrowthInsightWidget` : bar chart 6 mois, indicateur trend coloré, taux de croissance
+- ✅ Hooks `useActivities` (staleTime 1min) + `useGrowthStats` (staleTime 30min)
+- ✅ Client API snake_case → camelCase pour les 2 nouveaux endpoints
+- ✅ Homepage complète : HeroCard + CollectionsGrid + widgets Dashboard
+- ✅ Commit : b011440
 
 #### Outils de Développement
 - ✅ **setup.sh** : Script setup automatique (Go, Docker, migrations, seed)
@@ -386,72 +403,20 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 
 ## 🚧 En Cours / Prochaines Étapes
 
-### Backend - Phase 2 (Prochaine priorité)
-**Objectif** : Implémenter les 3 endpoints REST restants
+### Priorité 1 — Import des vraies données MECCG
+- 🔜 Script d'import Google Sheets → PostgreSQL (1 678 cartes MECCG)
+- 🔜 Validation du modèle de données avec vraies cartes
+- 🔜 Remplacer les 40 cartes mock par les vraies données
 
-1. **GET /api/v1/collections** 🔜
-   - Retourner liste des collections avec stats
-   - Hero images URLs
-   - Tests TDD
+### Priorité 2 — DevOps
+- 🔜 Docker Compose multi-services (PostgreSQL + backend + frontend)
+- 🔜 Scripts start/stop centralisés
+- 🔜 CI/CD GitHub Actions (lint, test, build)
 
-2. **GET /api/v1/activities/recent** 🔜
-   - Mock de 5-10 activités récentes
-   - Types variés (card_added, milestone_reached, import_completed)
-   - Pagination
-
-3. **GET /api/v1/statistics/growth** 🔜
-   - Mock de données de croissance (6 mois)
-   - Calcul du growth_rate_percentage
-   - Graphique bar chart data
-
-4. **Tests d'intégration** 🔜
-   - testcontainers-go pour PostgreSQL
-   - Tests E2E des endpoints
-   - Performance tests
-
-5. **Documentation OpenAPI/Swagger** 🔜
-   - Spec OpenAPI 3.0
-   - Swagger UI
-   - Génération clients
-
-### Frontend - Phase 1 (À démarrer)
-**Objectif** : Créer le composant HeroCard et intégrer l'endpoint
-
-1. **Composant HeroCard** 🔜
-   - Créer dans `frontend/src/components/homepage/`
-   - Props TypeScript typées
-   - Respecter l'Ethos (Tonal Layering, Dual-Type)
-   - State management (React Query)
-
-2. **Intégration API** 🔜
-   - Client API fetch `/api/v1/collections/summary`
-   - Afficher stats (24/40, 60%)
-   - Loading state (skeleton)
-   - Error handling
-
-3. **Tests** 🔜
-   - Tests composant (Testing Library)
-   - Tests hooks (React Query)
-   - MSW pour mock API
-
-### DevOps - Phase 1 (À démarrer)
-**Objectif** : Setup environnement de développement complet
-
-1. **Docker Compose multi-services** 🔜
-   - PostgreSQL
-   - Backend microservice
-   - Frontend Next.js
-   - Nginx reverse proxy (optionnel)
-
-2. **Scripts de développement** 🔜
-   - Start/stop tous les services
-   - Logs centralisés
-   - Reset données
-
-3. **CI/CD basique** 🔜
-   - GitHub Actions
-   - Tests automatiques
-   - Linting
+### Priorité 3 — Qualité
+- 🔜 Tests d'intégration backend (testcontainers-go)
+- 🔜 Tests composants frontend (Testing Library + MSW)
+- 🔜 Documentation OpenAPI/Swagger
 
 ---
 
@@ -601,10 +566,11 @@ Collectoria/
 3. **Frontend Phase 2** : Composants Dashboard Widgets (Activity + Growth)
 
 **Le MVP avance très bien !** 💪
-- ✅ Backend : 2 endpoints opérationnels (/summary, /collections)
-- ✅ Frontend : 2 composants majeurs (HeroCard, CollectionsGrid)
-- ⏸️ Homepage à 60% complète (manque widgets Dashboard)
+- ✅ Backend : 4 endpoints opérationnels (/summary, /collections, /activities/recent, /statistics/growth)
+- ✅ Frontend : Homepage complète — HeroCard, CollectionsGrid, RecentActivityWidget, GrowthInsightWidget
+- ✅ Navigation : TopNav sticky sur toutes les pages
+- 🔜 Prochaine étape : import des vraies données MECCG
 
 ---
 
-**Prochaine session** : Finaliser Option 1 Phase 3 (test + intégration homepage) 🎯
+**Prochaine session** : Import des vraies données MECCG depuis Google Sheets 🎯
