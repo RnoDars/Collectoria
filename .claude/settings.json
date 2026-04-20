@@ -28,15 +28,13 @@
         "hooks": [
           {
             "type": "command",
-            "if": "Bash(git commit*)",
             "statusMessage": "Vérification sécurité...",
-            "command": "cmd=$(jq -r '.tool_input.command'); if echo \"$cmd\" | grep -q 'git commit'; then changed=$(git -C /home/rno/git/Collectoria diff --name-only HEAD~1 HEAD 2>/dev/null); if echo \"$changed\" | grep -qE '^(Backend|backend|Frontend|frontend)/'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"[Hook Security] Ce commit touche du code Backend/Frontend. Alfred doit déclencher l Agent Security pour auditer les changements du dernier commit.\"}}'; fi; fi"
+            "command": "cmd=$(jq -r '.tool_input.command // empty' 2>/dev/null); echo \"$cmd\" | grep -q 'git commit' || exit 0; changed=$(git -C /home/rno/git/Collectoria diff --name-only HEAD~1 HEAD 2>/dev/null); echo \"$changed\" | grep -qE '^(Backend|backend|Frontend|frontend)/' || exit 0; echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"[Hook Security] Ce commit touche du code Backend/Frontend. Alfred doit déclencher l Agent Security pour auditer les changements du dernier commit.\"}}';"
           },
           {
             "type": "command",
-            "if": "Bash(git commit*)",
             "statusMessage": "Vérification amélioration continue...",
-            "command": "cmd=$(jq -r '.tool_input.command'); if echo \"$cmd\" | grep -q 'git commit'; then count=$(git -C /home/rno/git/Collectoria rev-list --count HEAD 2>/dev/null); if [ $((count % 10)) -eq 0 ]; then echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostToolUse\\\",\\\"additionalContext\\\":\\\"[Hook Amélioration Continue] $count commits atteints. Alfred doit déclencher l Agent Amélioration Continue pour un audit du système d agents.\\\"}}\"; fi; fi"
+            "command": "cmd=$(jq -r '.tool_input.command // empty' 2>/dev/null); echo \"$cmd\" | grep -q 'git commit' || exit 0; count=$(git -C /home/rno/git/Collectoria rev-list --count HEAD 2>/dev/null); [ \"$count\" -gt 0 ] && [ $((count % 10)) -eq 0 ] || exit 0; echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostToolUse\\\",\\\"additionalContext\\\":\\\"[Hook Amélioration Continue] $count commits atteints. Alfred doit déclencher l Agent Amélioration Continue pour un audit du système d agents.\\\"}}\""
           }
         ]
       }

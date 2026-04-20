@@ -125,6 +125,73 @@ export async function fetchGrowthStats(period = '6m', granularity = 'month'): Pr
   }
 }
 
+// ─── Cards ────────────────────────────────────────────────────────────────────
+
+export interface Card {
+  id: string
+  nameEn: string
+  nameFr: string
+  cardType: string
+  series: string
+  rarity: string
+  isOwned: boolean
+}
+
+export interface CardPage {
+  cards: Card[]
+  total: number
+  page: number
+  hasMore: boolean
+  timestamp: string
+}
+
+export interface CardFilters {
+  search?: string
+  series?: string
+  type?: string
+  rarity?: string
+  owned?: 'true' | 'false'
+}
+
+export async function fetchCards(filters: CardFilters, page: number): Promise<CardPage> {
+  const params = new URLSearchParams()
+  params.set('page', String(page))
+  params.set('limit', '50')
+  if (filters.search)  params.set('search',  filters.search)
+  if (filters.series)  params.set('series',  filters.series)
+  if (filters.type)    params.set('type',    filters.type)
+  if (filters.rarity)  params.set('rarity',  filters.rarity)
+  if (filters.owned)   params.set('owned',   filters.owned)
+
+  const response = await fetch(`${API_BASE_URL}/api/v1/cards?${params.toString()}`, {
+    headers: { 'Content-Type': 'application/json' },
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch cards: ${response.statusText}`)
+  }
+
+  const data = await response.json()
+
+  return {
+    cards: data.cards.map((c: any) => ({
+      id: c.id,
+      nameEn: c.name_en,
+      nameFr: c.name_fr,
+      cardType: c.card_type,
+      series: c.series,
+      rarity: c.rarity,
+      isOwned: c.is_owned,
+    })),
+    total: data.total,
+    page: data.page,
+    hasMore: data.has_more,
+    timestamp: data.timestamp,
+  }
+}
+
+// ─── Collections ─────────────────────────────────────────────────────────────
+
 export async function fetchCollections(): Promise<Collection[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/collections`, {
     headers: {

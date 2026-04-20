@@ -2,6 +2,8 @@
 
 import { Collection } from '@/lib/api/collections'
 import { useState } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 interface CollectionCardProps {
   collection: Collection
@@ -9,16 +11,14 @@ interface CollectionCardProps {
 
 export default function CollectionCard({ collection }: CollectionCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const router = useRouter()
 
   const percentage = Math.round(collection.completionPercentage)
   const isComplete = percentage === 100
   const isEmpty = percentage === 0
 
-  // Placeholder gradients based on collection slug
   const getGradient = (slug: string) => {
     switch (slug) {
-      case 'meccg':
-        return 'linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #1c3a0e 100%)'
       case 'doomtrooper':
         return 'linear-gradient(135deg, #8b0000 0%, #2b0000 50%, #000000 100%)'
       default:
@@ -26,8 +26,13 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
     }
   }
 
+  const collectionImages: Record<string, string> = {
+    meccg: '/meccg-logo.png',
+  }
+
   return (
     <div
+      onClick={() => router.push('/cards')}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
@@ -50,10 +55,19 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
         width: '100%',
         height: '160px',
         borderRadius: '16px',
-        background: getGradient(collection.slug),
+        background: collectionImages[collection.slug] ? '#f3f4f5' : getGradient(collection.slug),
         marginBottom: '16px',
         overflow: 'hidden',
       }}>
+        {collectionImages[collection.slug] && (
+          <Image
+            src={collectionImages[collection.slug]}
+            alt={collection.name}
+            fill
+            style={{ objectFit: 'contain', padding: '8px' }}
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
+        )}
         {/* Overlay gradient for text readability */}
         <div style={{
           position: 'absolute',
