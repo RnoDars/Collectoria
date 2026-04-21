@@ -1,7 +1,7 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-21 - Import des vraies données MECCG complété (1679 cartes) + Homepage opérationnelle  
-**Prochaine session** : Tests frontend (Vitest) + DevOps multi-services (Docker Compose complet)
+**Date** : 2026-04-21 - Tests frontend + Sécurité Phase 1 complétés  
+**Prochaine session** : Améliorations fonctionnelles (puis Phase 2 Sécurité avant production)
 
 ---
 
@@ -407,6 +407,20 @@ curl http://localhost:8080/api/v1/collections/summary | jq
   - Recommandation documentée : `Continuous-Improvement/recommendations/workflow-status-update_2026-04-21.md`
   - Responsabilité claire : Alfred → Suivi de Projet pour maintenir STATUS.md à jour
 
+### 🔒 Sécurité (21 avril)
+- ✅ **Audit de sécurité complet** : 18 vulnérabilités identifiées (5 CRITICAL, 4 HIGH, 6 MEDIUM, 3 LOW)
+- ✅ **Phase 1 - Quick Wins** : 7 corrections implémentées en 3h
+  - Headers de sécurité HTTP (X-Frame-Options, CSP, X-Content-Type-Options, etc.)
+  - CORS configurable via variables d'environnement
+  - Health check amélioré avec vérification PostgreSQL
+  - Credentials Docker externalisés (plus de hardcoded passwords)
+  - Dockerfile non-root (user collectoria UID 1000)
+  - Logger configurable (dev/prod modes)
+  - Validation des inputs (limit, offset, filtres)
+- ✅ **Score de sécurité amélioré** : 4.5/10 → 7.0/10 (+2.5 points)
+- ✅ **Script de validation** : `Security/validate-quick-wins.sh` avec 30+ tests automatisés
+- ⚠️ **Phase 2 IMPÉRATIVE avant production** : JWT auth (2j), SQL injection fix (1j), Rate limiting (4h)
+
 ### 📚 Documentation
 - ✅ ~12,000+ lignes de documentation totales
 - ✅ 18 commits Git au total
@@ -416,20 +430,22 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 
 ## 🚧 En Cours / Prochaines Étapes
 
-### Priorité 1 — Tests Frontend (immédiat)
-- 🔜 Configuration Vitest pour le frontend
-- 🔜 Tests composants HeroCard.tsx et CollectionsGrid.tsx
-- 🔜 Établir le pattern de tests frontend (suite du TDD backend)
+### Priorité 0 — Phase 2 Sécurité (BLOQUANT PRODUCTION) 🔴
+- 🔜 JWT Authentication (2 jours) - UserID actuellement hardcodé
+- 🔜 Correction injection SQL (1 jour) - fmt.Sprintf dans CardRepository
+- 🔜 Rate Limiting (4 heures) - Protection DoS/brute force
+- **Budget estimé** : ~€2,000 (2-3 jours développeur)
+- **Score cible** : 10/10 (production-ready)
+
+### Priorité 1 — Améliorations Fonctionnelles
+- 🔜 Tests d'intégration backend (testcontainers-go)
+- 🔜 Documentation OpenAPI/Swagger
+- 🔜 Endpoint GET /api/v1/cards avec pagination et filtres
 
 ### Priorité 2 — DevOps
 - 🔜 Docker Compose multi-services (PostgreSQL + backend + frontend)
 - 🔜 Scripts start/stop centralisés
 - 🔜 CI/CD GitHub Actions (lint, test, build)
-
-### Priorité 3 — Qualité & Sécurité
-- 🔜 Tests d'intégration backend (testcontainers-go)
-- 🔜 Documentation OpenAPI/Swagger
-- 🔜 Audit sécurité des endpoints publics (authentification à prévoir)
 
 ---
 
@@ -552,6 +568,12 @@ Collectoria/
 - **Homepage complète** avec 4 sections interconnectées
 - **Infrastructure TDD** en place (backend), à étendre au frontend
 
+### Sécurité
+- **Audit complet** : 18 vulnérabilités identifiées
+- **Quick Wins implémentés** : 7/7 (Phase 1)
+- **Score actuel** : 7.0/10
+- **Documentation** : 2845+ lignes (rapports, guides, scripts)
+
 ---
 
 ## 🎉 Bilan Global
@@ -565,6 +587,7 @@ Collectoria/
 - ✅ **4 endpoints REST** : `/summary`, `/collections`, `/activities/recent`, `/statistics/growth`
 - ✅ **Homepage complète** : HeroCard + CollectionsGrid + Dashboard Widgets (Activity + Growth)
 - ✅ **Tests backend** : TDD appliqué, >90% coverage
+- ✅ **Sécurité Phase 1** : Quick Wins implémentés, score 7.0/10
 - ✅ **Documentation** : ~12,000+ lignes, tout est documenté
 - ✅ **Workflow** : Commits atomiques, communication claire, hooks Git automatiques
 
@@ -574,6 +597,7 @@ Collectoria/
 - Frontend : Homepage complète et fonctionnelle (4 sections)
 - Intégration : Frontend ↔ Backend connectés avec données réelles
 - Tests : Infrastructure TDD backend établie (>90% coverage)
+- Sécurité : Phase 1 complète (7.0/10), Phase 2 requise avant production
 
 ### Prochaines Priorités
 1. **Tests Frontend** : Vitest + premiers tests composants (HeroCard, CollectionsGrid)
@@ -589,4 +613,4 @@ Collectoria/
 
 ---
 
-**Prochaine session** : Tests frontend (Vitest) + Docker Compose multi-services 🎯
+**Prochaine session** : Améliorations fonctionnelles (puis Phase 2 Sécurité avant production) 🎯

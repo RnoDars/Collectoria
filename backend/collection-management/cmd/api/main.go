@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"time"
 
 	"collectoria/collection-management/internal/application"
 	"collectoria/collection-management/internal/config"
@@ -13,8 +14,27 @@ import (
 )
 
 func main() {
-	// Configuration du logger
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	// Configuration du logger selon l'environnement
+	env := getEnv("ENV", "development")
+	logLevel := getEnv("LOG_LEVEL", "debug")
+
+	if env == "production" {
+		// Production: JSON structured logs
+		log.Logger = zerolog.New(os.Stdout).With().
+			Timestamp().
+			Str("service", "collection-management").
+			Logger()
+		zerolog.SetGlobalLevel(parseLogLevel(logLevel, zerolog.InfoLevel))
+	} else {
+		// Development: Pretty console logs
+		log.Logger = log.Output(zerolog.ConsoleWriter{
+			Out:        os.Stderr,
+			TimeFormat: time.RFC3339,
+		})
+		zerolog.SetGlobalLevel(parseLogLevel(logLevel, zerolog.DebugLevel))
+	}
+
+	log.Info().Str("env", env).Str("log_level", logLevel).Msg("Starting Collection Management Service")
 
 	// Chargement de la configuration
 	cfg, err := config.Load()
@@ -49,11 +69,42 @@ func main() {
 	catalogService := application.NewCatalogService(cardRepo)
 
 	// Initialisation du serveur HTTP
-	server := http.NewServer(collectionService, catalogService, log.Logger, cfg.Server.Port)
+	server := http.NewServer(collectionService, catalogService, log.Logger, cfg.Server.Port, cfg.CORS, db)
 
 	// Démarrage du serveur
-	log.Info().Msgf("Starting Collection Management Service on port %d", cfg.Server.Port)
+	log.Info().Msgf("Server ready on port %d", cfg.Server.Port)
 	if err := server.Start(); err != nil {
 		log.Fatal().Err(err).Msg("Server failed")
+	}
+}
+
+// getEnv récupère une variable d'environnement avec une valeur par défaut
+func getEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}
+
+// parseLogLevel convertit une string en niveau de log zerolog
+func parseLogLevel(level string, defaultLevel zerolog.Level) zerolog.Level {
+	switch level {
+	case "trace":
+		return zerolog.TraceLevel
+	case "debug":
+		return zerolog.DebugLevel
+	case "info":
+		return zerolog.InfoLevel
+	case "warn", "warning":
+		return zerolog.WarnLevel
+	case "error":
+		return zerolog.ErrorLevel
+	case "fatal":
+		return zerolog.FatalLevel
+	case "panic":
+		return zerolog.PanicLevel
+	default:
+		return defaultLevel
 	}
 }

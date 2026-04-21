@@ -59,7 +59,21 @@ collection-management/
 
 ## Configuration
 
-Variables d'environnement:
+### Fichier de Configuration
+
+1. Copier le fichier d'exemple:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **IMPORTANT**: Modifier les valeurs sensibles, notamment:
+   - `DB_PASSWORD`: Utiliser un mot de passe fort en production
+   - `CORS_ALLOWED_ORIGINS`: Configurer les origines autorisées pour votre environnement
+   - `ENV`: Passer à `production` en prod pour des logs JSON structurés
+
+3. Ne JAMAIS commiter le fichier `.env` dans Git (déjà dans .gitignore)
+
+### Variables d'Environnement
 
 ```bash
 # Serveur
@@ -69,10 +83,31 @@ SERVER_PORT=8080
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=collectoria
-DB_PASSWORD=collectoria
+DB_PASSWORD=your-secure-password-here    # ⚠️ CHANGE ME IN PRODUCTION
 DB_NAME=collection_management
-DB_SSLMODE=disable
+DB_SSLMODE=disable                        # Use 'require' in production
+
+# CORS (Cross-Origin Resource Sharing)
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+CORS_MAX_AGE=300                         # Préflight cache duration (seconds)
+
+# Logging
+ENV=development                          # development | production
+LOG_LEVEL=debug                          # trace | debug | info | warn | error | fatal | panic
 ```
+
+### Différences Development vs Production
+
+**Development** (`ENV=development`):
+- Logs colorés et formatés pour la console
+- Niveau de log par défaut: `debug`
+- SSL désactivé pour PostgreSQL
+
+**Production** (`ENV=production`):
+- Logs JSON structurés (pour agrégation)
+- Niveau de log par défaut: `info`
+- SSL recommandé pour PostgreSQL (`DB_SSLMODE=require`)
+- CORS strictement configuré
 
 ## Installation
 

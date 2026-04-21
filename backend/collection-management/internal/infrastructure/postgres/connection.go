@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"github.com/rs/zerolog/log"
 )
 
 // Config représente la configuration de connexion PostgreSQL
@@ -19,6 +20,15 @@ type Config struct {
 
 // NewConnection crée une nouvelle connexion à PostgreSQL
 func NewConnection(cfg Config) (*sqlx.DB, error) {
+	// Log connection info without password
+	log.Info().
+		Str("host", cfg.Host).
+		Int("port", cfg.Port).
+		Str("user", cfg.User).
+		Str("database", cfg.Database).
+		Str("sslmode", cfg.SSLMode).
+		Msg("Connecting to database")
+
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Database, cfg.SSLMode,

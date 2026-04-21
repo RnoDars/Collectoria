@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // Config représente la configuration de l'application
 type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
+	CORS     CORSConfig
 }
 
 // ServerConfig représente la configuration du serveur HTTP
@@ -27,6 +29,12 @@ type DatabaseConfig struct {
 	SSLMode  string
 }
 
+// CORSConfig représente la configuration CORS
+type CORSConfig struct {
+	AllowedOrigins []string
+	MaxAge         int
+}
+
 // Load charge la configuration depuis les variables d'environnement
 func Load() (*Config, error) {
 	cfg := &Config{
@@ -40,6 +48,10 @@ func Load() (*Config, error) {
 			Password: getEnv("DB_PASSWORD", "collectoria"),
 			Database: getEnv("DB_NAME", "collection_management"),
 			SSLMode:  getEnv("DB_SSLMODE", "disable"),
+		},
+		CORS: CORSConfig{
+			AllowedOrigins: strings.Split(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001"), ","),
+			MaxAge:         getEnvAsInt("CORS_MAX_AGE", 300),
 		},
 	}
 

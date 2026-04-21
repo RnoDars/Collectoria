@@ -1,15 +1,21 @@
 package http
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"runtime"
+	"strconv"
 	"time"
 
 	"collectoria/collection-management/internal/application"
+	"collectoria/collection-management/internal/config"
 	"collectoria/collection-management/internal/infrastructure/http/handlers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
 )
 
@@ -21,10 +27,12 @@ type Server struct {
 	activityService   *application.ActivityService
 	logger            zerolog.Logger
 	port              int
+	corsConfig        config.CORSConfig
+	db                *sqlx.DB
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, logger zerolog.Logger, port int) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
@@ -32,6 +40,8 @@ func NewServer(collectionService *application.CollectionService, catalogService 
 		activityService:   application.NewActivityService(),
 		logger:            logger,
 		port:              port,
+		corsConfig:        corsConfig,
+		db:                db,
 	}
 
 	s.setupMiddleware()
@@ -48,35 +58,75 @@ func (s *Server) setupMiddleware() {
 	s.router.Use(middleware.Recoverer)
 	s.router.Use(middleware.Timeout(60 * time.Second))
 
-	// CORS pour localhost (frontend Next.js en développement)
-	s.router.Use(func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			origin := r.Header.Get("Origin")
-			// Accepter localhost sur n'importe quel port en développement
-			if origin == "http://localhost:3000" || origin == "http://localhost:3001" {
-				w.Header().Set("Access-Control-Allow-Origin", origin)
+	// Security headers
+	s.router.Use(securityHeadersMiddleware)
+
+	// CORS configurable
+	s.router.Use(s.corsMiddleware)
+}
+
+// corsMiddleware configure CORS avec les origines autorisées
+func (s *Server) corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+
+		// Check if origin is allowed
+		allowed := false
+		for _, allowedOrigin := range s.corsConfig.AllowedOrigins {
+			if origin == allowedOrigin {
+				allowed = true
+				break
 			}
+		}
+
+		if allowed {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			w.Header().Set("Access-Control-Max-Age", strconv.Itoa(s.corsConfig.MaxAge))
+		}
 
-			if r.Method == "OPTIONS" {
-				w.WriteHeader(http.StatusOK)
-				return
-			}
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 
-			next.ServeHTTP(w, r)
-		})
+		next.ServeHTTP(w, r)
+	})
+}
+
+// securityHeadersMiddleware ajoute les headers de sécurité HTTP recommandés
+func securityHeadersMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Prevent MIME type sniffing
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+
+		// Prevent clickjacking
+		w.Header().Set("X-Frame-Options", "DENY")
+
+		// XSS Protection (legacy but still useful)
+		w.Header().Set("X-XSS-Protection", "1; mode=block")
+
+		// Referrer policy
+		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+
+		// HSTS (only if HTTPS)
+		if r.TLS != nil {
+			w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		}
+
+		// Content Security Policy (restrictive)
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; frame-ancestors 'none'")
+
+		next.ServeHTTP(w, r)
 	})
 }
 
 // setupRoutes configure les routes
 func (s *Server) setupRoutes() {
 	s.router.Route("/api/v1", func(r chi.Router) {
-		// Health check
-		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"status":"ok"}`))
-		})
+		// Health check amélioré
+		r.Get("/health", s.healthCheckHandler)
 
 		// Collections routes
 		collectionHandler := handlers.NewCollectionHandler(s.collectionService, s.logger)
@@ -94,6 +144,51 @@ func (s *Server) setupRoutes() {
 		catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
 		r.Get("/cards", catalogHandler.GetCards)
 	})
+}
+
+// HealthResponse représente la réponse du health check
+type HealthResponse struct {
+	Status  string            `json:"status"`
+	Checks  map[string]string `json:"checks"`
+	Version string            `json:"version,omitempty"`
+}
+
+// healthCheckHandler gère le health check avec vérification de la base de données
+func (s *Server) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+	defer cancel()
+
+	checks := make(map[string]string)
+	overallStatus := "healthy"
+
+	// Check database connection
+	if err := s.db.PingContext(ctx); err != nil {
+		checks["database"] = "unhealthy: " + err.Error()
+		overallStatus = "unhealthy"
+		s.logger.Error().Err(err).Msg("Database health check failed")
+	} else {
+		checks["database"] = "healthy"
+	}
+
+	// Check memory (optional)
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	checks["memory_mb"] = fmt.Sprintf("%.2f", float64(m.Alloc)/1024/1024)
+
+	response := HealthResponse{
+		Status:  overallStatus,
+		Checks:  checks,
+		Version: "0.1.0",
+	}
+
+	statusCode := http.StatusOK
+	if overallStatus != "healthy" {
+		statusCode = http.StatusServiceUnavailable
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(response)
 }
 
 // Start démarre le serveur

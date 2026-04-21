@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"collectoria/collection-management/internal/domain"
+	"collectoria/collection-management/internal/infrastructure/http/validators"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -48,22 +49,47 @@ func (h *CatalogHandler) GetCards(w http.ResponseWriter, r *http.Request) {
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	q := r.URL.Query()
+
+	// Validation des paramètres de pagination
 	page := 1
 	limit := 50
 	if p := q.Get("page"); p != "" {
 		if v, err := strconv.Atoi(p); err == nil && v > 0 {
 			page = v
+		} else {
+			writeJSONError(w, h.logger, http.StatusBadRequest, "INVALID_PARAM", "Invalid page parameter")
+			return
 		}
 	}
 	if l := q.Get("limit"); l != "" {
 		if v, err := strconv.Atoi(l); err == nil && v > 0 && v <= 200 {
 			limit = v
+		} else {
+			writeJSONError(w, h.logger, http.StatusBadRequest, "INVALID_PARAM", "Invalid limit parameter (must be 1-200)")
+			return
+		}
+	}
+
+	// Validation des paramètres de recherche
+	search := q.Get("search")
+	if search != "" {
+		if err := validators.ValidateStringParam(search, 100); err != nil {
+			writeJSONError(w, h.logger, http.StatusBadRequest, "INVALID_PARAM", err.Error())
+			return
+		}
+	}
+
+	series := q.Get("series")
+	if series != "" {
+		if err := validators.ValidateStringParam(series, 50); err != nil {
+			writeJSONError(w, h.logger, http.StatusBadRequest, "INVALID_PARAM", err.Error())
+			return
 		}
 	}
 
 	filter := domain.CardFilter{
-		Search: q.Get("search"),
-		Series: q.Get("series"),
+		Search: search,
+		Series: series,
 		Type:   q.Get("type"),
 		Rarity: q.Get("rarity"),
 		Owned:  q.Get("owned"),
