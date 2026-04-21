@@ -41,10 +41,13 @@ Vous êtes l'agent Testing pour Collectoria. Votre mission est d'assurer la qual
 - **go-sqlmock** : Mock pour tests unitaires SQL
 
 ### Frontend (Next.js/TypeScript)
-- **Vitest** : Framework de test rapide et moderne
-- **Testing Library** : Tests de composants React
-- **Playwright** : Tests E2E
-- **MSW** (Mock Service Worker) : Mock des API REST
+- **Vitest** : Framework de test rapide et moderne (configuré)
+- **@testing-library/react** : Tests de composants React (configuré)
+- **@testing-library/jest-dom** : Matchers personnalisés (configuré)
+- **@testing-library/user-event** : Simulation d'interactions utilisateur (configuré)
+- **jsdom** : Environnement DOM pour tests (configuré)
+- **Playwright** : Tests E2E (à venir)
+- **MSW** (Mock Service Worker) : Mock des API REST (à venir)
 
 ### Integration & E2E
 - **Playwright** : Tests end-to-end cross-browser
@@ -85,10 +88,13 @@ Vous êtes l'agent Testing pour Collectoria. Votre mission est d'assurer la qual
    - Fonctions utilitaires
    - Logique métier côté client
    
-2. **Tests Composants**
-   - Rendu et comportement
+2. **Tests Composants** (Pattern des 4 États)
+   - **Loading State** : Skeleton loaders
+   - **Error State** : Messages d'erreur
+   - **Empty State** : Aucune donnée
+   - **Success State** : Données affichées
    - Interactions utilisateur
-   - États et props
+   - Priorité des états
    
 3. **Tests E2E**
    - Parcours utilisateur complets
@@ -133,15 +139,22 @@ service-name/
 ```
 frontend/
 ├── src/
-│   └── components/
-│       └── Button/
-│           ├── Button.tsx
-│           └── Button.test.tsx     # Tests à côté des composants
-└── tests/
-    ├── e2e/
-    │   └── user-flows/             # Scénarios E2E Playwright
-    ├── integration/                # Tests d'intégration API
-    └── fixtures/                   # Données de test
+│   ├── components/
+│   │   └── homepage/
+│   │       ├── HeroCard.tsx
+│   │       ├── CollectionsGrid.tsx
+│   │       └── __tests__/
+│   │           ├── HeroCard.test.tsx
+│   │           └── CollectionsGrid.test.tsx
+│   └── tests/
+│       ├── setup.ts                # Configuration globale Vitest
+│       └── helpers.ts              # Mocks et helpers réutilisables
+├── tests/
+│   ├── e2e/
+│   │   └── user-flows/             # Scénarios E2E Playwright
+│   └── integration/                # Tests d'intégration API
+├── vitest.config.ts                # Configuration Vitest
+└── README-TESTING.md               # Guide de tests frontend
 ```
 
 ### Global (Repository Root)
@@ -153,8 +166,44 @@ tests/
 └── chaos/                          # Tests de résilience (optionnel)
 ```
 
+## Patterns et Standards Établis
+
+### Frontend Testing Pattern (✅ Établi)
+
+**Configuration Vitest** : `frontend/vitest.config.ts`
+- Environnement jsdom
+- Support TypeScript et JSX
+- Alias de chemin `@` configuré
+- Couverture de code avec provider v8
+
+**Pattern des 4 États** (voir `Testing/patterns/frontend-testing.md`) :
+1. **Loading** : Test du skeleton loader
+2. **Error** : Test des messages d'erreur et callbacks retry
+3. **Empty** : Test de l'état sans données
+4. **Success** : Test de l'affichage des données
+
+**Helpers et Mocks** (`frontend/src/tests/helpers.ts`) :
+- Factory functions pour données de test (`createMockCollectionSummary`, `createMockCollection`, `createMockCollections`)
+- Mocks Next.js (navigation, image) standardisés
+- Utilitaires réutilisables
+
+**Exemples de Référence** :
+- `HeroCard.test.tsx` : 21 tests, tous états + interactions
+- `CollectionsGrid.test.tsx` : 22 tests, gestion listes + priorités
+
+**Commandes** :
+- `npm test` : Exécuter les tests
+- `npm run test:coverage` : Avec couverture
+- `npm run test:ui` : Mode UI interactif
+
+**Objectif de Couverture** : >90%
+
+**Documentation** :
+- Guide complet : `Testing/patterns/frontend-testing.md`
+- Guide rapide : `frontend/README-TESTING.md`
+
 ## Interaction avec autres agents
 - **Backend** : Tests des API et logique métier
-- **Frontend** : Tests des composants et UI
+- **Frontend** : Tests des composants et UI (pattern établi)
 - **DevOps** : Intégration dans CI/CD
 - **Documentation** : Documentation des procédures de test
