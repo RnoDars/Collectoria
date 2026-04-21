@@ -197,77 +197,29 @@ export default function HeroCard({ summary, isLoading, error, onRetry }: HeroCar
         )}
       </div>
 
-      {/* Action Buttons */}
-      <div style={{
-        display: 'flex',
-        gap: '12px',
-        flexWrap: 'wrap',
-      }}>
-        <button style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '24px',
-          padding: '12px 24px',
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '0.875rem',
-          fontWeight: '600',
-          cursor: 'pointer',
-          transition: 'transform 0.2s',
-        }}
-        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      {/* Action Button */}
+      <div>
+        <a
+          href="/cards/add"
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '24px',
+            padding: '12px 24px',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'transform 0.2s',
+            textDecoration: 'none',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
           Add Card
-        </button>
-
-        <button style={{
-          background: '#e8e9ea',
-          color: '#667eea',
-          border: 'none',
-          borderRadius: '24px',
-          padding: '12px 24px',
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '0.875rem',
-          fontWeight: '600',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#e1e3e4'
-          e.currentTarget.style.transform = 'scale(1.05)'
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#e8e9ea'
-          e.currentTarget.style.transform = 'scale(1)'
-        }}
-        >
-          View Wishlist
-        </button>
-
-        <button style={{
-          background: '#e8e9ea',
-          color: '#667eea',
-          border: 'none',
-          borderRadius: '24px',
-          padding: '12px 24px',
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '0.875rem',
-          fontWeight: '600',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#e1e3e4'
-          e.currentTarget.style.transform = 'scale(1.05)'
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#e8e9ea'
-          e.currentTarget.style.transform = 'scale(1)'
-        }}
-        >
-          Import
-        </button>
+        </a>
       </div>
     </div>
   )
@@ -364,23 +316,10 @@ function HeroCardSkeleton() {
         }} />
       </div>
 
-      {/* Buttons skeleton */}
-      <div style={{
-        display: 'flex',
-        gap: '12px',
-      }}>
+      {/* Button skeleton */}
+      <div>
         <div className="skeleton" style={{
           width: '100px',
-          height: '40px',
-          borderRadius: '24px',
-        }} />
-        <div className="skeleton" style={{
-          width: '120px',
-          height: '40px',
-          borderRadius: '24px',
-        }} />
-        <div className="skeleton" style={{
-          width: '80px',
           height: '40px',
           borderRadius: '24px',
         }} />

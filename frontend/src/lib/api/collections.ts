@@ -190,6 +190,36 @@ export async function fetchCards(filters: CardFilters, page: number): Promise<Ca
   }
 }
 
+// ─── Card Possession ──────────────────────────────────────────────────────────
+
+export async function updateCardPossession(
+  cardId: string,
+  isOwned: boolean
+): Promise<Card> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/cards/${cardId}/possession`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ is_owned: isOwned }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to update card possession: ${response.statusText}`)
+  }
+
+  const data = await response.json()
+
+  // Convert snake_case to camelCase
+  return {
+    id: data.card.id,
+    nameEn: data.card.name_en,
+    nameFr: data.card.name_fr,
+    cardType: data.card.card_type,
+    series: data.card.series,
+    rarity: data.card.rarity,
+    isOwned: data.card.is_owned,
+  }
+}
+
 // ─── Collections ─────────────────────────────────────────────────────────────
 
 export async function fetchCollections(): Promise<Collection[]> {

@@ -148,14 +148,14 @@ describe('HeroCard', () => {
       expect(screen.getByText('100%')).toBeInTheDocument()
     })
 
-    it('should display all action buttons', () => {
+    it('should display Add Card link', () => {
       const summary = createMockCollectionSummary()
 
       render(<HeroCard summary={summary} />)
 
-      expect(screen.getByRole('button', { name: /Add Card/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /View Wishlist/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Import/i })).toBeInTheDocument()
+      const addCardLink = screen.getByRole('link', { name: /Add Card/i })
+      expect(addCardLink).toBeInTheDocument()
+      expect(addCardLink).toHaveAttribute('href', '/cards/add')
     })
 
     it('should round completion percentage to nearest integer', () => {
