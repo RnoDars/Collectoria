@@ -1,7 +1,7 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-20 - Homepage complète (4 sections) + 4 endpoints REST opérationnels  
-**Prochaine session** : Import des vraies données MECCG (Google Sheets → PostgreSQL)
+**Date** : 2026-04-21 - Import des vraies données MECCG complété (1679 cartes) + Homepage opérationnelle  
+**Prochaine session** : Tests frontend (Vitest) + DevOps multi-services (Docker Compose complet)
 
 ---
 
@@ -18,11 +18,17 @@
 - ✅ Architecture locale (Docker Compose) documentée
 - ✅ Architecture cloud (Fly.io recommandé, $5-10/mois) documentée
 
-### 📊 Données (14 avril)
-- ✅ Google Sheets analysés (2733 cartes : 1055 Doomtrooper + 1678 MECCG)
+### 📊 Données (14 avril + 21 avril ⭐)
+- ✅ Google Sheets analysés (2733 cartes : 1055 Doomtrooper + 1679 MECCG)
 - ✅ Structure des données comprise et validée
 - ✅ Spécification technique v2 complète basée sur données réelles
 - ✅ Modèle de données avec types hiérarchiques MECCG, collections bilingues, raretés multiples
+- ✅ **Import des vraies données MECCG (21 avril)** :
+  - Script Python d'import : `backend/collection-management/data/import_meccg.py` (134 lignes)
+  - Migration SQL générée : `migrations/002_seed_meccg_real.sql` (3398 lignes, 497 KB)
+  - 1679 cartes MECCG importées (1661 possédées, 18 non possédées)
+  - 8 séries couvertes : Les Sorciers, Les Dragons, Against the Shadow, L'Oeil de Sauron, Sombres Séides, The Balrog, The White Hand, Promo
+  - Données réelles remplacent les 40 cartes mock
 
 ### 💻 Frontend (15 avril)
 - ✅ Frontend Next.js créé et testé :
@@ -315,12 +321,12 @@ Générées par Stitch, stockées dans `Design/mockups/homepage/` :
 - ✅ **Build** : TypeScript compilation + production build réussis
 - ✅ **Commit** : 37bf556 "feat: add CollectionsGrid component with CollectionCard"
 
-**Phase 3 ✅** : Test d'intégration et intégration homepage (20 avril)
+**Phase 3 ✅** : Test d'intégration et intégration homepage (21 avril)
 - ✅ Intégration de HeroCard + CollectionsGrid dans la homepage réelle (`/`)
 - ✅ TopNav sticky persistante sur toutes les pages (liens vers pages de test)
 - ✅ Validation visuelle confirmée par l'utilisateur
 
-### 🎯 Dashboard Widgets (20 avril) ⭐ NOUVEAU
+### 🎯 Dashboard Widgets (21 avril) ⭐ NOUVEAU
 
 **Backend — 2 nouveaux endpoints REST**
 - ✅ `GET /api/v1/activities/recent` — 5 activités mock (card_added, milestone_reached, import_completed), pagination limit/offset
@@ -386,13 +392,20 @@ make run
 curl http://localhost:8080/api/v1/collections/summary | jq
 ```
 
-### 🔧 Workflow & Bonnes Pratiques (15 avril)
-- ✅ **Commits petits et réguliers** : Bonne pratique appliquée (12+ commits)
+### 🔧 Workflow & Bonnes Pratiques (15 avril + 21 avril)
+- ✅ **Commits petits et réguliers** : Bonne pratique appliquée (45+ commits au 21/04)
 - ✅ **Communication Alfred améliorée** :
   - Préfixe "🤖 Alfred :" systématique
   - Annonce explicite des appels aux sous-agents
   - Transparence sur qui agit (Alfred vs sous-agents)
 - ✅ Mémoire persistante Alfred mise à jour avec préférences utilisateur
+- ✅ **Hooks Git automatiques (17 avril)** :
+  - Hook post-commit Security (audit automatique après chaque commit Backend/Frontend)
+  - Hook post-commit Amélioration Continue (rapport tous les 10 commits)
+- ✅ **Amélioration Continue active (21 avril)** :
+  - Workflow de synchronisation STATUS.md défini
+  - Recommandation documentée : `Continuous-Improvement/recommendations/workflow-status-update_2026-04-21.md`
+  - Responsabilité claire : Alfred → Suivi de Projet pour maintenir STATUS.md à jour
 
 ### 📚 Documentation
 - ✅ ~12,000+ lignes de documentation totales
@@ -403,20 +416,20 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 
 ## 🚧 En Cours / Prochaines Étapes
 
-### Priorité 1 — Import des vraies données MECCG
-- 🔜 Script d'import Google Sheets → PostgreSQL (1 678 cartes MECCG)
-- 🔜 Validation du modèle de données avec vraies cartes
-- 🔜 Remplacer les 40 cartes mock par les vraies données
+### Priorité 1 — Tests Frontend (immédiat)
+- 🔜 Configuration Vitest pour le frontend
+- 🔜 Tests composants HeroCard.tsx et CollectionsGrid.tsx
+- 🔜 Établir le pattern de tests frontend (suite du TDD backend)
 
 ### Priorité 2 — DevOps
 - 🔜 Docker Compose multi-services (PostgreSQL + backend + frontend)
 - 🔜 Scripts start/stop centralisés
 - 🔜 CI/CD GitHub Actions (lint, test, build)
 
-### Priorité 3 — Qualité
+### Priorité 3 — Qualité & Sécurité
 - 🔜 Tests d'intégration backend (testcontainers-go)
-- 🔜 Tests composants frontend (Testing Library + MSW)
 - 🔜 Documentation OpenAPI/Swagger
+- 🔜 Audit sécurité des endpoints publics (authentification à prévoir)
 
 ---
 
@@ -495,8 +508,8 @@ Collectoria/
 ## 🎯 Objectifs MVP (Rappel)
 
 **Collections** :
-1. **MECCG** (priorité 1) - 1678 cartes (mock : 40 cartes pour tests)
-2. **Doomtrooper** (priorité 2) - 1055 cartes
+1. **MECCG** (priorité 1) - 1679 cartes réelles importées (mock : 40 cartes pour tests)
+2. **Doomtrooper** (priorité 2) - 1055 cartes (données à importer)
 
 **Fonctionnalités MVP** :
 - Catalogue complet des cartes (nom EN/FR, type, série, rareté)
@@ -522,10 +535,11 @@ Collectoria/
 - **18 commits Git** au total
 
 ### Code
-- **29 fichiers** backend (3,940 lignes)
-- **12 tests unitaires** (91.7% coverage)
-- **1 endpoint REST** opérationnel
-- **40 cartes mock** MECCG (toutes dimensions)
+- **Backend** : ~50 fichiers (>5,000 lignes de Go)
+- **Frontend** : ~15 composants React + hooks
+- **Tests backend** : >20 tests unitaires (>90% coverage)
+- **4 endpoints REST** opérationnels
+- **1679 vraies cartes MECCG** en base de données
 
 ### Design
 - **1 Design System** complet (Ethos V1)
@@ -534,9 +548,9 @@ Collectoria/
 
 ### Architecture
 - **1 microservice Go** opérationnel (Collection Management)
-- **4 endpoints REST** documentés (1 implémenté, 3 à venir)
-- **2 microservices** définis (Collection Management, Statistics & Analytics)
-- **150+ tests** à implémenter (TDD)
+- **4 endpoints REST** opérationnels et testés
+- **Homepage complète** avec 4 sections interconnectées
+- **Infrastructure TDD** en place (backend), à étendre au frontend
 
 ---
 
@@ -547,30 +561,32 @@ Collectoria/
 - ✅ **Design System** : Ethos complet, maquettes validées
 - ✅ **Spécifications** : Homepage complètement spécifiée
 - ✅ **Backend Phase 1** : Premier microservice opérationnel avec tests TDD
-- ✅ **Données mock** : 40 cartes MECCG couvrant toutes dimensions
-- ✅ **Endpoint REST** : `/api/v1/collections/summary` fonctionnel
-- ✅ **Tests** : 12/12 passent, 91.7% coverage
-- ✅ **Documentation** : ~12,000 lignes, tout est documenté
-- ✅ **Workflow** : Commits atomiques, communication claire
+- ✅ **Données réelles** : 1679 cartes MECCG importées (8 séries, 1661 possédées, 18 non possédées)
+- ✅ **4 endpoints REST** : `/summary`, `/collections`, `/activities/recent`, `/statistics/growth`
+- ✅ **Homepage complète** : HeroCard + CollectionsGrid + Dashboard Widgets (Activity + Growth)
+- ✅ **Tests backend** : TDD appliqué, >90% coverage
+- ✅ **Documentation** : ~12,000+ lignes, tout est documenté
+- ✅ **Workflow** : Commits atomiques, communication claire, hooks Git automatiques
 
 ### État Actuel
-**Le projet a franchi une étape majeure !** 🚀
-- Backend : Microservice 1 **opérationnel** avec données mock
-- Frontend : Environnement prêt, design défini
-- Specs : Homepage complète, prête pour implémentation
-- Tests : Infrastructure TDD en place
+**Le MVP prend forme avec des données réelles !** 🚀
+- Backend : Microservice 1 **opérationnel** avec **1679 vraies cartes MECCG**
+- Frontend : Homepage complète et fonctionnelle (4 sections)
+- Intégration : Frontend ↔ Backend connectés avec données réelles
+- Tests : Infrastructure TDD backend établie (>90% coverage)
 
 ### Prochaines Priorités
-1. **Option 1 Phase 3** : Tester intégration CollectionsGrid + intégrer dans homepage `/`
-2. **Backend Phase 2** : Implémenter les 2 endpoints REST restants (activities, statistics)
-3. **Frontend Phase 2** : Composants Dashboard Widgets (Activity + Growth)
+1. **Tests Frontend** : Vitest + premiers tests composants (HeroCard, CollectionsGrid)
+2. **DevOps** : Docker Compose multi-services (PostgreSQL + backend + frontend)
+3. **Sécurité** : Audit des endpoints publics + plan d'authentification
 
 **Le MVP avance très bien !** 💪
-- ✅ Backend : 4 endpoints opérationnels (/summary, /collections, /activities/recent, /statistics/growth)
-- ✅ Frontend : Homepage complète — HeroCard, CollectionsGrid, RecentActivityWidget, GrowthInsightWidget
+- ✅ Backend : 4 endpoints opérationnels avec données réelles
+- ✅ Frontend : Homepage complète (HeroCard, CollectionsGrid, RecentActivityWidget, GrowthInsightWidget)
+- ✅ Données : 1679 cartes MECCG réelles importées
 - ✅ Navigation : TopNav sticky sur toutes les pages
-- 🔜 Prochaine étape : import des vraies données MECCG
+- 🔜 Prochaines étapes : Tests frontend + DevOps complet
 
 ---
 
-**Prochaine session** : Import des vraies données MECCG depuis Google Sheets 🎯
+**Prochaine session** : Tests frontend (Vitest) + Docker Compose multi-services 🎯
