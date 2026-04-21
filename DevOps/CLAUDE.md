@@ -281,6 +281,65 @@ collectoria/
 - **Schema Registry** : Versioning des schémas de messages
 - **Backward compatibility** : Évolutions de schémas compatibles
 
+## Lancement d'Environnement - Bonnes Pratiques
+
+Quand tu lances l'environnement de développement, **toujours indiquer clairement les ports utilisés** :
+
+### Frontend Next.js - Détection Automatique du Port
+
+**Contexte** : Next.js cherche automatiquement un port disponible (3000 → 3001 → 3002...)
+
+**TOUJOURS vérifier et indiquer le port réel** après démarrage :
+
+```bash
+# Méthode 1 : Vérifier quel port est utilisé
+lsof -i :3000 -i :3001 -i :3002 2>/dev/null | grep LISTEN
+
+# Méthode 2 : Lire les logs de démarrage
+tail -20 /tmp/frontend-dev.log | grep "Local:"
+
+# Méthode 3 : Tester les ports
+curl -s http://localhost:3000 > /dev/null && echo "Port 3000" || \
+curl -s http://localhost:3001 > /dev/null && echo "Port 3001" || \
+echo "Aucun port trouvé"
+```
+
+### Ports Standards du Projet
+
+- **Frontend Next.js** : 3000 (par défaut, peut changer → **TOUJOURS VÉRIFIER**)
+- **Backend Go** : 8080 (fixe)
+- **PostgreSQL** : 5432 (fixe)
+- **Kafka** (futur) : 9092/2181
+
+### Template de Rapport de Lancement
+
+**TOUJOURS afficher ce rapport après lancement** :
+
+```
+✅ Environnement de développement lancé :
+
+Backend Go
+- Port : 8080
+- URL : http://localhost:8080/api/v1/health
+- Status : Healthy
+
+Frontend Next.js
+- Port : 3001 (3000 était occupé)  ← IMPORTANT : Indiquer pourquoi si ≠ 3000
+- URL : http://localhost:3001
+- Status : Ready
+
+Base de Données
+- Port : 5432
+- Status : Up (healthy)
+- Données : 1679 cartes MECCG
+```
+
+**Si le port 3000 est occupé**, indiquer ce qui l'occupe :
+```bash
+lsof -i :3000 | grep LISTEN | awk '{print $1, $2}'
+# Exemple : "node 12345" ou "python 67890"
+```
+
 ## Interaction avec autres agents
 - **Backend** : Configuration serveur et déploiement
 - **Frontend** : Build et déploiement static
