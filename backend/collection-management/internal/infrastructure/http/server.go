@@ -24,6 +24,7 @@ type Server struct {
 	router            *chi.Mux
 	collectionService *application.CollectionService
 	catalogService    *application.CatalogService
+	cardService       *application.CardService
 	activityService   *application.ActivityService
 	logger            zerolog.Logger
 	port              int
@@ -32,11 +33,12 @@ type Server struct {
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
 		catalogService:    catalogService,
+		cardService:       cardService,
 		activityService:   application.NewActivityService(),
 		logger:            logger,
 		port:              port,
@@ -143,6 +145,10 @@ func (s *Server) setupRoutes() {
 		// Catalog routes
 		catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
 		r.Get("/cards", catalogHandler.GetCards)
+
+		// Card possession routes
+		cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
+		r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
 	})
 }
 

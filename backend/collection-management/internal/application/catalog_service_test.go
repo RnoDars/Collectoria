@@ -51,6 +51,9 @@ func (m *mockCardRepository) GetCardsCatalog(ctx context.Context, userID uuid.UU
 		HasMore: end < len(m.cards),
 	}, nil
 }
+func (m *mockCardRepository) UpdateUserCardPossession(ctx context.Context, userID, cardID uuid.UUID, isOwned bool) error {
+	return nil
+}
 
 func makeMockCards(n int) []domain.CardWithOwnership {
 	cards := make([]domain.CardWithOwnership, n)

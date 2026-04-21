@@ -100,6 +100,11 @@ func (m *MockCardRepository) GetCardsCatalog(ctx context.Context, userID uuid.UU
 	return &domain.CardPage{Cards: []domain.CardWithOwnership{}, Total: 0, Page: 1, HasMore: false}, nil
 }
 
+func (m *MockCardRepository) UpdateUserCardPossession(ctx context.Context, userID, cardID uuid.UUID, isOwned bool) error {
+	args := m.Called(ctx, userID, cardID, isOwned)
+	return args.Error(0)
+}
+
 func TestCollectionService_GetSummary(t *testing.T) {
 	ctx := context.Background()
 	userID := uuid.New()

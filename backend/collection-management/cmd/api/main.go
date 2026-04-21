@@ -67,9 +67,10 @@ func main() {
 	// Initialisation des services
 	collectionService := application.NewCollectionService(collectionRepo, cardRepo)
 	catalogService := application.NewCatalogService(cardRepo)
+	cardService := application.NewCardService(cardRepo)
 
 	// Initialisation du serveur HTTP
-	server := http.NewServer(collectionService, catalogService, log.Logger, cfg.Server.Port, cfg.CORS, db)
+	server := http.NewServer(collectionService, catalogService, cardService, log.Logger, cfg.Server.Port, cfg.CORS, db)
 
 	// Démarrage du serveur
 	log.Info().Msgf("Server ready on port %d", cfg.Server.Port)

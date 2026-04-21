@@ -8,15 +8,15 @@ import (
 
 // Card représente une carte dans le catalogue
 type Card struct {
-	ID           uuid.UUID
-	CollectionID uuid.UUID
-	NameEN       string
-	NameFR       string
-	CardType     string
-	Series       string
-	Rarity       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID           uuid.UUID   `db:"id"`
+	CollectionID uuid.UUID   `db:"collection_id"`
+	NameEN       string      `db:"name_en"`
+	NameFR       string      `db:"name_fr"`
+	CardType     string      `db:"card_type"`
+	Series       string      `db:"series"`
+	Rarity       string      `db:"rarity"`
+	CreatedAt    time.Time   `db:"created_at"`
+	UpdatedAt    time.Time   `db:"updated_at"`
 }
 
 // CardWithOwnership représente une carte avec son statut de possession

@@ -24,7 +24,18 @@ func (r *CardRepository) GetAllCards(ctx context.Context) ([]domain.Card, error)
 }
 
 func (r *CardRepository) GetCardByID(ctx context.Context, id uuid.UUID) (*domain.Card, error) {
-	return nil, nil
+	query := `
+		SELECT id, collection_id, name_en, name_fr, card_type, series, rarity, created_at, updated_at
+		FROM cards
+		WHERE id = $1`
+
+	var card domain.Card
+	err := r.db.GetContext(ctx, &card, query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &card, nil
 }
 
 func (r *CardRepository) GetCardsByCollectionID(ctx context.Context, collectionID uuid.UUID) ([]domain.Card, error) {
@@ -150,6 +161,18 @@ func (r *CardRepository) GetCardsCatalog(ctx context.Context, userID uuid.UUID, 
 		Page:    filter.Page,
 		HasMore: offset+len(rows) < total,
 	}, nil
+}
+
+// UpdateUserCardPossession met à jour le statut de possession d'une carte (UPSERT)
+func (r *CardRepository) UpdateUserCardPossession(ctx context.Context, userID, cardID uuid.UUID, isOwned bool) error {
+	query := `
+		INSERT INTO user_cards (user_id, card_id, is_owned, created_at, updated_at)
+		VALUES ($1, $2, $3, NOW(), NOW())
+		ON CONFLICT (user_id, card_id)
+		DO UPDATE SET is_owned = $3, updated_at = NOW()`
+
+	_, err := r.db.ExecContext(ctx, query, userID, cardID, isOwned)
+	return err
 }
 
 // Vérification statique que CardRepository implémente domain.CardRepository

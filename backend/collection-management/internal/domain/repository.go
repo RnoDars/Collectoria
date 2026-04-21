@@ -32,6 +32,7 @@ type CardRepository interface {
 	GetUserCards(ctx context.Context, userID uuid.UUID) ([]UserCard, error)
 	GetUserCardsOwned(ctx context.Context, userID uuid.UUID) ([]Card, error)
 	IsCardOwned(ctx context.Context, userID, cardID uuid.UUID) (bool, error)
+	UpdateUserCardPossession(ctx context.Context, userID, cardID uuid.UUID, isOwned bool) error
 
 	// Catalogue filtré avec pagination
 	GetCardsCatalog(ctx context.Context, userID uuid.UUID, filter CardFilter) (*CardPage, error)
