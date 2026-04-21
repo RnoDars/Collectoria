@@ -33,13 +33,13 @@ type Server struct {
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, activityService *application.ActivityService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
 		catalogService:    catalogService,
 		cardService:       cardService,
-		activityService:   application.NewActivityService(),
+		activityService:   activityService,
 		logger:            logger,
 		port:              port,
 		corsConfig:        corsConfig,

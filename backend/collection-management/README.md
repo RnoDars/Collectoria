@@ -193,6 +193,81 @@ Retourne la liste de toutes les collections.
 ]
 ```
 
+### GET /api/v1/activities/recent
+
+Retourne les activités récentes de l'utilisateur (Phase 1 : BDD locale).
+
+**Query Parameters**:
+- `limit` (optional): Nombre maximum d'activités à retourner (default: 10, max: 100)
+
+**Response**:
+```json
+{
+  "activities": [
+    {
+      "id": "uuid",
+      "type": "card_added",
+      "title": "Carte Gandalf ajoutée",
+      "description": "Carte ajoutée à votre collection",
+      "timestamp": "2026-04-21T15:57:14.670833Z",
+      "icon": "plus-circle",
+      "related_collection_name": "Middle-earth CCG",
+      "metadata": {
+        "card_id": "uuid",
+        "card_name": "Gandalf",
+        "is_owned": "true"
+      }
+    }
+  ],
+  "total_count": 1,
+  "has_more": false
+}
+```
+
+**Activity Types**:
+- `card_added`: Carte ajoutée à la collection
+- `card_removed`: Carte retirée de la collection
+- `card_possession_changed`: Changement de statut de possession
+
+**Statuts**:
+- `200 OK` - Succès
+- `500 Internal Server Error` - Erreur serveur
+
+### PATCH /api/v1/cards/{id}/possession
+
+Met à jour le statut de possession d'une carte et enregistre l'activité.
+
+**Request Body**:
+```json
+{
+  "is_owned": true
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "card": {
+    "id": "uuid",
+    "name_en": "Gandalf",
+    "name_fr": "Gandalf",
+    "card_type": "Character",
+    "series": "Limited",
+    "rarity": "Rare",
+    "is_owned": true
+  }
+}
+```
+
+**Statuts**:
+- `200 OK` - Succès
+- `400 Bad Request` - ID de carte invalide
+- `404 Not Found` - Carte non trouvée
+- `500 Internal Server Error` - Erreur serveur
+
+**Note**: L'enregistrement de l'activité est effectué en "best effort" - une erreur lors de l'enregistrement de l'activité ne fait pas échouer la mise à jour de possession.
+
 ### GET /api/v1/health
 
 Health check endpoint.

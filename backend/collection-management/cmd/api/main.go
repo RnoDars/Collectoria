@@ -63,14 +63,16 @@ func main() {
 	// Initialisation des repositories
 	collectionRepo := postgres.NewCollectionRepository(db)
 	cardRepo := postgres.NewCardRepository(db)
+	activityRepo := postgres.NewPostgresActivityRepository(db)
 
 	// Initialisation des services
+	activityService := application.NewActivityService(activityRepo)
 	collectionService := application.NewCollectionService(collectionRepo, cardRepo)
 	catalogService := application.NewCatalogService(cardRepo)
-	cardService := application.NewCardService(cardRepo)
+	cardService := application.NewCardService(cardRepo, activityService)
 
 	// Initialisation du serveur HTTP
-	server := http.NewServer(collectionService, catalogService, cardService, log.Logger, cfg.Server.Port, cfg.CORS, db)
+	server := http.NewServer(collectionService, catalogService, cardService, activityService, log.Logger, cfg.Server.Port, cfg.CORS, db)
 
 	// Démarrage du serveur
 	log.Info().Msgf("Server ready on port %d", cfg.Server.Port)
