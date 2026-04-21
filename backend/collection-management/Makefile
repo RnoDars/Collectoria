@@ -1,4 +1,4 @@
-.PHONY: help setup build run test test-coverage clean docker-up docker-down migrate seed
+.PHONY: help setup build run test test-coverage clean docker-up docker-down migrate seed restart
 
 # Default target
 help:
@@ -13,6 +13,7 @@ help:
 	@echo "  make docker-down    - Stop PostgreSQL"
 	@echo "  make migrate        - Apply database migrations"
 	@echo "  make seed           - Load seed data (40 MECCG cards)"
+	@echo "  make restart        - Restart local environment (clean + restart backend + frontend)"
 	@echo "  make clean          - Clean build artifacts"
 	@echo ""
 
@@ -80,3 +81,7 @@ dev: docker-up migrate seed
 	@echo ""
 	@echo "Development environment ready!"
 	@echo "Run 'make run' to start the service"
+
+# Restart local environment (clean + restart)
+restart:
+	@./scripts/restart-local.sh
