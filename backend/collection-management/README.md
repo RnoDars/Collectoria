@@ -334,6 +334,34 @@ export SERVER_PORT=8081
 go run cmd/api/main.go
 ```
 
+## Future Improvements
+
+### Event-Driven Architecture avec Kafka
+
+**Statut** : Planifié pour Phase 2 (après MVP)
+
+Actuellement, les activités sont stockées directement dans la table `activities`
+du microservice Collection Management. À terme, nous migrerons vers une architecture
+Kafka event-driven pour :
+- Découpler les services
+- Améliorer la scalabilité
+- Créer un audit trail durable
+- Permettre de multiples consumers (notifications, analytics)
+
+**Déclencheurs de migration** :
+- Au moins 2 services producteurs d'événements
+- Volume d'activités > 10,000 par jour
+- Besoin de notifications en temps réel
+- Besoin d'audit trail complet
+
+**Voir** :
+- ADR : `../../Project follow-up/decisions/2026-04-21_activities-architecture-choice.md`
+- Plan de migration : `../../Project follow-up/future-tasks/migration-kafka-activities.md`
+
+**Effort estimé** : 3-5 jours de développement
+
+---
+
 ## TODO
 
 - [ ] Authentification JWT (récupération user_id depuis token)

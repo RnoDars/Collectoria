@@ -174,6 +174,9 @@
 - **Score cible** : 9.0/10
 
 **Priorité 1 - Nouvelles Fonctionnalités**
+- 🔜 Brancher activités réelles (toggle → activities table) - 2-3h
+  - Architecture Phase 1 documentée dans ADR-002
+  - Migration Kafka prévue en Phase 2 (voir `future-tasks/migration-kafka-activities.md`)
 - Page détail d'une carte (`/cards/:id`)
 - Statistiques avancées (`/stats`)
 - Import/Export de collection
@@ -223,7 +226,10 @@
 - `Project follow-up/workflow-status-sync.md` (9,169 lignes)
 - `Project follow-up/reports/status-sync-2026-04-21.md`
 - `Project follow-up/reports/2026-04-21_rapport-session-complete.md` (complet)
-- `Project follow-up/decisions/2026-04-21_cors-patch-method.md` (ADR complète)
+- `Project follow-up/reports/2026-04-21_decision-activities-architecture.md` (rapport décision)
+- `Project follow-up/decisions/2026-04-21_cors-patch-method.md` (ADR-001)
+- `Project follow-up/decisions/2026-04-21_activities-architecture-choice.md` (ADR-002)
+- `Project follow-up/future-tasks/migration-kafka-activities.md` (TODO migration)
 - `Project follow-up/checklists/2026-04-21_session-checklist.md` (48 tâches)
 - `Project follow-up/metrics/2026-04-21_velocite.md` (analyse détaillée)
 - `Project follow-up/reports/2026-04-21_synthese-journee.md` (ce fichier)
