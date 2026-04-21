@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-21 - Session Productive : Tests Frontend, Sécurité Phase 1, Toggle de Possession Opérationnel  
-**Focus du jour** : 8 commits, 103 tests, Score sécurité 7.0/10, Fonctionnalité toggle livrée  
-**Prochaine session** : Phase 2 Sécurité (CRITICAL avant production) + Nouvelles fonctionnalités
+**Date** : 2026-04-21 - Session Exceptionnelle : Activités Phase 1, Toggle Possession, Sécurité Phase 1  
+**Focus du jour** : 12 commits, 103 tests, 2 features majeures, Score sécurité 7.0/10, ADR-002 documentée  
+**Prochaine session** : Modal confirmation toggle (1-2h) → Phase 2 Sécurité (CRITICAL) ou Nouvelles fonctionnalités
 
 ---
 
@@ -513,6 +513,34 @@ curl http://localhost:8080/api/v1/collections/summary | jq
   - e958116 "fix: add PATCH method to CORS allowed methods"
   - b853980 "docs: add port detection guidelines to DevOps agent"
 
+### 🎯 Système d'Activités Récentes - Phase 1 (21 avril) ⭐ NOUVEAU
+
+**Architecture Decision (ADR-002)** :
+- ✅ Choix documenté : MVP Phase 1 (BDD) vs Kafka Phase 2 (futur)
+- ✅ TODO créé pour migration Kafka avec déclencheurs clairs
+- ✅ Documentation complète (~65 KB, 25,000+ lignes)
+
+**Backend Phase 1 - Implémenté** :
+- ✅ Table `activities` avec indexes optimisés
+- ✅ ActivityRepository PostgreSQL (JSONB metadata)
+- ✅ ActivityService.RecordCardActivity()
+- ✅ CardService enrichi (best-effort activity recording)
+- ✅ Injection de dépendances (activityRepo → activityService → cardService)
+- ✅ Tests manuels validés (toggle → activity → dashboard)
+
+**Fonctionnalité** :
+- ✅ Toggle carte possédée → Activité "card_added" enregistrée
+- ✅ Retrait carte → Activité "card_removed" enregistrée
+- ✅ GET /api/v1/activities/recent retourne vraies données (fin du mock)
+- ✅ Dashboard affiche automatiquement les vraies activités
+- ✅ Metadata JSON avec card_id et card_name
+
+**TODO Documenté** :
+- 📅 Modal de confirmation toggle (HIGH priority, 1-2h)
+- 📅 Migration Kafka Phase 2 (quand 2+ producteurs)
+
+**Commit** : ab324b9 "feat(activities): implement Phase 1 activity tracking system"
+
 ### 📚 Documentation
 - ✅ ~12,000+ lignes de documentation totales
 - ✅ 18 commits Git au total
@@ -542,8 +570,11 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 - **Budget estimé** : ~€2,000 (2-3 jours développeur)
 - **Score cible** : 9.0/10 (production-ready)
 
-### Priorité 1 — Nouvelles Fonctionnalités 🎯
-**Fonctionnalités utilisateur à forte valeur ajoutée**
+### Priorité 1 — Améliorations UX/Fonctionnelles
+- 🔜 **Modal de confirmation toggle (1-2h) - HIGH priority**
+  - Confirmation avant toggle possession (éviter erreurs)
+  - Design Ethos V1
+  - Spécifications complètes disponibles dans TODO
 - 🔜 **Page détail d'une carte** : `/cards/:id`
   - Affichage complet d'une carte (image, métadonnées, statut possession)
   - Historique d'acquisition
@@ -676,8 +707,9 @@ Collectoria/
 - **~15,000+ lignes** de documentation technique (+3,000 lignes aujourd'hui)
 - **8 fichiers** de spécifications homepage (128 KB)
 - **~1,950 lignes** de documentation backend
-- **2,845+ lignes** de documentation sécurité (nouveau)
-- **60+ commits Git** au total (52 avant aujourd'hui + 8 aujourd'hui)
+- **2,845+ lignes** de documentation sécurité
+- **~65 KB** de documentation architecture activités (ADR-002 + TODO modal)
+- **56 commits Git** au total (44 avant 21/04 + 12 aujourd'hui)
 
 ### Code
 - **Backend** : ~50 fichiers (~7,500 lignes de Go)
@@ -720,12 +752,14 @@ Collectoria/
 - **Scripts d'audit** : 2 scripts automatisés (`audit-mvp.sh`, `validate-quick-wins.sh`)
 
 ### Productivité du 21 avril 2026
-- **8 commits** pushés dans la journée
-- **~8,000 lignes** de code/tests/documentation ajoutées
+- **12 commits** pushés dans la journée
+- **~10,000 lignes** de code/tests/documentation ajoutées
 - **103 tests** créés (43 initiaux + 60 toggle)
-- **1 fonctionnalité majeure** livrée (toggle de possession)
+- **2 fonctionnalités majeures** livrées (toggle de possession + activités Phase 1)
 - **7 corrections sécurité** implémentées
 - **Score sécurité** : 4.5/10 → 7.0/10
+- **Architecture decision** : ADR-002 (BDD vs Kafka)
+- **TODO modal confirmation** : Spécifications complètes créées
 
 ---
 
@@ -751,7 +785,7 @@ Collectoria/
 - ✅ **Workflow** : Commits atomiques (60+ au total), communication claire, hooks Git automatiques
 
 ### Accomplissements du 21 avril 2026 ⭐
-**Une journée extrêmement productive avec 6 grandes réalisations :**
+**Une journée extrêmement productive avec 9 grandes réalisations :**
 
 1. **Tests Frontend** : Vitest configuré + 43 tests initiaux (HeroCard, CollectionsGrid)
 2. **Audit Sécurité** : 18 vulnérabilités identifiées, 2,845+ lignes de documentation
@@ -759,13 +793,17 @@ Collectoria/
 4. **Fonctionnalité Toggle** : Backend (PATCH endpoint) + Frontend (page `/cards/add`) + 60 tests
 5. **Correction CORS** : Ajout méthode PATCH, script de redémarrage automatisé
 6. **Workflow DevOps** : Documentation détection ports, procédure redémarrage
+7. **Documentation Milestone** : Documentation complète du projet
+8. **ADR-002** : Architecture Decision activités (BDD Phase 1 vs Kafka Phase 2)
+9. **Activités Phase 1** : Backend complet avec table activities, services, tests manuels validés
 
 **Métriques du 21 avril :**
-- **8 commits** pushés (603d49b, 5612d4e, 6352f71, 4474394, 9a43d5d, e958116, b853980, 85d181a)
-- **~8,000 lignes** ajoutées (code + tests + documentation)
+- **12 commits** pushés
+- **~10,000 lignes** ajoutées (code + tests + documentation)
 - **103 tests** créés (43 + 60)
-- **1 feature complète** livrée (toggle de possession)
+- **2 features complètes** livrées (toggle de possession + activités Phase 1)
 - **Score sécurité** : +2.5 points (+55%)
+- **35+ story points** livrés
 
 ### État Actuel
 **Le MVP prend forme rapidement avec des données réelles et des tests solides !** 🚀
@@ -773,6 +811,7 @@ Collectoria/
 - **Backend** : Microservice opérationnel avec **1,679 vraies cartes MECCG** et **5 endpoints REST**
 - **Frontend** : Homepage complète + page `/cards/add` fonctionnelle avec filtres et toggle
 - **Intégration** : Frontend ↔ Backend connectés avec données réelles + CORS configuré
+- **Activités** : Système Phase 1 implémenté (BDD + services), dashboard affiche vraies activités
 - **Tests** : 
   - Infrastructure TDD en place (backend + frontend)
   - 103 tests frontend, >90% coverage backend
@@ -780,7 +819,7 @@ Collectoria/
 - **Sécurité** : 
   - Phase 1 complète (7.0/10)
   - Phase 2 CRITIQUE avant production (JWT, Rate Limiting, SQL Injection audit)
-- **Documentation** : Complète et à jour (~15,000 lignes)
+- **Documentation** : Complète et à jour (~15,000 lignes + 65 KB architecture activités)
 
 ### Prochaines Priorités
 
@@ -803,12 +842,14 @@ Collectoria/
 
 - ✅ Backend : 5 endpoints opérationnels avec données réelles
 - ✅ Frontend : Homepage complète + page `/cards/add` avec toggle fonctionnel
+- ✅ Activités : Phase 1 implémentée, dashboard affiche vraies activités
 - ✅ Tests : 103 tests frontend + tests backend (>90% coverage)
 - ✅ Sécurité : Phase 1 complète (7.0/10)
 - ✅ Données : 1,679 cartes MECCG réelles importées
 - ✅ Navigation : TopNav sticky + toast notifications
-- 🔜 Prochaines étapes : **Phase 2 Sécurité** (JWT, Rate Limiting, SQL Injection) ou **Nouvelles fonctionnalités** (détail carte, stats, import/export)
+- ✅ Architecture : ADR-002 documentée (BDD Phase 1 → Kafka Phase 2)
+- 🔜 Prochaines étapes : **Modal confirmation toggle (1-2h)** → **Phase 2 Sécurité** (JWT, Rate Limiting, SQL Injection) ou **Nouvelles fonctionnalités** (détail carte, stats, import/export)
 
 ---
 
-**Prochaine session** : Phase 2 Sécurité (CRITICAL) ou Nouvelles Fonctionnalités (selon priorité) 🎯
+**Prochaine session** : Modal confirmation toggle (HIGH) → Phase 2 Sécurité (CRITICAL) ou Nouvelles Fonctionnalités (selon priorité) 🎯
