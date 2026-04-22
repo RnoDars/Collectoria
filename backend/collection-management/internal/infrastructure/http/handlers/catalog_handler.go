@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"collectoria/collection-management/internal/domain"
+	"collectoria/collection-management/internal/infrastructure/http/middleware"
 	"collectoria/collection-management/internal/infrastructure/http/validators"
 
 	"github.com/google/uuid"
@@ -46,7 +47,14 @@ type CardPageResponse struct {
 
 func (h *CatalogHandler) GetCards(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	// Extract userID from context (injected by auth middleware)
+	userID, err := middleware.GetUserID(ctx)
+	if err != nil {
+		h.logger.Error().Err(err).Msg("Failed to get user ID from context")
+		writeJSONError(w, h.logger, http.StatusUnauthorized, "UNAUTHORIZED", "User not authenticated")
+		return
+	}
 
 	q := r.URL.Query()
 

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"collectoria/collection-management/internal/domain"
+	"collectoria/collection-management/internal/infrastructure/http/middleware"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -61,7 +62,14 @@ type GrowthStatsResponse struct {
 
 func (h *ActivityHandler) GetRecentActivities(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	// Extract userID from context (injected by auth middleware)
+	userID, err := middleware.GetUserID(ctx)
+	if err != nil {
+		h.logger.Error().Err(err).Msg("Failed to get user ID from context")
+		writeJSONError(w, h.logger, http.StatusUnauthorized, "UNAUTHORIZED", "User not authenticated")
+		return
+	}
 
 	limit := 10
 	offset := 0
@@ -111,7 +119,14 @@ func (h *ActivityHandler) GetRecentActivities(w http.ResponseWriter, r *http.Req
 
 func (h *ActivityHandler) GetGrowthStats(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+
+	// Extract userID from context (injected by auth middleware)
+	userID, err := middleware.GetUserID(ctx)
+	if err != nil {
+		h.logger.Error().Err(err).Msg("Failed to get user ID from context")
+		writeJSONError(w, h.logger, http.StatusUnauthorized, "UNAUTHORIZED", "User not authenticated")
+		return
+	}
 
 	period := r.URL.Query().Get("period")
 	if period == "" {

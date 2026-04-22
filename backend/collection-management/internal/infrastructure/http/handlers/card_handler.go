@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"collectoria/collection-management/internal/domain"
+	"collectoria/collection-management/internal/infrastructure/http/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -57,8 +58,13 @@ func (h *CardHandler) UpdateCardPossession(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// 3. Get userID (hardcodé pour l'instant)
-	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	// 3. Extract userID from context (injected by auth middleware)
+	userID, err := middleware.GetUserID(ctx)
+	if err != nil {
+		h.logger.Error().Err(err).Msg("Failed to get user ID from context")
+		writeJSONError(w, h.logger, http.StatusUnauthorized, "UNAUTHORIZED", "User not authenticated")
+		return
+	}
 
 	// 4. Call service
 	result, err := h.service.ToggleCardPossession(ctx, userID, cardID, req.IsOwned)

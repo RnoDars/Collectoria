@@ -7,6 +7,7 @@ import (
 
 	"collectoria/collection-management/internal/application"
 	"collectoria/collection-management/internal/domain"
+	"collectoria/collection-management/internal/infrastructure/http/middleware"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -80,9 +81,13 @@ type ErrorDetail struct {
 func (h *CollectionHandler) GetSummary(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// Pour l'instant, utiliser un userID fictif hardcodé
-	// TODO: Récupérer depuis le JWT token une fois l'authentification implémentée
-	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	// Extract userID from context (injected by auth middleware)
+	userID, err := middleware.GetUserID(ctx)
+	if err != nil {
+		h.logger.Error().Err(err).Msg("Failed to get user ID from context")
+		writeJSONError(w, h.logger, http.StatusUnauthorized, "UNAUTHORIZED", "User not authenticated")
+		return
+	}
 
 	summary, err := h.service.GetSummary(ctx, userID)
 	if err != nil {
@@ -106,8 +111,13 @@ func (h *CollectionHandler) GetSummary(w http.ResponseWriter, r *http.Request) {
 func (h *CollectionHandler) GetAllCollections(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// TODO: Récupérer depuis le JWT token une fois l'authentification implémentée
-	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	// Extract userID from context (injected by auth middleware)
+	userID, err := middleware.GetUserID(ctx)
+	if err != nil {
+		h.logger.Error().Err(err).Msg("Failed to get user ID from context")
+		writeJSONError(w, h.logger, http.StatusUnauthorized, "UNAUTHORIZED", "User not authenticated")
+		return
+	}
 
 	collections, err := h.service.GetAllCollectionsWithStats(ctx, userID)
 	if err != nil {
