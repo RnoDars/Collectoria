@@ -6,6 +6,7 @@ import (
 
 	"collectoria/collection-management/internal/application"
 	"collectoria/collection-management/internal/config"
+	"collectoria/collection-management/internal/infrastructure/auth"
 	"collectoria/collection-management/internal/infrastructure/http"
 	"collectoria/collection-management/internal/infrastructure/postgres"
 
@@ -71,8 +72,16 @@ func main() {
 	catalogService := application.NewCatalogService(cardRepo)
 	cardService := application.NewCardService(cardRepo, activityService)
 
+	// Initialisation du JWT service
+	jwtService := auth.NewJWTService(
+		cfg.JWT.Secret,
+		cfg.JWT.Issuer,
+		cfg.JWT.ExpirationHours,
+	)
+	log.Info().Msg("JWT service initialized")
+
 	// Initialisation du serveur HTTP
-	server := http.NewServer(collectionService, catalogService, cardService, activityService, log.Logger, cfg.Server.Port, cfg.CORS, db)
+	server := http.NewServer(collectionService, catalogService, cardService, activityService, jwtService, log.Logger, cfg.Server.Port, cfg.CORS, db)
 
 	// Démarrage du serveur
 	log.Info().Msgf("Server ready on port %d", cfg.Server.Port)

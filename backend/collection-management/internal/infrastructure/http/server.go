@@ -11,7 +11,9 @@ import (
 
 	"collectoria/collection-management/internal/application"
 	"collectoria/collection-management/internal/config"
+	"collectoria/collection-management/internal/infrastructure/auth"
 	"collectoria/collection-management/internal/infrastructure/http/handlers"
+	customMiddleware "collectoria/collection-management/internal/infrastructure/http/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -26,6 +28,7 @@ type Server struct {
 	catalogService    *application.CatalogService
 	cardService       *application.CardService
 	activityService   *application.ActivityService
+	jwtService        *auth.JWTService
 	logger            zerolog.Logger
 	port              int
 	corsConfig        config.CORSConfig
@@ -33,13 +36,14 @@ type Server struct {
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, activityService *application.ActivityService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, activityService *application.ActivityService, jwtService *auth.JWTService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
 		catalogService:    catalogService,
 		cardService:       cardService,
 		activityService:   activityService,
+		jwtService:        jwtService,
 		logger:            logger,
 		port:              port,
 		corsConfig:        corsConfig,
@@ -126,29 +130,41 @@ func securityHeadersMiddleware(next http.Handler) http.Handler {
 
 // setupRoutes configure les routes
 func (s *Server) setupRoutes() {
+	// Auth middleware
+	authMiddleware := customMiddleware.NewAuthMiddleware(s.jwtService, s.logger)
+
 	s.router.Route("/api/v1", func(r chi.Router) {
-		// Health check amélioré
+		// Public routes (no authentication required)
 		r.Get("/health", s.healthCheckHandler)
 
-		// Collections routes
-		collectionHandler := handlers.NewCollectionHandler(s.collectionService, s.logger)
-		r.Route("/collections", func(r chi.Router) {
-			r.Get("/summary", collectionHandler.GetSummary)
-			r.Get("/", collectionHandler.GetAllCollections)
+		// Auth routes
+		authHandler := handlers.NewAuthHandler(s.jwtService, s.logger)
+		r.Post("/auth/login", authHandler.Login)
+
+		// Protected routes (authentication required)
+		r.Group(func(r chi.Router) {
+			r.Use(authMiddleware.Authenticate)
+
+			// Collections routes
+			collectionHandler := handlers.NewCollectionHandler(s.collectionService, s.logger)
+			r.Route("/collections", func(r chi.Router) {
+				r.Get("/summary", collectionHandler.GetSummary)
+				r.Get("/", collectionHandler.GetAllCollections)
+			})
+
+			// Activities & Statistics routes
+			activityHandler := handlers.NewActivityHandler(s.activityService, s.logger)
+			r.Get("/activities/recent", activityHandler.GetRecentActivities)
+			r.Get("/statistics/growth", activityHandler.GetGrowthStats)
+
+			// Catalog routes
+			catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
+			r.Get("/cards", catalogHandler.GetCards)
+
+			// Card possession routes
+			cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
+			r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
 		})
-
-		// Activities & Statistics routes
-		activityHandler := handlers.NewActivityHandler(s.activityService, s.logger)
-		r.Get("/activities/recent", activityHandler.GetRecentActivities)
-		r.Get("/statistics/growth", activityHandler.GetGrowthStats)
-
-		// Catalog routes
-		catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
-		r.Get("/cards", catalogHandler.GetCards)
-
-		// Card possession routes
-		cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
-		r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
 	})
 }
 
