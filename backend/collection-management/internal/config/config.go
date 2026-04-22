@@ -12,6 +12,7 @@ type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	CORS     CORSConfig
+	JWT      JWTConfig
 }
 
 // ServerConfig représente la configuration du serveur HTTP
@@ -35,6 +36,13 @@ type CORSConfig struct {
 	MaxAge         int
 }
 
+// JWTConfig représente la configuration JWT
+type JWTConfig struct {
+	Secret          string
+	ExpirationHours int
+	Issuer          string
+}
+
 // Load charge la configuration depuis les variables d'environnement
 func Load() (*Config, error) {
 	cfg := &Config{
@@ -53,6 +61,19 @@ func Load() (*Config, error) {
 			AllowedOrigins: strings.Split(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001"), ","),
 			MaxAge:         getEnvAsInt("CORS_MAX_AGE", 300),
 		},
+		JWT: JWTConfig{
+			Secret:          getEnv("JWT_SECRET", ""),
+			ExpirationHours: getEnvAsInt("JWT_EXPIRATION_HOURS", 24),
+			Issuer:          getEnv("JWT_ISSUER", "collectoria-api"),
+		},
+	}
+
+	// Validation: JWT Secret MUST be set and secure
+	if cfg.JWT.Secret == "" {
+		return nil, fmt.Errorf("JWT_SECRET must be set")
+	}
+	if len(cfg.JWT.Secret) < 32 {
+		return nil, fmt.Errorf("JWT_SECRET must be at least 32 characters long for security")
 	}
 
 	return cfg, nil
