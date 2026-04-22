@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-22 - Session Authentification Complète : JWT Backend + Frontend + Modal Confirmation  
-**Focus du jour** : 14 commits, 70 nouveaux tests (28 frontend + 22 backend + 20 modal), 3 fonctionnalités majeures (Modal Toggle, Auth JWT Backend, Auth JWT Frontend), Score sécurité 8.0/10, Email utilisateur dans header, Navigation simplifiée (/cards/add → /cards)  
-**Prochaine session** : À définir (Phase 2 Sécurité suite recommandée mais optionnelle)
+**Date** : 2026-04-22 - Session Authentification + Setup Multi-Machines  
+**Focus du jour** : Auth JWT complète, Modal confirmation, Fix hydration TopNav, Fix activity_repository scan, Migration 004 seed possession, Procédures DevOps mises à jour  
+**Prochaine session** : Collection Romans "Royaumes oubliés" (6-8h)
 
 ---
 
@@ -549,6 +549,35 @@ curl http://localhost:8080/api/v1/collections/summary | jq
   - Idées UX : Avatar utilisateur, Dropdown menu
   - Fonctionnalités futures : Statistiques avancées, Wishlist, Import/Export
 - ✅ Commit : c1c4f46
+
+### 🛠️ Corrections & Infrastructure (22 avril - fin de session)
+
+#### Fix hydration TopNav
+- ✅ Erreur React hydration mismatch sur `TopNav` corrigée
+  - Cause : `isAuthenticated()` lit `localStorage` au rendu → divergence SSR/client
+  - Solution : état `mounted` pour ne rendre l'UI auth qu'après montage client
+  - Fichier : `frontend/src/components/layout/TopNav.tsx`
+
+#### Fix activity_repository scan
+- ✅ Bug clés dupliquées dans `RecentActivityWidget` corrigé
+  - Cause : `rows.Scan()` écrasait `a.ID` avec `entity_id` (card_id) → toutes les activités sur une même carte partageaient le même ID
+  - Solution : variables dédiées `scannedUserID` et `scannedEntityID`
+  - Fichier : `backend/collection-management/internal/infrastructure/postgres/activity_repository.go`
+
+#### Migration 004 — Seed possession de développement
+- ✅ `migrations/004_seed_dev_possession.sql` créée et committée
+  - 1679 lignes INSERT avec `ON CONFLICT DO NOTHING` (idempotente)
+  - Snapshot de la possession réelle (1661/1679 cartes possédées)
+  - Source : Google Sheets MECCG original
+  - Garantit un état de départ identique sur toutes les machines de dev
+
+#### Procédures DevOps mises à jour
+- ✅ `DevOps/CLAUDE.md` corrigé et enrichi :
+  - Chemins corrigés (`~/git/Collectoria/` au lieu de `/home/arnaud.dars/`)
+  - Mot de passe DB corrigé (`collectoria` au lieu de `changeme`)
+  - Variables JWT ajoutées dans les commandes de lancement
+  - Nouvelle section "Initialisation d'une Nouvelle Machine" avec ordre des 4 migrations
+  - Credentials de dev documentés dans un tableau de référence
 
 ### ✨ Modal de Confirmation Toggle (22 avril)
 - ✅ Composant ConfirmToggleModal (302 lignes)

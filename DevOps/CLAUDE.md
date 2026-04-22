@@ -332,36 +332,39 @@ pkill -f "go run"
 lsof -ti :8080 | xargs -r kill -9  # Force kill port 8080 si nécessaire
 
 # 2. Nettoyage cache frontend
-rm -rf /home/arnaud.dars/git/Collectoria/frontend/.next
+rm -rf ~/git/Collectoria/frontend/.next
 
 # 3. Vérification PostgreSQL
-sg docker -c "docker ps | grep collectoria-collection-db"
-sg docker -c "docker exec collectoria-collection-db pg_isready -U collectoria"
+docker ps | grep collectoria-collection-db
+docker exec collectoria-collection-db pg_isready -U collectoria
 
 # 4. Redémarrage backend
-cd /home/arnaud.dars/git/Collectoria/backend/collection-management
+cd ~/git/Collectoria/backend/collection-management
 DB_HOST=localhost \
 DB_PORT=5432 \
 DB_USER=collectoria \
-DB_PASSWORD=changeme \
+DB_PASSWORD=collectoria \
 DB_NAME=collection_management \
 DB_SSLMODE=disable \
 CORS_ALLOWED_ORIGINS="http://localhost:3000,http://localhost:3001" \
 ENV=development \
 LOG_LEVEL=info \
+JWT_SECRET=collectoria-super-secret-jwt-key-64-chars-minimum-for-security-ok \
+JWT_EXPIRATION_HOURS=24 \
+JWT_ISSUER=collectoria-api \
 nohup go run cmd/api/main.go > /tmp/backend-collectoria.log 2>&1 &
 
-# Attendre 3 secondes puis vérifier
-sleep 3
+# Attendre que le backend compile et démarre (~10s)
+sleep 10
 curl http://localhost:8080/api/v1/health
 
 # 5. Redémarrage frontend
-cd /home/arnaud.dars/git/Collectoria/frontend
+cd ~/git/Collectoria/frontend
 nohup npm run dev > /tmp/frontend-collectoria.log 2>&1 &
 
-# Attendre 5 secondes puis vérifier
-sleep 5
-curl -I http://localhost:3000
+# Attendre 10 secondes puis vérifier
+sleep 10
+curl -s -o /dev/null -w "%{http_code}" http://localhost:3000
 ```
 
 ### Vérifications Post-Redémarrage
@@ -490,6 +493,63 @@ Base de Données
 lsof -i :3000 | grep LISTEN | awk '{print $1, $2}'
 # Exemple : "node 12345" ou "python 67890"
 ```
+
+## Initialisation d'une Nouvelle Machine
+
+Quand on configure l'environnement sur une nouvelle machine, suivre ces étapes dans l'ordre :
+
+### 1. Cloner le repo et démarrer PostgreSQL
+
+```bash
+git clone git@github.com:RnoDars/Collectoria.git ~/git/Collectoria
+cd ~/git/Collectoria/backend/collection-management
+docker compose up -d
+```
+
+### 2. Appliquer les migrations dans l'ordre
+
+```bash
+# Les migrations sont cumulatives et TOUTES nécessaires
+docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+  < migrations/001_create_collections_schema.sql
+
+docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+  < migrations/002_seed_meccg_real.sql          # 1679 cartes MECCG (catalogue)
+
+docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+  < migrations/003_create_activities_table.sql  # Table activités
+
+docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+  < migrations/004_seed_dev_possession.sql      # Possession initiale (1661/1679 possédées)
+```
+
+**Note** : La migration 004 est idempotente (`ON CONFLICT DO NOTHING`). Elle peut être rejouée sans risque sur une base qui a déjà des données de possession.
+
+### 3. Installer les dépendances frontend
+
+```bash
+cd ~/git/Collectoria/frontend
+npm install
+```
+
+### 4. Lancer l'environnement
+
+Suivre la procédure de démarrage manuel ci-dessus (section "Méthode Manuelle").
+
+---
+
+### Credentials de développement
+
+| Paramètre | Valeur |
+|-----------|--------|
+| DB_USER | `collectoria` |
+| DB_PASSWORD | `collectoria` |
+| DB_NAME | `collection_management` |
+| Login app | `arnaud.dars@gmail.com` |
+| Password app | `flying38` |
+| UserID dev | `00000000-0000-0000-0000-000000000001` |
+
+---
 
 ## Interaction avec autres agents
 - **Backend** : Configuration serveur et déploiement

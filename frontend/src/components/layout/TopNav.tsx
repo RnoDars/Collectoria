@@ -17,16 +17,20 @@ export default function TopNav() {
   const pathname = usePathname()
   const { isAuthenticated, logout } = useAuth()
   const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    // Get email from token when component mounts
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     if (isAuthenticated()) {
-      const email = getUserEmail()
-      setUserEmail(email)
+      setUserEmail(getUserEmail())
     } else {
       setUserEmail(null)
     }
-  }, [pathname]) // Re-check on route change
+  }, [pathname, mounted])
 
   return (
     <nav style={{
@@ -84,7 +88,7 @@ export default function TopNav() {
 
         {/* Auth Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {isAuthenticated() ? (
+          {mounted && isAuthenticated() ? (
             <>
               {/* User Email */}
               {userEmail && (

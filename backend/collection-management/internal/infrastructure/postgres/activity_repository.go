@@ -94,14 +94,16 @@ func (r *PostgresActivityRepository) GetRecentByUserID(ctx context.Context, user
 		var a domain.Activity
 		var activityType string
 		var entityType string
+		var scannedUserID uuid.UUID
+		var scannedEntityID uuid.UUID
 		var metadataJSON []byte
 
 		err := rows.Scan(
 			&a.ID,
-			&a.ID, // Temporary: using ID for user_id until we have proper user context
+			&scannedUserID,
 			&activityType,
 			&entityType,
-			&a.ID, // Temporary: using ID for entity_id
+			&scannedEntityID,
 			&metadataJSON,
 			&a.Timestamp,
 		)
