@@ -67,6 +67,7 @@ collection-management/
    ```
 
 2. **IMPORTANT**: Modifier les valeurs sensibles, notamment:
+   - `JWT_SECRET`: Générer un secret sécurisé (minimum 32 caractères)
    - `DB_PASSWORD`: Utiliser un mot de passe fort en production
    - `CORS_ALLOWED_ORIGINS`: Configurer les origines autorisées pour votre environnement
    - `ENV`: Passer à `production` en prod pour des logs JSON structurés
@@ -90,6 +91,11 @@ DB_SSLMODE=disable                        # Use 'require' in production
 # CORS (Cross-Origin Resource Sharing)
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
 CORS_MAX_AGE=300                         # Préflight cache duration (seconds)
+
+# JWT Authentication
+JWT_SECRET=your-super-secret-key-at-least-32-chars  # ⚠️ REQUIRED - Generate with: openssl rand -base64 48
+JWT_EXPIRATION_HOURS=24                  # Token validity duration (hours)
+JWT_ISSUER=collectoria-api               # Token issuer identifier
 
 # Logging
 ENV=development                          # development | production
@@ -154,7 +160,76 @@ go run cmd/api/main.go
 
 ## API Endpoints
 
-### GET /api/v1/collections/summary
+### Authentication
+
+All endpoints except `/health` and `/auth/login` require JWT authentication.
+
+**Include the token in the Authorization header**:
+```bash
+Authorization: Bearer <token>
+```
+
+See [Authentication Documentation](docs/AUTHENTICATION.md) for complete details.
+
+**Quick Start**:
+```bash
+# 1. Login to get token
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@collectoria.com","password":"test123"}' | jq -r '.token')
+
+# 2. Use token for authenticated requests
+curl -X GET http://localhost:8080/api/v1/collections/summary \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+---
+
+### Public Endpoints
+
+#### GET /api/v1/health
+
+Health check endpoint (no authentication required).
+
+**Response**:
+```json
+{
+  "status": "healthy",
+  "checks": {
+    "database": "healthy",
+    "memory_mb": "12.45"
+  },
+  "version": "0.1.0"
+}
+```
+
+#### POST /api/v1/auth/login
+
+Login endpoint to obtain JWT token (MVP: mock authentication).
+
+**Request**:
+```json
+{
+  "email": "test@collectoria.com",
+  "password": "password123"
+}
+```
+
+**Response**:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires_at": "2026-04-23T15:00:00Z"
+}
+```
+
+---
+
+### Protected Endpoints
+
+All endpoints below require authentication.
+
+#### GET /api/v1/collections/summary
 
 Retourne les statistiques globales de toutes les collections.
 
