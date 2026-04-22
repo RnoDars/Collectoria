@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"collectoria/collection-management/internal/domain"
+	"collectoria/collection-management/internal/infrastructure/http/middleware"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -86,6 +87,9 @@ func TestCollectionHandler_GetAllCollections(t *testing.T) {
 		mockService.On("GetAllCollectionsWithStats", mock.Anything, userID).Return(expectedCollections, nil)
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/collections", nil)
+		// Inject userID into context (simulating auth middleware)
+		ctx := middleware.WithUserID(req.Context(), userID)
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		handler.GetAllCollections(w, req)
@@ -129,6 +133,9 @@ func TestCollectionHandler_GetAllCollections(t *testing.T) {
 		mockService.On("GetAllCollectionsWithStats", mock.Anything, userID).Return(nilCollections, errors.New("database error"))
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/collections", nil)
+		// Inject userID into context (simulating auth middleware)
+		ctx := middleware.WithUserID(req.Context(), userID)
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		handler.GetAllCollections(w, req)
@@ -152,6 +159,9 @@ func TestCollectionHandler_GetAllCollections(t *testing.T) {
 		mockService.On("GetAllCollectionsWithStats", mock.Anything, userID).Return([]domain.CollectionWithStats{}, nil)
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/collections", nil)
+		// Inject userID into context (simulating auth middleware)
+		ctx := middleware.WithUserID(req.Context(), userID)
+		req = req.WithContext(ctx)
 		w := httptest.NewRecorder()
 
 		handler.GetAllCollections(w, req)

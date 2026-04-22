@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"collectoria/collection-management/internal/domain"
+	"collectoria/collection-management/internal/infrastructure/http/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -62,7 +63,10 @@ func TestCardHandler_UpdateCardPossession_Success(t *testing.T) {
 	// Setup chi context avec le paramètre d'URL
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("id", cardID.String())
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+	ctx := context.WithValue(req.Context(), chi.RouteCtxKey, rctx)
+	// Inject userID into context (simulating auth middleware)
+	ctx = middleware.WithUserID(ctx, userID)
+	req = req.WithContext(ctx)
 
 	rr := httptest.NewRecorder()
 
@@ -159,7 +163,10 @@ func TestCardHandler_UpdateCardPossession_CardNotFound(t *testing.T) {
 	// Setup chi context
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("id", cardID.String())
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+	ctx := context.WithValue(req.Context(), chi.RouteCtxKey, rctx)
+	// Inject userID into context (simulating auth middleware)
+	ctx = middleware.WithUserID(ctx, userID)
+	req = req.WithContext(ctx)
 
 	rr := httptest.NewRecorder()
 
@@ -195,7 +202,10 @@ func TestCardHandler_UpdateCardPossession_ServiceError(t *testing.T) {
 	// Setup chi context
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("id", cardID.String())
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+	ctx := context.WithValue(req.Context(), chi.RouteCtxKey, rctx)
+	// Inject userID into context (simulating auth middleware)
+	ctx = middleware.WithUserID(ctx, userID)
+	req = req.WithContext(ctx)
 
 	rr := httptest.NewRecorder()
 
@@ -245,7 +255,10 @@ func TestCardHandler_UpdateCardPossession_SetNotOwned(t *testing.T) {
 	// Setup chi context
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("id", cardID.String())
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+	ctx := context.WithValue(req.Context(), chi.RouteCtxKey, rctx)
+	// Inject userID into context (simulating auth middleware)
+	ctx = middleware.WithUserID(ctx, userID)
+	req = req.WithContext(ctx)
 
 	rr := httptest.NewRecorder()
 
