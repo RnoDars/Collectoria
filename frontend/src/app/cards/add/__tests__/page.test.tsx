@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import AddCardsPage from '../page'
 import * as cardsHook from '@/hooks/useCards'
@@ -138,21 +139,60 @@ describe('AddCardsPage', () => {
     expect(notOwnedLabels).toHaveLength(1)
   })
 
-  it('calls toggleCard when toggle button is clicked', async () => {
+  it('opens confirmation modal when toggle button is clicked', async () => {
+    const user = userEvent.setup()
     render(<AddCardsPage />, { wrapper: createWrapper() })
 
     const toggleButtons = screen.getAllByRole('switch')
     expect(toggleButtons).toHaveLength(2)
 
     // Click on first card's toggle (Gandalf - not owned)
-    fireEvent.click(toggleButtons[0])
+    await user.click(toggleButtons[0])
 
+    // Modal should appear
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText("Confirmer l'action")).toBeInTheDocument()
+      expect(screen.getByText(/Voulez-vous marquer cette carte comme possédée/i)).toBeInTheDocument()
+    })
+
+    // Click confirm button
+    const confirmButton = screen.getByRole('button', { name: /Confirmer/i })
+    await user.click(confirmButton)
+
+    // Now the API should be called
     await waitFor(() => {
       expect(mockToggleCard).toHaveBeenCalledWith(
         { cardId: '1', isOwned: true },
         expect.any(Object)
       )
     })
+  })
+
+  it('cancels toggle when modal is cancelled', async () => {
+    const user = userEvent.setup()
+    render(<AddCardsPage />, { wrapper: createWrapper() })
+
+    const toggleButtons = screen.getAllByRole('switch')
+
+    // Click on first card's toggle
+    await user.click(toggleButtons[0])
+
+    // Modal should appear
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+    })
+
+    // Click cancel button
+    const cancelButton = screen.getByRole('button', { name: /Annuler/i })
+    await user.click(cancelButton)
+
+    // Modal should close and API should NOT be called
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+
+    expect(mockToggleCard).not.toHaveBeenCalled()
   })
 
   it('shows loading state', () => {

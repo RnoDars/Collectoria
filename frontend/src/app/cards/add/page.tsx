@@ -5,6 +5,7 @@ import { useCards } from '@/hooks/useCards'
 import { useCardToggle } from '@/hooks/useCardToggle'
 import { CardFilters, Card } from '@/lib/api/collections'
 import Link from 'next/link'
+import ConfirmToggleModal from '@/components/cards/ConfirmToggleModal'
 
 // ─── Données statiques ────────────────────────────────────────────────────────
 
@@ -244,6 +245,10 @@ export default function AddCardsPage() {
   const [rarity, setRarity] = useState('')
   const [owned, setOwned] = useState<OwnedFilter>('all')
   const [togglingCardId, setTogglingCardId] = useState<string>()
+  const [confirmModal, setConfirmModal] = useState<{
+    card: Card
+    newState: boolean
+  } | null>(null)
 
   // Debounce search input
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -296,10 +301,23 @@ export default function AddCardsPage() {
   }, [handleIntersection])
 
   const handleToggle = (cardId: string, isOwned: boolean) => {
-    setTogglingCardId(cardId)
-    toggleCard({ cardId, isOwned }, {
-      onSettled: () => setTogglingCardId(undefined),
-    })
+    const card = allCards.find(c => c.id === cardId)
+    if (!card) return
+    setConfirmModal({ card, newState: isOwned })
+  }
+
+  const handleConfirmToggle = () => {
+    if (!confirmModal) return
+    setTogglingCardId(confirmModal.card.id)
+    toggleCard(
+      { cardId: confirmModal.card.id, isOwned: confirmModal.newState },
+      { onSettled: () => setTogglingCardId(undefined) }
+    )
+    setConfirmModal(null)
+  }
+
+  const handleCancelToggle = () => {
+    setConfirmModal(null)
   }
 
   // ─── Styles ───────────────────────────────────────────────────────────────
@@ -415,8 +433,19 @@ export default function AddCardsPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div style={pageStyle}>
-      <div style={containerStyle}>
+    <>
+      {confirmModal && (
+        <ConfirmToggleModal
+          card={confirmModal.card}
+          newState={confirmModal.newState}
+          isOpen={true}
+          onConfirm={handleConfirmToggle}
+          onCancel={handleCancelToggle}
+        />
+      )}
+
+      <div style={pageStyle}>
+        <div style={containerStyle}>
         {/* Header */}
         <header style={headerStyle}>
           <Link href="/" style={backLinkStyle}>
@@ -607,5 +636,6 @@ export default function AddCardsPage() {
         )}
       </div>
     </div>
+    </>
   )
 }
