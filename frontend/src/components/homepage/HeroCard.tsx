@@ -200,7 +200,7 @@ export default function HeroCard({ summary, isLoading, error, onRetry }: HeroCar
       {/* Action Button */}
       <div>
         <a
-          href="/cards/add"
+          href="/cards"
           style={{
             display: 'inline-block',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

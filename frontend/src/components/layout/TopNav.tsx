@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { getUserEmail } from '@/lib/auth'
+import { useEffect, useState } from 'react'
 
 const NAV_LINKS = [
   { href: '/', label: 'Accueil' },
@@ -14,6 +16,17 @@ const NAV_LINKS = [
 export default function TopNav() {
   const pathname = usePathname()
   const { isAuthenticated, logout } = useAuth()
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Get email from token when component mounts
+    if (isAuthenticated()) {
+      const email = getUserEmail()
+      setUserEmail(email)
+    } else {
+      setUserEmail(null)
+    }
+  }, [pathname]) // Re-check on route change
 
   return (
     <nav style={{
@@ -70,25 +83,40 @@ export default function TopNav() {
         </div>
 
         {/* Auth Actions */}
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {isAuthenticated() ? (
-            <button
-              onClick={logout}
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                color: 'var(--on-surface-variant)',
-                padding: '0.375rem 0.75rem',
-                borderRadius: '8px',
-                background: 'transparent',
-                border: '1px solid var(--outline-variant)',
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-              }}
-            >
-              Se déconnecter
-            </button>
+            <>
+              {/* User Email */}
+              {userEmail && (
+                <span style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  color: 'var(--on-surface)',
+                }}>
+                  {userEmail}
+                </span>
+              )}
+
+              {/* Logout Button */}
+              <button
+                onClick={logout}
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  color: 'var(--on-surface-variant)',
+                  padding: '0.375rem 0.75rem',
+                  borderRadius: '8px',
+                  background: 'transparent',
+                  border: '1px solid var(--outline-variant)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+              >
+                Se déconnecter
+              </button>
+            </>
           ) : (
             <Link
               href="/login"

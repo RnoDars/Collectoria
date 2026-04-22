@@ -54,14 +54,27 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// MVP: Mock authentication - generate a new userID for each login
-	// TODO: In production, validate credentials against user database
-	userID := uuid.New()
+	// MVP: Simple hardcoded authentication
+	// TODO: In production, validate credentials against user database with hashed passwords
+	var userID uuid.UUID
+
+	// Validate credentials
+	if req.Email == "arnaud.dars@gmail.com" && req.Password == "flying38" {
+		// Valid credentials - use existing userID with all the data
+		userID = uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	} else {
+		// Invalid credentials
+		h.logger.Warn().
+			Str("email", req.Email).
+			Msg("Invalid credentials")
+		writeJSONError(w, h.logger, http.StatusUnauthorized, "INVALID_CREDENTIALS", "Invalid email or password")
+		return
+	}
 
 	h.logger.Info().
 		Str("email", req.Email).
 		Str("user_id", userID.String()).
-		Msg("Mock login successful")
+		Msg("Login successful")
 
 	// Generate JWT token
 	token, err := h.jwtService.GenerateToken(userID, req.Email)

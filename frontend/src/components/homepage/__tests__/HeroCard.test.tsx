@@ -155,7 +155,7 @@ describe('HeroCard', () => {
 
       const addCardLink = screen.getByRole('link', { name: /Add Card/i })
       expect(addCardLink).toBeInTheDocument()
-      expect(addCardLink).toHaveAttribute('href', '/cards/add')
+      expect(addCardLink).toHaveAttribute('href', '/cards')
     })
 
     it('should round completion percentage to nearest integer', () => {

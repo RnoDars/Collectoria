@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import AddCardsPage from '../page'
+import CardsPage from '../page'
 import * as cardsHook from '@/hooks/useCards'
 import * as toggleHook from '@/hooks/useCardToggle'
 
@@ -55,7 +55,7 @@ function createWrapper() {
   )
 }
 
-describe('AddCardsPage', () => {
+describe('CardsPage', () => {
   const mockToggleCard = vi.fn()
 
   beforeEach(() => {
@@ -91,20 +91,20 @@ describe('AddCardsPage', () => {
   })
 
   it('renders page title and back link', () => {
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByText('Gérer ma Collection')).toBeInTheDocument()
     expect(screen.getByText('← Retour au dashboard')).toBeInTheDocument()
   })
 
   it('displays card count', () => {
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByText('2 cartes disponibles')).toBeInTheDocument()
   })
 
   it('renders filter inputs', () => {
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByPlaceholderText('Rechercher une carte...')).toBeInTheDocument()
     expect(screen.getByLabelText('Filtrer par série')).toBeInTheDocument()
@@ -113,7 +113,7 @@ describe('AddCardsPage', () => {
   })
 
   it('renders ownership filter toggle buttons', () => {
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByText('Toutes')).toBeInTheDocument()
     expect(screen.getByText('Possédées')).toBeInTheDocument()
@@ -121,7 +121,7 @@ describe('AddCardsPage', () => {
   })
 
   it('displays cards in grid', () => {
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByText('Gandalf le Gris')).toBeInTheDocument()
     // Check for both cards (Aragorn appears in the card, not in filters)
@@ -130,7 +130,7 @@ describe('AddCardsPage', () => {
   })
 
   it('shows owned status for each card', () => {
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     const ownedLabels = screen.getAllByText('Possédée')
     const notOwnedLabels = screen.getAllByText('Non possédée')
@@ -141,7 +141,7 @@ describe('AddCardsPage', () => {
 
   it('opens confirmation modal when toggle button is clicked', async () => {
     const user = userEvent.setup()
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     const toggleButtons = screen.getAllByRole('switch')
     expect(toggleButtons).toHaveLength(2)
@@ -171,7 +171,7 @@ describe('AddCardsPage', () => {
 
   it('cancels toggle when modal is cancelled', async () => {
     const user = userEvent.setup()
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     const toggleButtons = screen.getAllByRole('switch')
 
@@ -206,7 +206,7 @@ describe('AddCardsPage', () => {
       error: null,
     } as any)
 
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByText('Chargement...')).toBeInTheDocument()
   })
@@ -222,7 +222,7 @@ describe('AddCardsPage', () => {
       error: new Error('Network error'),
     } as any)
 
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByText('Impossible de charger les cartes')).toBeInTheDocument()
     expect(screen.getByText('Network error')).toBeInTheDocument()
@@ -250,7 +250,7 @@ describe('AddCardsPage', () => {
       error: null,
     } as any)
 
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     expect(screen.getByText('Aucune carte trouvée')).toBeInTheDocument()
     expect(screen.getByText('Essayez de modifier vos filtres.')).toBeInTheDocument()
@@ -259,7 +259,7 @@ describe('AddCardsPage', () => {
   it('updates search filter when typing', async () => {
     const useCardsSpy = vi.spyOn(cardsHook, 'useCards')
 
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     const searchInput = screen.getByPlaceholderText('Rechercher une carte...')
     fireEvent.change(searchInput, { target: { value: 'Gandalf' } })
@@ -278,7 +278,7 @@ describe('AddCardsPage', () => {
   it('updates series filter', () => {
     const useCardsSpy = vi.spyOn(cardsHook, 'useCards')
 
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     const seriesSelect = screen.getByLabelText('Filtrer par série')
     fireEvent.change(seriesSelect, { target: { value: 'Les Sorciers' } })
@@ -291,7 +291,7 @@ describe('AddCardsPage', () => {
   it('updates ownership filter', () => {
     const useCardsSpy = vi.spyOn(cardsHook, 'useCards')
 
-    render(<AddCardsPage />, { wrapper: createWrapper() })
+    render(<CardsPage />, { wrapper: createWrapper() })
 
     const ownedButton = screen.getByText('Possédées')
     fireEvent.click(ownedButton)

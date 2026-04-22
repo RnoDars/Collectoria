@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useCards } from '@/hooks/useCards'
-import { CardFilters } from '@/lib/api/collections'
+import { useCardToggle } from '@/hooks/useCardToggle'
+import { CardFilters, Card } from '@/lib/api/collections'
+import Link from 'next/link'
+import ConfirmToggleModal from '@/components/cards/ConfirmToggleModal'
 
 // ─── Données statiques ────────────────────────────────────────────────────────
 
@@ -58,51 +61,207 @@ const RARITY_OPTIONS = [
 
 type OwnedFilter = 'all' | 'true' | 'false'
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Card Toggle Component ────────────────────────────────────────────────────
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
+interface CardToggleProps {
+  card: Card
+  onToggle: (cardId: string, isOwned: boolean) => void
+  isLoading?: boolean
+}
 
-function SkeletonRow() {
+function CardToggle({ card, onToggle, isLoading }: CardToggleProps) {
+  const isOwned = card.isOwned
+
+  const toggleStyle: React.CSSProperties = {
+    position: 'relative',
+    width: '48px',
+    height: '26px',
+    background: isOwned
+      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      : 'var(--surface-container-highest)',
+    borderRadius: '13px',
+    border: 'none',
+    cursor: isLoading ? 'not-allowed' : 'pointer',
+    opacity: isLoading ? 0.6 : 1,
+    transition: 'all 0.3s ease',
+    boxShadow: isOwned
+      ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+      : '0 2px 6px rgba(25, 28, 29, 0.1)',
+  }
+
+  const knobStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '3px',
+    left: isOwned ? '25px' : '3px',
+    width: '20px',
+    height: '20px',
+    background: '#ffffff',
+    borderRadius: '50%',
+    transition: 'left 0.3s ease',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+  }
+
   return (
-    <tr>
-      {[120, 120, 80, 140, 60, 60].map((w, i) => (
-        <td key={i} style={{ padding: '0.75rem 1rem' }}>
-          <div
-            style={{
-              height: '0.875rem',
-              width: `${w}px`,
-              borderRadius: '6px',
-              background: 'var(--surface-container-highest)',
-              animation: 'pulse 1.4s ease-in-out infinite',
-            }}
-          />
-        </td>
-      ))}
-    </tr>
+    <button
+      onClick={() => !isLoading && onToggle(card.id, !isOwned)}
+      disabled={isLoading}
+      style={toggleStyle}
+      aria-label={isOwned ? 'Retirer de la collection' : 'Ajouter à la collection'}
+      aria-pressed={isOwned}
+      role="switch"
+    >
+      <div style={knobStyle} />
+    </button>
   )
 }
 
-// ─── Page principale ──────────────────────────────────────────────────────────
+// ─── Card Grid Item ───────────────────────────────────────────────────────────
 
-export default function CardsPage() {
-  const [search, setSearch]   = useState('')
-  const [series, setSeries]   = useState('')
-  const [type, setType]       = useState('')
-  const [rarity, setRarity]   = useState('')
-  const [owned, setOwned]     = useState<OwnedFilter>('all')
+interface CardItemProps {
+  card: Card
+  onToggle: (cardId: string, isOwned: boolean) => void
+  isTogglingId?: string
+}
 
-  // Debounce du champ search (300 ms)
+function CardItem({ card, onToggle, isTogglingId }: CardItemProps) {
+  const isToggling = isTogglingId === card.id
+
+  const cardStyle: React.CSSProperties = {
+    background: 'var(--surface-container-lowest)',
+    borderRadius: '12px',
+    padding: '1.25rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    boxShadow: '0 4px 12px rgba(25, 28, 29, 0.06)',
+    transition: 'all 0.2s',
+  }
+
+  const nameStyle: React.CSSProperties = {
+    fontFamily: 'Manrope, sans-serif',
+    fontWeight: '700',
+    fontSize: '1rem',
+    color: 'var(--on-surface)',
+    marginBottom: '0.25rem',
+    lineHeight: '1.3',
+  }
+
+  const metaStyle: React.CSSProperties = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '0.8125rem',
+    color: 'var(--on-surface-variant)',
+    marginBottom: '0.125rem',
+  }
+
+  const rarityBadgeStyle: React.CSSProperties = {
+    display: 'inline-block',
+    fontFamily: 'Manrope, sans-serif',
+    fontWeight: '700',
+    fontSize: '0.6875rem',
+    letterSpacing: '0.04em',
+    padding: '0.125rem 0.5rem',
+    borderRadius: '6px',
+    background: 'var(--surface-container-high)',
+    color: 'var(--on-surface-variant)',
+  }
+
+  return (
+    <div style={cardStyle}>
+      <div style={{ flex: 1 }}>
+        <div style={nameStyle}>{card.nameFr || card.nameEn}</div>
+        {card.nameFr && card.nameEn && (
+          <div style={{ ...metaStyle, marginBottom: '0.5rem', opacity: 0.8 }}>
+            {card.nameEn}
+          </div>
+        )}
+        <div style={metaStyle}>
+          <strong>Type:</strong> {card.cardType}
+        </div>
+        <div style={metaStyle}>
+          <strong>Série:</strong> {card.series}
+        </div>
+        <div style={{ marginTop: '0.5rem' }}>
+          <span style={rarityBadgeStyle}>{card.rarity}</span>
+        </div>
+      </div>
+
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: '0.75rem',
+        borderTop: '1px solid var(--surface-container-high)',
+      }}>
+        <span style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '0.8125rem',
+          fontWeight: '600',
+          color: card.isOwned ? '#667eea' : 'var(--on-surface-variant)',
+        }}>
+          {card.isOwned ? 'Possédée' : 'Non possédée'}
+        </span>
+        <CardToggle card={card} onToggle={onToggle} isLoading={isToggling} />
+      </div>
+    </div>
+  )
+}
+
+// ─── Skeleton Loading ─────────────────────────────────────────────────────────
+
+function CardSkeleton() {
+  return (
+    <div style={{
+      background: 'var(--surface-container-lowest)',
+      borderRadius: '12px',
+      padding: '1.25rem',
+      height: '200px',
+    }}>
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        .skeleton {
+          animation: pulse 1.4s ease-in-out infinite;
+          background: var(--surface-container-highest);
+          borderRadius: 6px;
+        }
+      `}</style>
+      <div className="skeleton" style={{ width: '80%', height: '1rem', marginBottom: '0.75rem' }} />
+      <div className="skeleton" style={{ width: '60%', height: '0.75rem', marginBottom: '0.5rem' }} />
+      <div className="skeleton" style={{ width: '70%', height: '0.75rem', marginBottom: '0.5rem' }} />
+      <div className="skeleton" style={{ width: '40%', height: '0.75rem', marginBottom: '1rem' }} />
+      <div className="skeleton" style={{ width: '60px', height: '1.5rem' }} />
+    </div>
+  )
+}
+
+// ─── Main Page Component ──────────────────────────────────────────────────────
+
+export default function AddCardsPage() {
+  const [search, setSearch] = useState('')
+  const [series, setSeries] = useState('')
+  const [type, setType] = useState('')
+  const [rarity, setRarity] = useState('')
+  const [owned, setOwned] = useState<OwnedFilter>('all')
+  const [togglingCardId, setTogglingCardId] = useState<string>()
+  const [confirmModal, setConfirmModal] = useState<{
+    card: Card
+    newState: boolean
+  } | null>(null)
+
+  // Debounce search input
   const [debouncedSearch, setDebouncedSearch] = useState('')
   useEffect(() => {
-    const id = setTimeout(() => setDebouncedSearch(search), 300)
-    return () => clearTimeout(id)
+    const timer = setTimeout(() => setDebouncedSearch(search), 300)
+    return () => clearTimeout(timer)
   }, [search])
 
   const filters: CardFilters = {
     ...(debouncedSearch && { search: debouncedSearch }),
-    ...(series          && { series }),
-    ...(type            && { type }),
-    ...(rarity          && { rarity }),
+    ...(series && { series }),
+    ...(type && { type }),
+    ...(rarity && { rarity }),
     ...(owned !== 'all' && { owned: owned as 'true' | 'false' }),
   }
 
@@ -116,11 +275,12 @@ export default function CardsPage() {
     error,
   } = useCards(filters)
 
-  // Aplatir toutes les pages en un tableau
-  const allCards = data?.pages.flatMap((p) => p.cards) ?? []
-  const total    = data?.pages[0]?.total ?? 0
+  const { toggleCard, isLoading: isToggling } = useCardToggle()
 
-  // Sentinel IntersectionObserver
+  const allCards = data?.pages.flatMap((p) => p.cards) ?? []
+  const total = data?.pages[0]?.total ?? 0
+
+  // Infinite scroll sentinel
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
   const handleIntersection = useCallback(
@@ -140,7 +300,27 @@ export default function CardsPage() {
     return () => observer.disconnect()
   }, [handleIntersection])
 
-  // ─── Styles inline (Ethos V1) ────────────────────────────────────────────
+  const handleToggle = (cardId: string, isOwned: boolean) => {
+    const card = allCards.find(c => c.id === cardId)
+    if (!card) return
+    setConfirmModal({ card, newState: isOwned })
+  }
+
+  const handleConfirmToggle = () => {
+    if (!confirmModal) return
+    setTogglingCardId(confirmModal.card.id)
+    toggleCard(
+      { cardId: confirmModal.card.id, isOwned: confirmModal.newState },
+      { onSettled: () => setTogglingCardId(undefined) }
+    )
+    setConfirmModal(null)
+  }
+
+  const handleCancelToggle = () => {
+    setConfirmModal(null)
+  }
+
+  // ─── Styles ───────────────────────────────────────────────────────────────
 
   const pageStyle: React.CSSProperties = {
     minHeight: '100vh',
@@ -149,31 +329,46 @@ export default function CardsPage() {
   }
 
   const containerStyle: React.CSSProperties = {
-    maxWidth: '1100px',
+    maxWidth: '1200px',
     margin: '0 auto',
+  }
+
+  const headerStyle: React.CSSProperties = {
+    marginBottom: '2rem',
+  }
+
+  const backLinkStyle: React.CSSProperties = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '0.875rem',
+    color: '#667eea',
+    textDecoration: 'none',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    marginBottom: '0.75rem',
+    fontWeight: '600',
   }
 
   const headingStyle: React.CSSProperties = {
     fontFamily: 'Manrope, sans-serif',
     fontWeight: '800',
-    fontSize: '1.75rem',
+    fontSize: '1.875rem',
     color: 'var(--on-surface)',
-    marginBottom: '0.25rem',
+    marginBottom: '0.5rem',
   }
 
   const counterStyle: React.CSSProperties = {
     fontFamily: 'Inter, sans-serif',
     fontSize: '0.875rem',
     color: 'var(--on-surface-variant)',
-    marginBottom: '1.5rem',
   }
 
   const filtersBarStyle: React.CSSProperties = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '0.75rem',
-    marginBottom: '1.5rem',
-    padding: '1rem 1.25rem',
+    marginBottom: '2rem',
+    padding: '1.25rem',
     background: 'var(--surface-container-low)',
     borderRadius: '16px',
   }
@@ -185,68 +380,19 @@ export default function CardsPage() {
     background: 'var(--surface-container-lowest)',
     border: 'none',
     borderRadius: '10px',
-    padding: '0.5rem 0.875rem',
+    padding: '0.625rem 0.875rem',
     outline: 'none',
-    minWidth: '180px',
-    flex: '1 1 180px',
+    minWidth: '200px',
+    flex: '1 1 200px',
     boxShadow: '0px 2px 8px rgba(25, 28, 29, 0.06)',
   }
 
   const selectStyle: React.CSSProperties = {
     ...inputStyle,
     cursor: 'pointer',
-    flex: '0 1 160px',
-    minWidth: '140px',
+    flex: '0 1 180px',
+    minWidth: '160px',
   }
-
-  const tableWrapStyle: React.CSSProperties = {
-    background: 'var(--surface-container-lowest)',
-    borderRadius: '16px',
-    overflow: 'hidden',
-    boxShadow: '0px 12px 32px rgba(25, 28, 29, 0.06)',
-  }
-
-  const tableStyle: React.CSSProperties = {
-    width: '100%',
-    borderCollapse: 'collapse',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '0.8125rem',
-    color: 'var(--on-surface)',
-  }
-
-  const thStyle: React.CSSProperties = {
-    fontFamily: 'Manrope, sans-serif',
-    fontWeight: '700',
-    fontSize: '0.75rem',
-    textTransform: 'uppercase',
-    letterSpacing: '0.06em',
-    color: 'var(--on-surface-variant)',
-    padding: '0.875rem 1rem',
-    background: 'var(--surface-container-low)',
-    textAlign: 'left',
-    whiteSpace: 'nowrap',
-  }
-
-  const tdStyle: React.CSSProperties = {
-    padding: '0.625rem 1rem',
-    verticalAlign: 'middle',
-  }
-
-  const rowEvenStyle: React.CSSProperties = {
-    background: 'var(--surface-container-lowest)',
-  }
-
-  const rowOddStyle: React.CSSProperties = {
-    background: 'var(--surface-container-low)',
-  }
-
-  // ─── Toggle owned ────────────────────────────────────────────────────────
-
-  const ownedOptions: { value: OwnedFilter; label: string }[] = [
-    { value: 'all',   label: 'Toutes' },
-    { value: 'true',  label: 'Possédées' },
-    { value: 'false', label: 'Non possédées' },
-  ]
 
   const toggleGroupStyle: React.CSSProperties = {
     display: 'flex',
@@ -264,42 +410,62 @@ export default function CardsPage() {
       color: active ? '#667eea' : 'var(--on-surface-variant)',
       background: active ? 'rgba(102, 126, 234, 0.1)' : 'transparent',
       border: 'none',
-      padding: '0.5rem 0.875rem',
+      padding: '0.625rem 1rem',
       cursor: 'pointer',
       transition: 'all 0.15s',
       whiteSpace: 'nowrap',
     }
   }
 
-  // ─── Rendu ───────────────────────────────────────────────────────────────
+  const gridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '1.25rem',
+    marginBottom: '2rem',
+  }
+
+  const ownedOptions: { value: OwnedFilter; label: string }[] = [
+    { value: 'all', label: 'Toutes' },
+    { value: 'true', label: 'Possédées' },
+    { value: 'false', label: 'Non possédées' },
+  ]
+
+  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div style={pageStyle}>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
-        select option { background: var(--surface-container-lowest, #fff); }
-      `}</style>
+    <>
+      {confirmModal && (
+        <ConfirmToggleModal
+          card={confirmModal.card}
+          newState={confirmModal.newState}
+          isOpen={true}
+          onConfirm={handleConfirmToggle}
+          onCancel={handleCancelToggle}
+        />
+      )}
 
-      <div style={containerStyle}>
+      <div style={pageStyle}>
+        <div style={containerStyle}>
+        {/* Header */}
+        <header style={headerStyle}>
+          <Link href="/" style={backLinkStyle}>
+            ← Retour au dashboard
+          </Link>
+          <h1 style={headingStyle}>Gérer ma Collection</h1>
+          <p style={counterStyle}>
+            {isLoading
+              ? 'Chargement...'
+              : isError
+              ? 'Erreur de chargement'
+              : `${total.toLocaleString('fr-FR')} carte${total > 1 ? 's' : ''} disponible${total > 1 ? 's' : ''}`}
+          </p>
+        </header>
 
-        {/* En-tête */}
-        <h1 style={headingStyle}>Cartes</h1>
-        <p style={counterStyle}>
-          {isLoading
-            ? 'Chargement…'
-            : isError
-            ? 'Erreur de chargement'
-            : `${total.toLocaleString('fr-FR')} carte${total > 1 ? 's' : ''}`}
-        </p>
-
-        {/* Barre de filtres */}
+        {/* Filters */}
         <div style={filtersBarStyle}>
           <input
             type="search"
-            placeholder="Rechercher…"
+            placeholder="Rechercher une carte..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={inputStyle}
@@ -314,7 +480,9 @@ export default function CardsPage() {
           >
             <option value="">Toutes les séries</option>
             {SERIES_OPTIONS.map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s}>
+                {s}
+              </option>
             ))}
           </select>
 
@@ -326,7 +494,9 @@ export default function CardsPage() {
           >
             <option value="">Tous les types</option>
             {TYPE_OPTIONS.map((t) => (
-              <option key={t} value={t}>{t}</option>
+              <option key={t} value={t}>
+                {t}
+              </option>
             ))}
           </select>
 
@@ -338,7 +508,9 @@ export default function CardsPage() {
           >
             <option value="">Toutes raretés</option>
             {RARITY_OPTIONS.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
 
@@ -356,135 +528,114 @@ export default function CardsPage() {
           </div>
         </div>
 
-        {/* État d'erreur */}
+        {/* Error State */}
         {isError && (
-          <div style={{
-            padding: '2rem',
-            borderRadius: '16px',
-            background: 'var(--surface-container-low)',
-            textAlign: 'center',
-          }}>
-            <p style={{
-              fontFamily: 'Manrope, sans-serif',
-              fontWeight: '700',
-              fontSize: '1.125rem',
-              color: 'var(--on-surface)',
-              marginBottom: '0.5rem',
-            }}>
+          <div
+            style={{
+              padding: '2rem',
+              borderRadius: '16px',
+              background: 'var(--surface-container-low)',
+              textAlign: 'center',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: 'Manrope, sans-serif',
+                fontWeight: '700',
+                fontSize: '1.125rem',
+                color: 'var(--on-surface)',
+                marginBottom: '0.5rem',
+              }}
+            >
               Impossible de charger les cartes
             </p>
-            <p style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '0.875rem',
-              color: 'var(--on-surface-variant)',
-            }}>
+            <p
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.875rem',
+                color: 'var(--on-surface-variant)',
+              }}
+            >
               {(error as Error)?.message ?? 'Une erreur inattendue est survenue.'}
             </p>
           </div>
         )}
 
-        {/* Tableau */}
+        {/* Cards Grid */}
         {!isError && (
-          <div style={tableWrapStyle}>
-            <table style={tableStyle}>
-              <thead>
-                <tr>
-                  <th style={thStyle}>Nom FR</th>
-                  <th style={thStyle}>Nom EN</th>
-                  <th style={thStyle}>Type</th>
-                  <th style={thStyle}>Série</th>
-                  <th style={thStyle}>Rareté</th>
-                  <th style={{ ...thStyle, textAlign: 'center' }}>Possédée</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading
-                  ? Array.from({ length: 10 }).map((_, i) => <SkeletonRow key={i} />)
-                  : allCards.length === 0
-                  ? (
-                    <tr>
-                      <td colSpan={6} style={{ padding: '3rem', textAlign: 'center' }}>
-                        <p style={{
-                          fontFamily: 'Manrope, sans-serif',
-                          fontWeight: '700',
-                          fontSize: '1.125rem',
-                          color: 'var(--on-surface)',
-                          marginBottom: '0.375rem',
-                        }}>
-                          Aucune carte trouvée
-                        </p>
-                        <p style={{
-                          fontFamily: 'Inter, sans-serif',
-                          fontSize: '0.875rem',
-                          color: 'var(--on-surface-variant)',
-                        }}>
-                          Essayez de modifier vos filtres.
-                        </p>
-                      </td>
-                    </tr>
-                  )
-                  : allCards.map((card, idx) => (
-                    <tr key={card.id} style={idx % 2 === 0 ? rowEvenStyle : rowOddStyle}>
-                      <td style={tdStyle}>{card.nameFr || '—'}</td>
-                      <td style={{ ...tdStyle, color: 'var(--on-surface-variant)' }}>
-                        {card.nameEn || '—'}
-                      </td>
-                      <td style={tdStyle}>{card.cardType}</td>
-                      <td style={{ ...tdStyle, color: 'var(--on-surface-variant)' }}>
-                        {card.series}
-                      </td>
-                      <td style={tdStyle}>
-                        <span style={{
-                          display: 'inline-block',
-                          fontFamily: 'Manrope, sans-serif',
-                          fontWeight: '700',
-                          fontSize: '0.6875rem',
-                          letterSpacing: '0.04em',
-                          padding: '0.125rem 0.5rem',
-                          borderRadius: '6px',
-                          background: 'var(--surface-container-highest)',
-                          color: 'var(--on-surface-variant)',
-                        }}>
-                          {card.rarity}
-                        </span>
-                      </td>
-                      <td style={{ ...tdStyle, textAlign: 'center' }}>
-                        {card.isOwned
-                          ? <span style={{ color: '#667eea', fontWeight: '700' }} aria-label="Possédée">✓</span>
-                          : <span style={{ color: 'var(--on-surface-variant)', opacity: 0.4 }} aria-label="Non possédée">✗</span>
-                        }
-                      </td>
-                    </tr>
-                  ))
-                }
+          <>
+            <div style={gridStyle}>
+              {isLoading
+                ? Array.from({ length: 12 }).map((_, i) => <CardSkeleton key={i} />)
+                : allCards.length === 0
+                ? (
+                  <div
+                    style={{
+                      gridColumn: '1 / -1',
+                      padding: '3rem',
+                      textAlign: 'center',
+                      background: 'var(--surface-container-lowest)',
+                      borderRadius: '16px',
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontFamily: 'Manrope, sans-serif',
+                        fontWeight: '700',
+                        fontSize: '1.125rem',
+                        color: 'var(--on-surface)',
+                        marginBottom: '0.5rem',
+                      }}
+                    >
+                      Aucune carte trouvée
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '0.875rem',
+                        color: 'var(--on-surface-variant)',
+                      }}
+                    >
+                      Essayez de modifier vos filtres.
+                    </p>
+                  </div>
+                )
+                : allCards.map((card) => (
+                    <CardItem
+                      key={card.id}
+                      card={card}
+                      onToggle={handleToggle}
+                      isTogglingId={togglingCardId}
+                    />
+                  ))}
 
-                {/* Skeleton des pages suivantes */}
-                {isFetchingNextPage &&
-                  Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={`next-${i}`} />)
-                }
-              </tbody>
-            </table>
-          </div>
+              {/* Loading more cards */}
+              {isFetchingNextPage &&
+                Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={`loading-${i}`} />)}
+            </div>
+
+            {/* Infinite scroll sentinel */}
+            <div ref={sentinelRef} style={{ height: '1px' }} aria-hidden />
+
+            {/* End of list message */}
+            {!hasNextPage && !isLoading && allCards.length > 0 && (
+              <p
+                style={{
+                  textAlign: 'center',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.8125rem',
+                  color: 'var(--on-surface-variant)',
+                  marginTop: '1.5rem',
+                  opacity: 0.7,
+                }}
+              >
+                Toutes les cartes sont affichées.
+              </p>
+            )}
+          </>
         )}
-
-        {/* Sentinel scroll infini */}
-        <div ref={sentinelRef} style={{ height: '1px', marginTop: '2rem' }} aria-hidden />
-
-        {/* Message fin de liste */}
-        {!hasNextPage && !isLoading && allCards.length > 0 && (
-          <p style={{
-            textAlign: 'center',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '0.8125rem',
-            color: 'var(--on-surface-variant)',
-            marginTop: '1.5rem',
-            opacity: 0.7,
-          }}>
-            Toutes les cartes sont affichées.
-          </p>
-        )}
-
       </div>
     </div>
+    </>
   )
 }

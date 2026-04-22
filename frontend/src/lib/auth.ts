@@ -69,3 +69,36 @@ export const getTokenExpiration = (): Date | null => {
 
   return new Date(expiresAt)
 }
+
+/**
+ * Decode JWT token and extract claims
+ * Note: This does NOT validate the token signature, just decodes the payload
+ */
+export const decodeToken = (token: string): { user_id: string; email: string } | null => {
+  try {
+    const parts = token.split('.')
+    if (parts.length !== 3) return null
+
+    const payload = parts[1]
+    const decoded = JSON.parse(atob(payload))
+
+    return {
+      user_id: decoded.user_id,
+      email: decoded.email,
+    }
+  } catch (error) {
+    console.error('Failed to decode JWT token:', error)
+    return null
+  }
+}
+
+/**
+ * Get the email from the current auth token
+ */
+export const getUserEmail = (): string | null => {
+  const token = getAuthToken()
+  if (!token) return null
+
+  const decoded = decodeToken(token)
+  return decoded?.email || null
+}
