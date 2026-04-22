@@ -9,12 +9,36 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
+
+// MockActivityRepository est un mock du ActivityRepository
+type MockActivityRepository struct {
+	mock.Mock
+}
+
+func (m *MockActivityRepository) Create(ctx context.Context, activity *domain.Activity) error {
+	args := m.Called(ctx, activity)
+	return args.Error(0)
+}
+
+func (m *MockActivityRepository) GetRecentByUserID(ctx context.Context, userID uuid.UUID, limit int) ([]*domain.Activity, error) {
+	args := m.Called(ctx, userID, limit)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*domain.Activity), args.Error(1)
+}
 
 func TestToggleCardPossession_Success_SetOwned(t *testing.T) {
 	// Arrange
 	mockRepo := new(MockCardRepository)
-	service := NewCardService(mockRepo)
+	mockActivityRepo := new(MockActivityRepository)
+	activityService := NewActivityService(mockActivityRepo)
+	service := NewCardService(mockRepo, activityService)
+
+	// Mock activity recording (best effort - can fail silently)
+	mockActivityRepo.On("Create", mock.Anything, mock.Anything).Return(nil)
 
 	ctx := context.Background()
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
@@ -49,7 +73,12 @@ func TestToggleCardPossession_Success_SetOwned(t *testing.T) {
 func TestToggleCardPossession_Success_SetNotOwned(t *testing.T) {
 	// Arrange
 	mockRepo := new(MockCardRepository)
-	service := NewCardService(mockRepo)
+	mockActivityRepo := new(MockActivityRepository)
+	activityService := NewActivityService(mockActivityRepo)
+	service := NewCardService(mockRepo, activityService)
+
+	// Mock activity recording (best effort - can fail silently)
+	mockActivityRepo.On("Create", mock.Anything, mock.Anything).Return(nil)
 
 	ctx := context.Background()
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
@@ -83,7 +112,9 @@ func TestToggleCardPossession_Success_SetNotOwned(t *testing.T) {
 func TestToggleCardPossession_CardNotFound(t *testing.T) {
 	// Arrange
 	mockRepo := new(MockCardRepository)
-	service := NewCardService(mockRepo)
+	mockActivityRepo := new(MockActivityRepository)
+	activityService := NewActivityService(mockActivityRepo)
+	service := NewCardService(mockRepo, activityService)
 
 	ctx := context.Background()
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
@@ -104,7 +135,12 @@ func TestToggleCardPossession_CardNotFound(t *testing.T) {
 func TestToggleCardPossession_Idempotent(t *testing.T) {
 	// Arrange
 	mockRepo := new(MockCardRepository)
-	service := NewCardService(mockRepo)
+	mockActivityRepo := new(MockActivityRepository)
+	activityService := NewActivityService(mockActivityRepo)
+	service := NewCardService(mockRepo, activityService)
+
+	// Mock activity recording (best effort - can fail silently)
+	mockActivityRepo.On("Create", mock.Anything, mock.Anything).Return(nil)
 
 	ctx := context.Background()
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
@@ -142,7 +178,9 @@ func TestToggleCardPossession_Idempotent(t *testing.T) {
 func TestToggleCardPossession_RepositoryError(t *testing.T) {
 	// Arrange
 	mockRepo := new(MockCardRepository)
-	service := NewCardService(mockRepo)
+	mockActivityRepo := new(MockActivityRepository)
+	activityService := NewActivityService(mockActivityRepo)
+	service := NewCardService(mockRepo, activityService)
 
 	ctx := context.Background()
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")

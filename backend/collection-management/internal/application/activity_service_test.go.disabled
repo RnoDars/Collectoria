@@ -13,7 +13,7 @@ import (
 )
 
 func TestActivityService_GetRecentActivities_ReturnsMockData(t *testing.T) {
-	service := application.NewActivityService()
+	service := application.NewActivityService(nil)
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	feed, err := service.GetRecentActivities(context.Background(), userID, 10, 0)
@@ -25,7 +25,7 @@ func TestActivityService_GetRecentActivities_ReturnsMockData(t *testing.T) {
 }
 
 func TestActivityService_GetRecentActivities_RespectsLimit(t *testing.T) {
-	service := application.NewActivityService()
+	service := application.NewActivityService(nil)
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	feed, err := service.GetRecentActivities(context.Background(), userID, 3, 0)
@@ -35,7 +35,7 @@ func TestActivityService_GetRecentActivities_RespectsLimit(t *testing.T) {
 }
 
 func TestActivityService_GetRecentActivities_ActivityHasRequiredFields(t *testing.T) {
-	service := application.NewActivityService()
+	service := application.NewActivityService(nil)
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	feed, err := service.GetRecentActivities(context.Background(), userID, 10, 0)
@@ -53,7 +53,7 @@ func TestActivityService_GetRecentActivities_ActivityHasRequiredFields(t *testin
 }
 
 func TestActivityService_GetRecentActivities_HasValidActivityTypes(t *testing.T) {
-	service := application.NewActivityService()
+	service := application.NewActivityService(nil)
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	feed, err := service.GetRecentActivities(context.Background(), userID, 10, 0)
@@ -70,7 +70,7 @@ func TestActivityService_GetRecentActivities_HasValidActivityTypes(t *testing.T)
 }
 
 func TestActivityService_GetGrowthStats_ReturnsMockData(t *testing.T) {
-	service := application.NewActivityService()
+	service := application.NewActivityService(nil)
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	stats, err := service.GetGrowthStats(context.Background(), userID, "6m", "month")
@@ -83,7 +83,7 @@ func TestActivityService_GetGrowthStats_ReturnsMockData(t *testing.T) {
 }
 
 func TestActivityService_GetGrowthStats_DataPointsAreValid(t *testing.T) {
-	service := application.NewActivityService()
+	service := application.NewActivityService(nil)
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	stats, err := service.GetGrowthStats(context.Background(), userID, "6m", "month")
@@ -98,7 +98,7 @@ func TestActivityService_GetGrowthStats_DataPointsAreValid(t *testing.T) {
 }
 
 func TestActivityService_GetGrowthStats_HasTrend(t *testing.T) {
-	service := application.NewActivityService()
+	service := application.NewActivityService(nil)
 	userID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
 
 	stats, err := service.GetGrowthStats(context.Background(), userID, "6m", "month")
