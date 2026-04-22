@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 
 const NAV_LINKS = [
   { href: '/', label: 'Accueil' },
@@ -12,6 +13,7 @@ const NAV_LINKS = [
 
 export default function TopNav() {
   const pathname = usePathname()
+  const { isAuthenticated, logout } = useAuth()
 
   return (
     <nav style={{
@@ -65,6 +67,46 @@ export default function TopNav() {
               </Link>
             )
           })}
+        </div>
+
+        {/* Auth Actions */}
+        <div>
+          {isAuthenticated() ? (
+            <button
+              onClick={logout}
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                color: 'var(--on-surface-variant)',
+                padding: '0.375rem 0.75rem',
+                borderRadius: '8px',
+                background: 'transparent',
+                border: '1px solid var(--outline-variant)',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+            >
+              Se déconnecter
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                color: 'white',
+                padding: '0.375rem 0.875rem',
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                textDecoration: 'none',
+                transition: 'all 0.15s',
+              }}
+            >
+              Se connecter
+            </Link>
+          )}
         </div>
       </div>
     </nav>

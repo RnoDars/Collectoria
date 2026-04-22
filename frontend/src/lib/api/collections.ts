@@ -1,3 +1,5 @@
+import { apiClient } from './client'
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
 export interface CollectionSummary {
@@ -26,11 +28,7 @@ export interface CollectionsResponse {
 }
 
 export async function fetchCollectionSummary(): Promise<CollectionSummary> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/collections/summary`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const response = await apiClient.get('/api/v1/collections/summary')
 
   if (!response.ok) {
     throw new Error(`Failed to fetch collection summary: ${response.statusText}`)
@@ -82,9 +80,7 @@ export interface GrowthStats {
 }
 
 export async function fetchRecentActivities(limit = 10): Promise<ActivityFeed> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/activities/recent?limit=${limit}`, {
-    headers: { 'Content-Type': 'application/json' },
-  })
+  const response = await apiClient.get(`/api/v1/activities/recent?limit=${limit}`)
   if (!response.ok) throw new Error(`Failed to fetch activities: ${response.statusText}`)
   const data = await response.json()
   return {
@@ -105,9 +101,8 @@ export async function fetchRecentActivities(limit = 10): Promise<ActivityFeed> {
 }
 
 export async function fetchGrowthStats(period = '6m', granularity = 'month'): Promise<GrowthStats> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/statistics/growth?period=${period}&granularity=${granularity}`,
-    { headers: { 'Content-Type': 'application/json' } }
+  const response = await apiClient.get(
+    `/api/v1/statistics/growth?period=${period}&granularity=${granularity}`
   )
   if (!response.ok) throw new Error(`Failed to fetch growth stats: ${response.statusText}`)
   const data = await response.json()
@@ -163,9 +158,7 @@ export async function fetchCards(filters: CardFilters, page: number): Promise<Ca
   if (filters.rarity)  params.set('rarity',  filters.rarity)
   if (filters.owned)   params.set('owned',   filters.owned)
 
-  const response = await fetch(`${API_BASE_URL}/api/v1/cards?${params.toString()}`, {
-    headers: { 'Content-Type': 'application/json' },
-  })
+  const response = await apiClient.get(`/api/v1/cards?${params.toString()}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch cards: ${response.statusText}`)
@@ -196,10 +189,8 @@ export async function updateCardPossession(
   cardId: string,
   isOwned: boolean
 ): Promise<Card> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/cards/${cardId}/possession`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ is_owned: isOwned }),
+  const response = await apiClient.patch(`/api/v1/cards/${cardId}/possession`, {
+    is_owned: isOwned,
   })
 
   if (!response.ok) {
@@ -223,11 +214,7 @@ export async function updateCardPossession(
 // ─── Collections ─────────────────────────────────────────────────────────────
 
 export async function fetchCollections(): Promise<Collection[]> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/collections`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const response = await apiClient.get('/api/v1/collections')
 
   if (!response.ok) {
     throw new Error(`Failed to fetch collections: ${response.statusText}`)
