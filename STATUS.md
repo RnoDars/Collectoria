@@ -400,9 +400,10 @@ curl http://localhost:8080/api/v1/collections/summary | jq
   - Annonce explicite des appels aux sous-agents
   - Transparence sur qui agit (Alfred vs sous-agents)
 - ✅ Mémoire persistante Alfred mise à jour avec préférences utilisateur
-- ✅ **Hooks Git automatiques (17 avril)** :
-  - Hook post-commit Security (audit automatique après chaque commit Backend/Frontend)
-  - Hook post-commit Amélioration Continue (rapport tous les 10 commits)
+- ✅ **Hooks Git automatiques (23 avril)** :
+  - Hook post-commit Security (audit automatique après chaque commit Backend/Frontend) — INSTALLÉ et TESTÉ
+  - Hook post-commit Amélioration Continue (rapport tous les 10 commits) — INSTALLÉ (prochain: commit #80)
+  - Script d'installation : `DevOps/scripts/install-git-hooks.sh`
 - ✅ **Amélioration Continue active (21 avril)** :
   - Workflow de synchronisation STATUS.md défini
   - Recommandation documentée : `Continuous-Improvement/recommendations/workflow-status-update_2026-04-21.md`
