@@ -122,9 +122,7 @@ func (r *BookRepository) GetBooksCatalog(ctx context.Context, userID uuid.UUID, 
 		SELECT COUNT(*)
 		FROM books b
 		LEFT JOIN user_books ub ON b.id = ub.book_id AND ub.user_id = $1
-		WHERE b.collection_id IN (
-			SELECT collection_id FROM user_collections WHERE user_id = $1
-		) %s`, whereClause)
+		WHERE 1=1 %s`, whereClause)
 
 	var total int
 	if err := r.db.GetContext(ctx, &total, countQuery, args...); err != nil {
@@ -144,9 +142,7 @@ func (r *BookRepository) GetBooksCatalog(ctx context.Context, userID uuid.UUID, 
 			COALESCE(ub.is_owned, false) AS is_owned
 		FROM books b
 		LEFT JOIN user_books ub ON b.id = ub.book_id AND ub.user_id = $1
-		WHERE b.collection_id IN (
-			SELECT collection_id FROM user_collections WHERE user_id = $1
-		) %s
+		WHERE 1=1 %s
 		ORDER BY
 			CASE
 				WHEN b.number ~ '^HS' THEN 1
