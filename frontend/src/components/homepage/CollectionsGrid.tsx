@@ -82,13 +82,28 @@ export default function CollectionsGrid({ collections, isLoading, error }: Colle
   }
 
   // Success State - Grid Layout
+  // Add static Books collection (until backend returns it)
+  const booksCollection: Collection = {
+    id: 'books-royaumes-oublies',
+    name: 'Royaumes Oubliés',
+    slug: 'royaumes-oublies',
+    description: 'Collection de romans Forgotten Realms',
+    totalCardsOwned: 41,
+    totalCardsAvailable: 94,
+    completionPercentage: 43.6,
+    heroImageUrl: '',
+    lastUpdated: null,
+  }
+
+  const allCollections = collections ? [...collections, booksCollection] : [booksCollection]
+
   return (
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
       gap: '24px',
     }}>
-      {collections.map((collection) => (
+      {allCollections.map((collection) => (
         <CollectionCard key={collection.id} collection={collection} />
       ))}
     </div>

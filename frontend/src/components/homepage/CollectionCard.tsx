@@ -17,10 +17,21 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
   const isComplete = percentage === 100
   const isEmpty = percentage === 0
 
+  const getCollectionRoute = (slug: string) => {
+    switch (slug) {
+      case 'royaumes-oublies':
+        return '/books'
+      default:
+        return '/cards'
+    }
+  }
+
   const getGradient = (slug: string) => {
     switch (slug) {
       case 'doomtrooper':
         return 'linear-gradient(135deg, #8b0000 0%, #2b0000 50%, #000000 100%)'
+      case 'royaumes-oublies':
+        return 'linear-gradient(135deg, #2c5f2d 0%, #1a3a1b 50%, #0d1f0e 100%)'
       default:
         return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     }
@@ -32,7 +43,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
 
   return (
     <div
-      onClick={() => router.push('/cards')}
+      onClick={() => router.push(getCollectionRoute(collection.slug))}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
@@ -173,7 +184,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
           fontWeight: '600',
           color: '#191c1d',
         }}>
-          {collection.totalCardsOwned} / {collection.totalCardsAvailable} cards
+          {collection.totalCardsOwned} / {collection.totalCardsAvailable} {collection.slug === 'royaumes-oublies' ? 'livres' : 'cards'}
         </div>
 
         <div style={{
