@@ -32,11 +32,12 @@ type Server struct {
 	logger            zerolog.Logger
 	port              int
 	corsConfig        config.CORSConfig
+	rateLimitConfig   config.RateLimitConfig
 	db                *sqlx.DB
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, activityService *application.ActivityService, jwtService *auth.JWTService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, db *sqlx.DB) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, activityService *application.ActivityService, jwtService *auth.JWTService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, rateLimitConfig config.RateLimitConfig, db *sqlx.DB) *Server {
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
@@ -47,6 +48,7 @@ func NewServer(collectionService *application.CollectionService, catalogService 
 		logger:            logger,
 		port:              port,
 		corsConfig:        corsConfig,
+		rateLimitConfig:   rateLimitConfig,
 		db:                db,
 	}
 
@@ -133,37 +135,67 @@ func (s *Server) setupRoutes() {
 	// Auth middleware
 	authMiddleware := customMiddleware.NewAuthMiddleware(s.jwtService, s.logger)
 
+	// Rate limiters
+	loginRateLimiter := customMiddleware.NewRateLimiter(customMiddleware.RateLimitConfig{
+		Requests: s.rateLimitConfig.LoginRequests,
+		Window:   s.rateLimitConfig.LoginWindow,
+	})
+
+	readRateLimiter := customMiddleware.NewRateLimiter(customMiddleware.RateLimitConfig{
+		Requests: s.rateLimitConfig.ReadRequests,
+		Window:   s.rateLimitConfig.ReadWindow,
+	})
+
+	writeRateLimiter := customMiddleware.NewRateLimiter(customMiddleware.RateLimitConfig{
+		Requests: s.rateLimitConfig.WriteRequests,
+		Window:   s.rateLimitConfig.WriteWindow,
+	})
+
 	s.router.Route("/api/v1", func(r chi.Router) {
-		// Public routes (no authentication required)
+		// Public routes (no authentication, no rate limiting)
 		r.Get("/health", s.healthCheckHandler)
 
-		// Auth routes
-		authHandler := handlers.NewAuthHandler(s.jwtService, s.logger)
-		r.Post("/auth/login", authHandler.Login)
+		// Auth routes (strict rate limiting)
+		r.Group(func(r chi.Router) {
+			r.Use(loginRateLimiter)
 
-		// Protected routes (authentication required)
+			authHandler := handlers.NewAuthHandler(s.jwtService, s.logger)
+			r.Post("/auth/login", authHandler.Login)
+		})
+
+		// Protected routes (authentication required + rate limiting)
 		r.Group(func(r chi.Router) {
 			r.Use(authMiddleware.Authenticate)
 
-			// Collections routes
-			collectionHandler := handlers.NewCollectionHandler(s.collectionService, s.logger)
-			r.Route("/collections", func(r chi.Router) {
-				r.Get("/summary", collectionHandler.GetSummary)
-				r.Get("/", collectionHandler.GetAllCollections)
+			// Read routes (permissive rate limiting)
+			r.Group(func(r chi.Router) {
+				r.Use(readRateLimiter)
+
+				// Collections routes
+				collectionHandler := handlers.NewCollectionHandler(s.collectionService, s.logger)
+				r.Route("/collections", func(r chi.Router) {
+					r.Get("/summary", collectionHandler.GetSummary)
+					r.Get("/", collectionHandler.GetAllCollections)
+				})
+
+				// Activities & Statistics routes
+				activityHandler := handlers.NewActivityHandler(s.activityService, s.logger)
+				r.Get("/activities/recent", activityHandler.GetRecentActivities)
+				r.Get("/statistics/growth", activityHandler.GetGrowthStats)
+
+				// Catalog routes
+				catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
+				r.Get("/cards", catalogHandler.GetCards)
 			})
 
-			// Activities & Statistics routes
-			activityHandler := handlers.NewActivityHandler(s.activityService, s.logger)
-			r.Get("/activities/recent", activityHandler.GetRecentActivities)
-			r.Get("/statistics/growth", activityHandler.GetGrowthStats)
+			// Write routes (moderate rate limiting)
+			r.Group(func(r chi.Router) {
+				r.Use(writeRateLimiter)
 
-			// Catalog routes
-			catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
-			r.Get("/cards", catalogHandler.GetCards)
-
-			// Card possession routes
-			cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
-			r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
+				// Card possession routes
+				cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
+				r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
+			})
 		})
 	})
 }

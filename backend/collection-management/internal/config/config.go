@@ -5,14 +5,16 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Config représente la configuration de l'application
 type Config struct {
-	Server   ServerConfig
-	Database DatabaseConfig
-	CORS     CORSConfig
-	JWT      JWTConfig
+	Server      ServerConfig
+	Database    DatabaseConfig
+	CORS        CORSConfig
+	JWT         JWTConfig
+	RateLimit   RateLimitConfig
 }
 
 // ServerConfig représente la configuration du serveur HTTP
@@ -43,6 +45,16 @@ type JWTConfig struct {
 	Issuer          string
 }
 
+// RateLimitConfig représente la configuration du rate limiting
+type RateLimitConfig struct {
+	LoginRequests  int64
+	LoginWindow    time.Duration
+	ReadRequests   int64
+	ReadWindow     time.Duration
+	WriteRequests  int64
+	WriteWindow    time.Duration
+}
+
 // Load charge la configuration depuis les variables d'environnement
 func Load() (*Config, error) {
 	cfg := &Config{
@@ -65,6 +77,14 @@ func Load() (*Config, error) {
 			Secret:          getEnv("JWT_SECRET", ""),
 			ExpirationHours: getEnvAsInt("JWT_EXPIRATION_HOURS", 24),
 			Issuer:          getEnv("JWT_ISSUER", "collectoria-api"),
+		},
+		RateLimit: RateLimitConfig{
+			LoginRequests: int64(getEnvAsInt("RATE_LIMIT_LOGIN_REQUESTS", 5)),
+			LoginWindow:   getEnvAsDuration("RATE_LIMIT_LOGIN_WINDOW", 15*time.Minute),
+			ReadRequests:  int64(getEnvAsInt("RATE_LIMIT_READ_REQUESTS", 100)),
+			ReadWindow:    getEnvAsDuration("RATE_LIMIT_READ_WINDOW", 1*time.Minute),
+			WriteRequests: int64(getEnvAsInt("RATE_LIMIT_WRITE_REQUESTS", 30)),
+			WriteWindow:   getEnvAsDuration("RATE_LIMIT_WRITE_WINDOW", 1*time.Minute),
 		},
 	}
 
@@ -98,6 +118,22 @@ func getEnvAsInt(key string, defaultValue int) int {
 	value, err := strconv.Atoi(valueStr)
 	if err != nil {
 		fmt.Printf("Warning: Invalid integer for %s, using default %d\n", key, defaultValue)
+		return defaultValue
+	}
+
+	return value
+}
+
+// getEnvAsDuration récupère une variable d'environnement en tant que duration
+func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
+	valueStr := os.Getenv(key)
+	if valueStr == "" {
+		return defaultValue
+	}
+
+	value, err := time.ParseDuration(valueStr)
+	if err != nil {
+		fmt.Printf("Warning: Invalid duration for %s, using default %s\n", key, defaultValue)
 		return defaultValue
 	}
 

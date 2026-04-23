@@ -81,7 +81,7 @@ func main() {
 	log.Info().Msg("JWT service initialized")
 
 	// Initialisation du serveur HTTP
-	server := http.NewServer(collectionService, catalogService, cardService, activityService, jwtService, log.Logger, cfg.Server.Port, cfg.CORS, db)
+	server := http.NewServer(collectionService, catalogService, cardService, activityService, jwtService, log.Logger, cfg.Server.Port, cfg.CORS, cfg.RateLimit, db)
 
 	// Démarrage du serveur
 	log.Info().Msgf("Server ready on port %d", cfg.Server.Port)
