@@ -94,16 +94,17 @@ export async function toggleBookPossession(
   const data = await response.json()
 
   // Convert snake_case to camelCase
+  // Backend returns Book object directly (not wrapped in {book: ...})
   return {
-    id: data.book.id,
-    collectionId: data.book.collection_id,
-    number: data.book.number,
-    title: data.book.title,
-    author: data.book.author,
-    publicationDate: data.book.publication_date,
-    bookType: data.book.book_type,
-    isOwned: data.book.is_owned,
-    createdAt: data.book.created_at,
-    updatedAt: data.book.updated_at,
+    id: data.id,
+    collectionId: data.collection_id,
+    number: data.number,
+    title: data.title,
+    author: data.author,
+    publicationDate: data.publication_date,
+    bookType: data.book_type,
+    isOwned: data.is_owned,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
   }
 }
