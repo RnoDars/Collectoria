@@ -13,6 +13,8 @@ const (
 	ActivityCardAdded              ActivityType = "card_added"
 	ActivityCardRemoved            ActivityType = "card_removed"
 	ActivityCardPossessionChanged  ActivityType = "card_possession_changed"
+	ActivityBookAdded              ActivityType = "book_added"
+	ActivityBookRemoved            ActivityType = "book_removed"
 	ActivityMilestoneReached       ActivityType = "milestone_reached"
 	ActivityImportCompleted        ActivityType = "import_completed"
 )
@@ -21,6 +23,7 @@ type EntityType string
 
 const (
 	EntityTypeCard       EntityType = "card"
+	EntityTypeBook       EntityType = "book"
 	EntityTypeCollection EntityType = "collection"
 )
 

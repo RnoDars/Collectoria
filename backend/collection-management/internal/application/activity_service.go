@@ -48,6 +48,34 @@ func (s *ActivityService) RecordCardActivity(
 	return s.activityRepo.Create(ctx, activity)
 }
 
+// RecordBookActivity enregistre une activité liée à un livre
+func (s *ActivityService) RecordBookActivity(
+	ctx context.Context,
+	userID uuid.UUID,
+	activityType string,
+	bookID uuid.UUID,
+	metadata map[string]interface{},
+) error {
+	// Convert metadata from map[string]interface{} to map[string]string for domain.Activity
+	stringMetadata := make(map[string]string)
+	for k, v := range metadata {
+		stringMetadata[k] = fmt.Sprintf("%v", v)
+	}
+
+	// Add user_id and book_id to metadata so repository can extract them
+	stringMetadata["user_id"] = userID.String()
+	stringMetadata["book_id"] = bookID.String()
+
+	activity := &domain.Activity{
+		ID:        uuid.New(),
+		Type:      domain.ActivityType(activityType),
+		Timestamp: time.Now(),
+		Metadata:  stringMetadata,
+	}
+
+	return s.activityRepo.Create(ctx, activity)
+}
+
 func (s *ActivityService) GetRecentActivities(ctx context.Context, userID uuid.UUID, limit, offset int) (*domain.ActivityFeed, error) {
 	// For now, we don't support offset with the repository implementation
 	// We'll implement pagination in Phase 2 if needed
