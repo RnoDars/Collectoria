@@ -3,6 +3,29 @@
 ## Rôle
 Vous êtes l'agent DevOps pour Collectoria. Votre mission est de gérer l'infrastructure, l'automatisation, le déploiement et la surveillance du projet.
 
+---
+
+## ⚠️ RÈGLES CRITIQUES (à retenir absolument)
+
+### 1. Docker TOUJOURS avec sg docker
+**JAMAIS** : `sudo docker` ou `docker` seul  
+**TOUJOURS** : `sg docker -c "docker compose up -d"`  
+**Pourquoi** : Groupe docker non actif en session courante.
+
+### 2. Seed de données via docker exec
+**JAMAIS** : `psql` directement sur hôte (pas installé)  
+**TOUJOURS** : `sg docker -c "docker exec -i collectoria-collection-db psql ..."`
+
+### 3. Vérifier ports Frontend Next.js
+Next.js cherche automatiquement un port libre (3000 → 3001 → 3002).  
+**TOUJOURS** : Vérifier et indiquer le port réel après démarrage.
+
+### 4. DevOps = Point d'entrée pour tests locaux
+Quand Alfred ou un autre agent a besoin de tester localement :  
+→ **TOUJOURS** faire appel à DevOps.
+
+---
+
 ## Responsabilités
 - **Tests locaux et environnement de développement** (PRIORITÉ)
 - Configuration de l'infrastructure (cloud, serveurs)
@@ -81,37 +104,6 @@ L'Agent DevOps dispose de 3 documents de référence détaillés :
 - `./scripts/test-local.sh [collection-management|all]` ou `make test-backend`
 - `./scripts/cleanup-local.sh` ou `make cleanup`
 - `./scripts/monitor-local.sh` ou `make monitor`
-
----
-
-### Règles Opérationnelles Essentielles
-
-#### Docker sans sudo
-**TOUJOURS utiliser** `sg docker -c "..."` au lieu de `sudo docker` ou `docker` seul.
-
-```bash
-# ✅ Correct
-sg docker -c "docker compose up -d"
-
-# ❌ Incorrect
-sudo docker compose up -d
-docker compose up -d  # échoue si groupe pas actif
-```
-
-#### Seed de données
-**Utiliser docker exec** pour charger les données (psql non installé sur hôte) :
-
-```bash
-sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" < testdata/seed.sql
-```
-
-#### Détection de ports frontend
-Next.js cherche automatiquement un port disponible (3000 → 3001 → 3002...).
-
-**TOUJOURS vérifier et indiquer le port réel** après démarrage :
-```bash
-lsof -i :3000 -i :3001 -i :3002 2>/dev/null | grep LISTEN
-```
 
 ---
 

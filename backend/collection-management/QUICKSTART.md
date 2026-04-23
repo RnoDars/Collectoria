@@ -2,6 +2,8 @@
 
 Démarrage rapide en 3 minutes.
 
+> **Note** : Ce guide est pour démarrage rapide manuel. Pour gestion complète de l'environnement, consulter l'Agent DevOps ou utiliser le Makefile à la racine.
+
 ---
 
 ## Option 1: Script Automatique (Recommandé)
@@ -181,14 +183,31 @@ go run cmd/api/main.go
 ## Troubleshooting
 
 ### Port 5432 déjà utilisé
-```bash
-# Arrêter le PostgreSQL local
-sudo systemctl stop postgresql
 
-# Ou changer le port dans docker-compose.yml
+**Option 1 : Arrêter PostgreSQL système (si installé)** :
+```bash
+sudo systemctl stop postgresql
+```
+
+**Option 2 (RECOMMANDÉ) : Utiliser Docker uniquement** :
+```bash
+# Vérifier qu'aucun container PostgreSQL ne tourne
+sg docker -c "docker ps | grep postgres"
+
+# Si container existe, le stopper
+sg docker -c "docker stop collectoria-collection-db"
+
+# Redémarrer proprement
+sg docker -c "docker compose up -d"
+```
+
+**Option 3 : Changer le port dans docker-compose.yml** :
+```yaml
 ports:
   - "5433:5432"
 ```
+
+**Note** : Pour gestion complète de l'environnement (tests locaux, multi-services), consulter l'Agent DevOps ou utiliser le Makefile à la racine.
 
 ### Port 8080 déjà utilisé
 ```bash
