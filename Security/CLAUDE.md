@@ -163,49 +163,110 @@ trivy image collectoria-backend:latest
 - **SIEM** : Centraliser les logs (ELK stack, Splunk)
 - **IDS/IPS** : Détecter les intrusions
 
-## Format des Rapports de Sécurité
+## Traçabilité des Audits de Sécurité
 
-Chaque audit doit générer un rapport :
+### Structure de Traçabilité
 
-```markdown
-# Rapport de Sécurité - [Date]
+**Répertoire audit-logs** : `Security/audit-logs/`
 
-## Résumé Exécutif
-- Nombre de vulnérabilités critiques : X
-- Nombre de vulnérabilités hautes : Y
-- Nombre de vulnérabilités moyennes : Z
+Tous les audits de sécurité doivent être documentés dans ce répertoire avec un log détaillé suivant le template `TEMPLATE.md`.
 
-## Vulnérabilités Détectées
+**Nommage** : `YYYY-MM-DD_type-audit.md`
 
-### [Criticité] - [Titre]
-**Type** : SQL Injection / XSS / etc.
-**Localisation** : fichier.go:ligne
-**Description** : ...
-**Impact** : ...
-**Recommandation** : ...
-**CVE** : (si applicable)
+Exemples :
+- `2026-04-21_quick-wins-phase1.md`
+- `2026-04-22_jwt-authentication.md`
+- `2026-04-23_audit-commit-a9543a8.md` (généré automatiquement par hook)
 
-## Dépendances Vulnérables
+### Types d'Audits
 
-### Backend (Go)
-| Package | Version | Vulnérabilité | CVE | Fix Version |
-|---------|---------|---------------|-----|-------------|
-| xxx     | 1.0.0   | SQL Injection | CVE-2023-1234 | 1.0.1 |
+1. **Audits Manuels** : Audits complets menés par l'Agent Security
+2. **Audits Automatiques** : Générés par le hook post-commit (voir ci-dessous)
+3. **Audits Planifiés** : Audits périodiques (hebdomadaires, mensuels)
+4. **Audits Post-Incident** : Suite à un incident de sécurité
 
-### Frontend (npm)
-| Package | Version | Vulnérabilité | Severity | Fix Version |
-|---------|---------|---------------|----------|-------------|
-| xxx     | 1.0.0   | XSS           | High     | 1.0.1 |
+### Hook Post-Commit Security
 
-## Actions Recommandées (Priorité)
-1. **Critique** : Corriger immédiatement
-2. **Haute** : Corriger dans les 7 jours
-3. **Moyenne** : Corriger dans les 30 jours
-4. **Basse** : Corriger lors du prochain sprint
+**Fichier** : `.git/hooks/post-commit`
 
-## Conclusion
-...
+**Déclenchement** : Automatique après chaque commit touchant `Backend/` ou `Frontend/`
+
+**Action** :
+1. Détecte les fichiers modifiés dans Backend/Frontend
+2. Crée un rapport minimal dans `Security/reports/YYYY-MM-DD_audit-commit-HASH.md`
+3. Affiche un message rappelant de compléter l'audit manuellement
+
+**Output du hook** :
 ```
+🔒 Hook Security: Commit abc1234 touche Backend/Frontend
+   ✅ Rapport créé: Security/reports/2026-04-23_audit-commit-abc1234.md
+   ⚠️  TODO: Compléter l'audit manuellement ou via Agent Security
+```
+
+**Note** : Les rapports générés automatiquement sont des **TODO** à compléter. Pour un audit complet, exécuter `Security/audit-mvp.sh` ou invoquer l'Agent Security.
+
+### Workflow de Traçabilité
+
+#### Après chaque audit manuel complet :
+1. Créer un log dans `Security/audit-logs/YYYY-MM-DD_type-audit.md` (utiliser le template)
+2. Remplir toutes les sections du template
+3. Lister les vulnérabilités avec criticité, localisation, recommandations
+4. Documenter les tests de sécurité effectués
+5. Signer et valider le log
+
+#### Après chaque commit Backend/Frontend (automatique) :
+1. Hook génère rapport minimal dans `Security/reports/`
+2. Si changements sensibles (auth, BDD, validation), compléter le rapport avec audit détaillé
+3. Migrer le rapport complété vers `Security/audit-logs/` si nécessaire
+
+#### Périodiquement :
+- Audits planifiés : hebdomadaire (HAUTE priorité), mensuel (complet)
+- Vérifier que tous les rapports automatiques ont été traités
+- Créer un log de synthèse périodique
+
+### Référence Template
+
+Le template complet se trouve dans `Security/audit-logs/TEMPLATE.md`.
+
+Sections principales :
+- Périmètre de l'audit
+- Méthodologie et outils utilisés
+- Résultats (tableau récapitulatif par criticité)
+- Vulnérabilités détaillées (une par section)
+- Dépendances vulnérables
+- Bonnes pratiques respectées
+- Points d'attention non-bloquants
+- Actions prioritaires
+- Tests de sécurité effectués
+- Métriques
+- Signatures
+
+### Historique des Audits (Référence)
+
+| Date | Type | Score Avant | Score Après | Fichier Log |
+|------|------|-------------|-------------|-------------|
+| 2026-04-21 | Quick Wins Phase 1 | 4.5/10 | 7.0/10 | `2026-04-21_quick-wins-phase1.md` |
+| 2026-04-22 | JWT Authentication | 7.0/10 | 8.0/10 | `2026-04-22_jwt-authentication.md` |
+| 2026-04-23 | Hooks Installation | 8.0/10 | 8.0/10 | (Pas d'impact score) |
+
+**Score actuel** : **8.0/10** (Production-ready pour développement, Phase 2 suite recommandée)
+
+---
+
+## Format des Rapports de Sécurité (Synthèse)
+
+Chaque audit doit générer un rapport complet utilisant le template `Security/audit-logs/TEMPLATE.md`.
+
+**Sections obligatoires** :
+- Résumé Exécutif avec tableau de criticité
+- Vulnérabilités détaillées (Type, CWE, CVE, Localisation, PoC, Impact, Recommandation)
+- Dépendances vulnérables (Backend Go + Frontend npm)
+- Actions prioritaires (timeline: immédiat, court terme, moyen terme, long terme)
+- Tests de sécurité effectués (checklist OWASP)
+- Métriques d'audit
+- Signatures
+
+Voir `Security/audit-logs/TEMPLATE.md` pour le format complet.
 
 ## Interaction avec les Autres Agents
 
