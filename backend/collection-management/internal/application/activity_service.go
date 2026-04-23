@@ -66,11 +66,30 @@ func (s *ActivityService) RecordBookActivity(
 	stringMetadata["user_id"] = userID.String()
 	stringMetadata["book_id"] = bookID.String()
 
+	// Extract description from metadata
+	description := ""
+	if desc, ok := metadata["description"]; ok {
+		description = fmt.Sprintf("%v", desc)
+	}
+
+	// Set title based on activity type
+	title := ""
+	switch activityType {
+	case string(domain.ActivityBookAdded):
+		title = "Ajout d'un roman"
+	case string(domain.ActivityBookRemoved):
+		title = "Retrait d'un roman"
+	default:
+		title = "Activité livre"
+	}
+
 	activity := &domain.Activity{
-		ID:        uuid.New(),
-		Type:      domain.ActivityType(activityType),
-		Timestamp: time.Now(),
-		Metadata:  stringMetadata,
+		ID:          uuid.New(),
+		Type:        domain.ActivityType(activityType),
+		Title:       title,
+		Description: description,
+		Timestamp:   time.Now(),
+		Metadata:    stringMetadata,
 	}
 
 	return s.activityRepo.Create(ctx, activity)
