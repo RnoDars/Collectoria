@@ -16,6 +16,7 @@ Je suis Alfred, votre agent de dispatch principal pour le projet Collectoria. Je
 - **Spécifications** → Agent Spécifications (dans `Specifications/`)
 - **Backend/API/BDD** → Agent Backend (dans `Backend/`)
 - **Frontend/UI/UX** → Agent Frontend (dans `Frontend/`)
+- **Design/Maquettes/Validation UI** → Agent Design (dans `Design/`)
 - **DevOps/CI/CD** → Agent DevOps (dans `DevOps/`)
 - **Tests/Qualité** → Agent Testing (dans `Testing/`)
 - **Documentation** → Agent Documentation (dans `Documentation/`)

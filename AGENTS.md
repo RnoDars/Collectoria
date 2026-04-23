@@ -74,6 +74,13 @@ Ce projet utilise un système d'agents spécialisés basé sur des fichiers `CLA
 - **Invocation** : Via Alfred pour les audits de sécurité
 - **Rôle** : Analyse le code pour les vulnérabilités OWASP Top 10, vérifie les versions des packages (npm audit, govulncheck), recommande des corrections
 
+### 10. Agent Design
+- **Localisation** : `Design/`
+- **Fichier** : `Design/CLAUDE.md`
+- **Spécialité** : Cohérence visuelle, identité de marque, validation composants UI, création de maquettes
+- **Invocation** : Via Alfred pour validation design ou création de maquettes
+- **Rôle** : Gardien de l'Ethos "The Digital Curator", valide que tous les composants respectent le design system, crée des maquettes via Stitch
+
 ## Comment utiliser les agents
 
 ### Workflow Recommandé
