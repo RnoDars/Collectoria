@@ -278,4 +278,20 @@ Voir [restart-procedures.md](restart-procedures.md) pour solutions détaillées.
 
 ---
 
+---
+
+## Single Source of Truth
+
+**Ce fichier (DevOps/CLAUDE.md) est la référence unique pour** :
+- Règles opérationnelles (sg docker, docker exec, ports)
+- Credentials de développement
+- Ports standards
+- Procédures critiques
+
+**Autres fichiers doivent référencer ce document**, pas dupliquer l'information.
+
+**En cas de contradiction** : DevOps/CLAUDE.md fait autorité.
+
+---
+
 *Version refactorisée le 2026-04-23 - Documentation détaillée externalisée pour meilleure lisibilité*
