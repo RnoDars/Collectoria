@@ -95,6 +95,39 @@ service-name/
 - Tests end-to-end pour les flows complets
 - Mocks pour les dépendances externes (Kafka, autres services)
 
+---
+
+## Best Practices Émergentes (Collectoria)
+
+### Commits Atomiques et Réguliers
+
+**Principe** : Faire des commits petits et fréquents plutôt que d'attendre d'avoir beaucoup de changements.
+
+**Why** : Les petits commits atomiques sont plus faciles à réviser, à déboguer, et à revenir en arrière si nécessaire. Cela améliore la traçabilité et facilite la collaboration.
+
+**How to apply** :
+- Dès qu'une fonctionnalité ou correction est terminée et testée, créer un commit
+- Ne pas accumuler plusieurs changements non liés dans un seul commit
+- Chaque commit doit représenter une unité de changement logique et cohérente
+- Proposer de commiter régulièrement même pendant une session de travail
+- Messages de commit clairs décrivant le "pourquoi" du changement
+
+**Exemples concrets du projet** :
+```bash
+# ✅ Bon : Commits atomiques (session 22 avril JWT)
+git commit -m "feat(auth): Implement JWT service with comprehensive tests"
+git commit -m "feat(auth): Implement authentication middleware with context helpers"
+git commit -m "feat(auth): Implement login endpoint with mock authentication"
+git commit -m "refactor(handlers): Replace hardcoded userID with JWT context extraction"
+# 9 commits pour l'authentification JWT → facile à réviser, rollback granulaire possible
+
+# ❌ Mauvais : Un seul gros commit
+git commit -m "feat: Add JWT authentication"
+# Difficile à réviser, rollback partiel impossible
+```
+
+**Référence mémoire** : `feedback_commits_small_regular.md`
+
 ### API REST
 - Versioning dans l'URL (`/api/v1/...`)
 - Contrats OpenAPI 3.0 obligatoires
