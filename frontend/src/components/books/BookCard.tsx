@@ -52,21 +52,16 @@ export default function BookCard({ book, onToggle, isTogglingId }: BookCardProps
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
   }
 
-  // Card styles
+  // Card styles - same style for all books (no conditional based on ownership)
   const cardStyle: React.CSSProperties = {
-    background: book.isOwned
-      ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%)'
-      : 'var(--surface-container-lowest)',
+    background: 'var(--surface-container-lowest)',
     borderRadius: '12px',
     padding: '1.25rem',
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
-    boxShadow: book.isOwned
-      ? '0 4px 16px rgba(102, 126, 234, 0.12)'
-      : '0 4px 12px rgba(25, 28, 29, 0.06)',
+    boxShadow: '0 4px 12px rgba(25, 28, 29, 0.06)',
     transition: 'all 0.2s',
-    border: book.isOwned ? '1px solid rgba(102, 126, 234, 0.2)' : 'none',
     position: 'relative',
   }
 
@@ -80,11 +75,8 @@ export default function BookCard({ book, onToggle, isTogglingId }: BookCardProps
     letterSpacing: '0.04em',
     padding: '0.25rem 0.625rem',
     borderRadius: '8px',
-    background: book.isOwned
-      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-      : 'var(--surface-container-high)',
-    color: book.isOwned ? '#ffffff' : 'var(--on-surface-variant)',
-    boxShadow: book.isOwned ? '0 2px 8px rgba(102, 126, 234, 0.3)' : 'none',
+    background: 'var(--surface-container-high)',
+    color: 'var(--on-surface-variant)',
   }
 
   const titleStyle: React.CSSProperties = {
@@ -158,7 +150,7 @@ export default function BookCard({ book, onToggle, isTogglingId }: BookCardProps
             fontFamily: 'Inter, sans-serif',
             fontSize: '0.8125rem',
             fontWeight: '600',
-            color: book.isOwned ? '#667eea' : 'var(--on-surface-variant)',
+            color: 'var(--on-surface-variant)',
           }}
         >
           {book.isOwned ? 'Possédé' : 'Non possédé'}

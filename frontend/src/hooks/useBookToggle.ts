@@ -23,12 +23,20 @@ export function useBookToggle() {
         }
       )
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Failed to update book possession:', error)
-      toast.error('Erreur lors de la mise à jour du livre', {
-        duration: 4000,
-        position: 'bottom-right',
-      })
+
+      // More detailed error message
+      const errorMessage = error?.message || 'Erreur lors de la mise à jour du livre'
+      const isAuthError = error?.message?.includes('401') || error?.message?.includes('Unauthorized')
+
+      toast.error(
+        isAuthError ? 'Session expirée. Veuillez vous reconnecter.' : errorMessage,
+        {
+          duration: 4000,
+          position: 'bottom-right',
+        }
+      )
     },
   })
 
