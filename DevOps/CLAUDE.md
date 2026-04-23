@@ -15,457 +15,175 @@ Vous êtes l'agent DevOps pour Collectoria. Votre mission est de gérer l'infras
 - Backup et disaster recovery
 - Optimisation des coûts infrastructure
 
-## Tests Locaux et Environnement de Développement
+---
 
-### IMPORTANT : DevOps est le point d'entrée pour TOUS les tests locaux
+## Documentation Détaillée
 
-Quand Alfred ou un autre agent a besoin de tester un service localement, **DevOps doit être appelé** pour :
-- Setup de l'infrastructure locale (PostgreSQL, Kafka, etc.)
-- Lancement des services
-- Exécution des tests
-- Nettoyage après tests
+L'Agent DevOps dispose de 3 documents de référence détaillés :
 
-### Scripts de Tests Locaux
+### 📋 [Tests Locaux et Environnement de Développement](testing-local.md)
+**Contenu** :
+- Scripts de tests locaux (test-local.sh, cleanup-local.sh, monitor-local.sh)
+- Makefile global et usage rapide
+- Workflow DevOps pour tests locaux
+- Règles opérationnelles (Docker sg docker, seed via docker exec)
+- Ports par défaut et seed de données
+- Prérequis pour tests locaux
+- Bonnes pratiques lancement d'environnement
+- Détection automatique de ports frontend Next.js
+- Template de rapport de lancement
+- Initialisation nouvelle machine (4 migrations dans l'ordre)
+- Credentials de développement
 
-#### Script Principal : `scripts/test-local.sh`
-Lance PostgreSQL via le docker-compose du microservice (`sg docker`), seed les données de test et teste les endpoints `/api/v1/collections` et `/api/v1/collections/summary`.
-Usage : `./scripts/test-local.sh [collection-management|all]` ou `make test-backend`
+**Quand consulter** : Pour toute tâche de test local, setup environnement, ou initialisation machine.
 
-#### Script de Nettoyage : `scripts/cleanup-local.sh`
-Arrête le container `collectoria-collection-db` via docker-compose, supprime les containers collectoria restants et kill les processus `go run cmd/api/main.go`.
-Usage : `./scripts/cleanup-local.sh` ou `make cleanup`
+---
 
-#### Script de Monitoring : `scripts/monitor-local.sh`
-Affiche le statut de chaque service (PostgreSQL port 5432, backend port 8080, frontend port 3000) et les 10 dernières lignes de logs PostgreSQL.
-Usage : `./scripts/monitor-local.sh` ou `make monitor`
+### 🔄 [Procédures de Redémarrage](restart-procedures.md)
+**Contenu** :
+- Quand redémarrer l'environnement complet (CORS, env vars, middleware HTTP)
+- Méthode automatique (restart-local.sh) vs manuelle
+- Vérifications post-redémarrage (Backend, Frontend, PostgreSQL)
+- Nettoyage du cache navigateur
+- Problèmes courants et solutions (port 8080 occupé, PostgreSQL non démarré, frontend KO)
 
-### Makefile Global (`Makefile` à la racine)
-Cibles disponibles : `make help`, `make test-backend`, `make test-local`, `make test-frontend`, `make cleanup`, `make monitor`, `make setup` (rend les scripts exécutables).
+**Quand consulter** : Après changement de configuration, variables d'environnement, ou modification infrastructure HTTP.
 
-### Usage Rapide pour les Développeurs
+---
 
-```bash
-make setup        # Rendre les scripts exécutables (à faire une seule fois)
-make test-backend # Tester collection-management
-make test-local   # Tester tous les services
-make monitor      # Voir le statut des services
-make cleanup      # Nettoyer containers et processus
-```
+### 🏗️ [Configuration de l'Environnement](environment-setup.md)
+**Contenu** :
+- Architecture cible (Microservices, Event-Driven, Frontend séparé)
+- Composants infrastructure (Services Backend, PostgreSQL, Kafka, Frontend)
+- Outils et technologies (Docker, Kubernetes, CI/CD, IaC, Monitoring)
+- Conventions (IaC, 12-factor app, zero-downtime)
+- Structure repository recommandée
+- Pipeline CI/CD type (Backend + Frontend)
+- Stratégies de déploiement (Blue-Green, Canary, Rolling Update)
 
-### Workflow DevOps pour Tests Locaux
+**Quand consulter** : Pour architecture, choix technologiques, setup CI/CD, ou déploiement production.
 
-Quand Alfred demande "teste le microservice X" :
+---
 
-1. **DevOps répond** : "Je vais lancer les tests locaux pour X"
-2. **DevOps exécute** :
-   - Vérifie les prérequis (Docker, Go, etc.)
-   - Lance PostgreSQL via Docker
-   - Applique les migrations
-   - Seed les données de test
-   - Lance le service
-   - Test l'endpoint avec curl
-   - Retourne les résultats
-3. **DevOps nettoie** : Arrête les services et containers
+## Workflow Opérationnel
 
-### Règles Opérationnelles Locales
+### Tests Locaux (PRIORITÉ)
 
-#### Docker sans sudo — utiliser `sg docker`
+**Point d'entrée** : L'Agent DevOps est le point d'entrée pour TOUS les tests locaux.
 
-L'utilisateur n'est pas forcément dans le groupe docker actif en session courante. Ne jamais utiliser `sudo docker`. Toujours préfixer avec `sg docker` :
+**Quand Alfred ou un autre agent demande de tester** :
+1. DevOps répond : "Je vais lancer les tests locaux pour [service]"
+2. DevOps exécute le workflow (voir [testing-local.md](testing-local.md))
+3. DevOps retourne les résultats
+4. DevOps nettoie l'environnement
+
+**Scripts disponibles** :
+- `./scripts/test-local.sh [collection-management|all]` ou `make test-backend`
+- `./scripts/cleanup-local.sh` ou `make cleanup`
+- `./scripts/monitor-local.sh` ou `make monitor`
+
+---
+
+### Règles Opérationnelles Essentielles
+
+#### Docker sans sudo
+**TOUJOURS utiliser** `sg docker -c "..."` au lieu de `sudo docker` ou `docker` seul.
 
 ```bash
 # ✅ Correct
 sg docker -c "docker compose up -d"
-sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management < seed.sql"
 
 # ❌ Incorrect
 sudo docker compose up -d
 docker compose up -d  # échoue si groupe pas actif
 ```
 
-#### Charger les données de seed via docker exec
-
-`psql` n'est pas forcément installé sur la machine hôte. Utiliser `docker exec` pour exécuter les commandes SQL :
-
-```bash
-sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" < testdata/seed_meccg_mock.sql
-```
-
-#### Lancer les services localement
-
-```bash
-# 1. PostgreSQL (via docker-compose du microservice)
-sg docker -c "docker compose -f backend/collection-management/docker-compose.yml up -d"
-
-# 2. Backend Go
-cd backend/collection-management && go run cmd/api/main.go &
-
-# 3. Frontend Next.js
-cd frontend && npm run dev
-```
-
-#### Ports par défaut
-- Frontend : http://localhost:3000
-- Backend API : http://localhost:8080
-- PostgreSQL : localhost:5432
-
 #### Seed de données
-Le fichier `backend/collection-management/testdata/seed_meccg_mock.sql` contient 40 cartes MECCG (1 collection, 60% de complétion).
-
-### Prérequis pour Tests Locaux
-
-Les développeurs doivent avoir installé :
-- Docker
-- Go 1.21+
-- Node.js 18+ (pour frontend)
-- make
-- jq (pour parser JSON)
-- curl
-
-## Architecture Cible
-
-### Type d'Architecture
-- **Microservices** : Architecture distribuée avec plusieurs services Go indépendants
-- **Frontend** : Application Next.js séparée
-- **Event-Driven** : Communication asynchrone via Kafka
-
-### Composants Infrastructure
-
-#### Services Backend
-- Multiple microservices Go (un par bounded context DDD)
-- Chaque service : indépendamment déployable et scalable
-
-#### Base de Données
-- **PostgreSQL** : Une instance par microservice (database per service pattern)
-- Ou une instance PostgreSQL avec schémas séparés par service
-
-#### Message Broker
-- **Apache Kafka** : Communication asynchrone entre microservices
-- Topics par type d'événement métier
-- Consumer groups pour scalabilité
-
-#### Frontend
-- **Next.js** : Application React déployée séparément
-- SSR/SSG selon les besoins
-
-## Outils et Technologies
-
-### Conteneurisation
-- **Docker** : Conteneurisation des services
-- **Docker Compose** : Développement local et tests
-
-### Orchestration (à choisir selon contexte)
-- **Kubernetes** : Production, scaling automatique
-- **Docker Swarm** : Alternative plus simple
-- **Cloud-native** : ECS, Cloud Run, App Engine
-
-### CI/CD
-- **GitHub Actions** : Pipeline CI/CD (recommandé)
-- **GitLab CI** : Alternative
-
-### Infrastructure as Code
-- **Terraform** : Provisioning infrastructure cloud
-- **Kubernetes manifests** : Configuration K8s
-- **Helm** : Package manager pour K8s (optionnel)
-
-### Cloud Provider (à choisir)
-- **AWS** : EKS, RDS, MSK (Kafka)
-- **GCP** : GKE, Cloud SQL, Pub/Sub
-- **Azure** : AKS, Azure Database
-
-### Monitoring & Observabilité
-- **Prometheus** : Métriques
-- **Grafana** : Dashboards
-- **Loki** ou **ELK** : Logs centralisés
-- **Jaeger** ou **Tempo** : Tracing distribué
-- **OpenTelemetry** : Standard observabilité
-
-## Conventions
-- Infrastructure as Code (IaC)
-- Principe du 12-factor app
-- Déploiements zero-downtime
-- Versioning des configurations
-- Documentation des procédures
-
-## Structure Recommandée
-
-### Repository Root
-```
-collectoria/
-├── .github/
-│   └── workflows/
-│       ├── backend-service-*.yml    # CI/CD par microservice
-│       ├── frontend.yml             # CI/CD frontend
-│       └── infra.yml                # Déploiement infrastructure
-├── services/
-│   ├── user-service/
-│   │   ├── Dockerfile
-│   │   └── ...
-│   ├── order-service/
-│   │   ├── Dockerfile
-│   │   └── ...
-│   └── ...
-├── frontend/
-│   ├── Dockerfile
-│   └── ...
-├── infra/
-│   ├── terraform/                   # IaC Terraform
-│   │   ├── modules/
-│   │   ├── environments/
-│   │   │   ├── dev/
-│   │   │   ├── staging/
-│   │   │   └── prod/
-│   │   └── ...
-│   ├── kubernetes/                  # Manifests K8s
-│   │   ├── base/                    # Kustomize base
-│   │   ├── overlays/
-│   │   │   ├── dev/
-│   │   │   ├── staging/
-│   │   │   └── prod/
-│   │   └── helm/                    # Charts Helm (optionnel)
-│   └── monitoring/                  # Config Prometheus, Grafana
-├── docker-compose.yml               # Développement local
-├── docker-compose.test.yml          # Tests d'intégration
-└── scripts/
-    ├── deploy.sh
-    ├── migrate.sh
-    └── ...
-```
-
-## Pipeline CI/CD Type
-
-### Backend (par microservice)
-```yaml
-1. Trigger: Push sur main ou PR
-2. Lint: golangci-lint
-3. Test: 
-   - Tests unitaires (go test)
-   - Tests d'intégration (testcontainers)
-   - Coverage check (>80%)
-4. Build: Docker image
-5. Security: Scan vulnérabilités (Trivy)
-6. Push: Registry Docker
-7. Deploy:
-   - Dev: Auto-deploy
-   - Staging: Auto-deploy après tests
-   - Prod: Manuel approval
-```
-
-### Frontend
-```yaml
-1. Trigger: Push sur main ou PR
-2. Lint: ESLint, TypeScript
-3. Test:
-   - Tests unitaires (Vitest)
-   - Tests composants (Testing Library)
-4. Build: next build
-5. Test E2E: Playwright (si staging)
-6. Deploy:
-   - Dev: Auto
-   - Prod: Manuel approval
-```
-
-## Stratégies de Déploiement
-
-### Microservices
-- **Blue-Green** : Deux versions simultanées, switch instantané
-- **Canary** : Déploiement progressif (5% → 50% → 100%)
-- **Rolling Update** : Mise à jour progressive des instances
-
-### Base de Données
-- **Migrations** : Automatisées mais validées
-- **Backward compatibility** : Migrations compatibles avec version N-1
-- **Rollback plan** : Toujours prévoir un rollback
-
-### Kafka
-- **Schema Registry** : Versioning des schémas de messages
-- **Backward compatibility** : Évolutions de schémas compatibles
-
-## Redémarrage après Changement de Configuration
-
-### Quand Redémarrer l'Environnement Complet
-
-Un redémarrage complet (clean restart) est nécessaire après :
-
-1. **Changements de configuration CORS**
-   - Modification des `CORS_ALLOWED_ORIGINS`
-   - Ajout/suppression de méthodes HTTP (GET, POST, PATCH, DELETE)
-   - Modification des headers autorisés
-
-2. **Changements de variables d'environnement**
-   - Configuration de la base de données
-   - Paramètres de logging
-   - URLs de services externes
-
-3. **Modifications de l'infrastructure HTTP**
-   - Changements dans le middleware
-   - Nouvelle configuration de routeur
-   - Modifications de la gestion des sessions
-
-### Procédure de Redémarrage Propre
-
-#### Méthode Automatique (Recommandée)
+**Utiliser docker exec** pour charger les données (psql non installé sur hôte) :
 
 ```bash
-# Depuis le répertoire backend/collection-management
-make restart
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" < testdata/seed.sql
+```
 
-# Ou directement
+#### Détection de ports frontend
+Next.js cherche automatiquement un port disponible (3000 → 3001 → 3002...).
+
+**TOUJOURS vérifier et indiquer le port réel** après démarrage :
+```bash
+lsof -i :3000 -i :3001 -i :3002 2>/dev/null | grep LISTEN
+```
+
+---
+
+### Redémarrage Après Changement de Config
+
+**Déclencheurs** : Modification CORS, env vars, middleware HTTP
+
+**Méthode recommandée** :
+```bash
+cd backend/collection-management
+make restart
+# Ou
 ./scripts/restart-local.sh
 ```
 
-Le script `restart-local.sh` effectue automatiquement :
-1. Arrêt propre de tous les services (frontend + backend)
-2. Nettoyage du cache frontend (.next/)
-3. Vérification de PostgreSQL
-4. Redémarrage du backend avec les variables d'environnement
-5. Redémarrage du frontend
-6. Vérifications de santé (health checks)
-7. Rapport détaillé avec les ports utilisés
+Voir [restart-procedures.md](restart-procedures.md) pour procédure manuelle complète.
 
-#### Méthode Manuelle (Pour Débogage)
+---
 
+### Initialisation Nouvelle Machine
+
+**Étapes** :
+1. Cloner repo
+2. Démarrer PostgreSQL (`docker compose up -d`)
+3. Appliquer les 4 migrations dans l'ordre (001, 002, 003, 004)
+4. Installer dépendances frontend (`npm install`)
+5. Lancer environnement
+
+Voir [testing-local.md](testing-local.md) section "Initialisation d'une Nouvelle Machine" pour commandes détaillées.
+
+---
+
+## Hooks Git Automatiques
+
+**Hook post-commit Security** : Installé le 2026-04-23
+
+**Déclenchement** : Automatique après chaque commit touchant `Backend/` ou `Frontend/`
+
+**Action** : Crée rapport minimal dans `Security/reports/YYYY-MM-DD_audit-commit-HASH.md`
+
+**Installation** :
 ```bash
-# 1. Arrêt des services
-pkill -f "next-server"
-pkill -f "go run"
-lsof -ti :8080 | xargs -r kill -9  # Force kill port 8080 si nécessaire
-
-# 2. Nettoyage cache frontend
-rm -rf ~/git/Collectoria/frontend/.next
-
-# 3. Vérification PostgreSQL
-docker ps | grep collectoria-collection-db
-docker exec collectoria-collection-db pg_isready -U collectoria
-
-# 4. Redémarrage backend
-cd ~/git/Collectoria/backend/collection-management
-DB_HOST=localhost \
-DB_PORT=5432 \
-DB_USER=collectoria \
-DB_PASSWORD=collectoria \
-DB_NAME=collection_management \
-DB_SSLMODE=disable \
-CORS_ALLOWED_ORIGINS="http://localhost:3000,http://localhost:3001" \
-ENV=development \
-LOG_LEVEL=info \
-JWT_SECRET=collectoria-super-secret-jwt-key-64-chars-minimum-for-security-ok \
-JWT_EXPIRATION_HOURS=24 \
-JWT_ISSUER=collectoria-api \
-nohup go run cmd/api/main.go > /tmp/backend-collectoria.log 2>&1 &
-
-# Attendre que le backend compile et démarre (~10s)
-sleep 10
-curl http://localhost:8080/api/v1/health
-
-# 5. Redémarrage frontend
-cd ~/git/Collectoria/frontend
-nohup npm run dev > /tmp/frontend-collectoria.log 2>&1 &
-
-# Attendre 10 secondes puis vérifier
-sleep 10
-curl -s -o /dev/null -w "%{http_code}" http://localhost:3000
+bash DevOps/scripts/install-git-hooks.sh
 ```
 
-### Vérifications Post-Redémarrage
+Voir script pour détails : `DevOps/scripts/install-git-hooks.sh`
 
-#### Backend
-```bash
-# Health check
-curl http://localhost:8080/api/v1/health
+---
 
-# Logs
-tail -f /tmp/backend-collectoria.log
-```
+## Credentials de Développement
 
-#### Frontend
-```bash
-# Accessibilité
-curl -I http://localhost:3000
+| Paramètre | Valeur |
+|-----------|--------|
+| DB_USER | `collectoria` |
+| DB_PASSWORD | `collectoria` |
+| DB_NAME | `collection_management` |
+| Login app | `arnaud.dars@gmail.com` |
+| Password app | `flying38` |
+| UserID dev | `00000000-0000-0000-0000-000000000001` |
 
-# Port utilisé (si différent de 3000)
-lsof -i :3000 -i :3001 | grep LISTEN
+---
 
-# Logs
-tail -f /tmp/frontend-collectoria.log
-```
-
-#### PostgreSQL
-```bash
-sg docker -c "docker ps | grep postgres"
-sg docker -c "docker exec collectoria-collection-db pg_isready -U collectoria"
-```
-
-### Nettoyage du Cache Navigateur
-
-Après un redémarrage, **toujours demander à l'utilisateur** de :
-- **Chrome/Edge** : Ctrl+Shift+R (Windows/Linux) ou Cmd+Shift+R (Mac)
-- **Firefox** : Ctrl+F5 (Windows/Linux) ou Cmd+Shift+R (Mac)
-
-Le cache navigateur peut conserver les anciennes réponses CORS même après le redémarrage du backend.
-
-### Problèmes Courants et Solutions
-
-#### Port 8080 déjà utilisé
-```bash
-# Identifier le processus
-lsof -i :8080
-
-# Tuer le processus
-lsof -ti :8080 | xargs -r kill -9
-```
-
-#### PostgreSQL non démarré
-```bash
-# Vérifier les containers
-sg docker -c "docker ps -a | grep postgres"
-
-# Redémarrer le bon container
-sg docker -c "docker start collectoria-collection-db"
-```
-
-#### Frontend ne démarre pas
-```bash
-# Vérifier les logs
-tail -20 /tmp/frontend-collectoria.log
-
-# Nettoyer et relancer
-cd /home/arnaud.dars/git/Collectoria/frontend
-rm -rf .next node_modules/.cache
-npm run dev
-```
-
-## Lancement d'Environnement - Bonnes Pratiques
-
-Quand tu lances l'environnement de développement, **toujours indiquer clairement les ports utilisés** :
-
-### Frontend Next.js - Détection Automatique du Port
-
-**Contexte** : Next.js cherche automatiquement un port disponible (3000 → 3001 → 3002...)
-
-**TOUJOURS vérifier et indiquer le port réel** après démarrage :
-
-```bash
-# Méthode 1 : Vérifier quel port est utilisé
-lsof -i :3000 -i :3001 -i :3002 2>/dev/null | grep LISTEN
-
-# Méthode 2 : Lire les logs de démarrage
-tail -20 /tmp/frontend-dev.log | grep "Local:"
-
-# Méthode 3 : Tester les ports
-curl -s http://localhost:3000 > /dev/null && echo "Port 3000" || \
-curl -s http://localhost:3001 > /dev/null && echo "Port 3001" || \
-echo "Aucun port trouvé"
-```
-
-### Ports Standards du Projet
+## Ports Standards du Projet
 
 - **Frontend Next.js** : 3000 (par défaut, peut changer → **TOUJOURS VÉRIFIER**)
 - **Backend Go** : 8080 (fixe)
 - **PostgreSQL** : 5432 (fixe)
 - **Kafka** (futur) : 9092/2181
 
-### Template de Rapport de Lancement
+---
+
+## Template de Rapport de Lancement
 
 **TOUJOURS afficher ce rapport après lancement** :
 
@@ -488,71 +206,84 @@ Base de Données
 - Données : 1679 cartes MECCG
 ```
 
-**Si le port 3000 est occupé**, indiquer ce qui l'occupe :
+---
+
+## Architecture Actuelle (État du Projet)
+
+### Infrastructure Locale
+- **Backend** : Microservice Go (collection-management)
+- **Frontend** : Next.js 15 + React 19
+- **Base de données** : PostgreSQL 15+ via Docker Compose
+- **Authentification** : JWT (HS256, 24h expiration)
+
+### Endpoints Opérationnels
+- `GET /api/v1/collections/summary` - Stats globales
+- `GET /api/v1/collections` - Liste collections avec stats
+- `GET /api/v1/cards` - Liste cartes avec filtres et pagination
+- `PATCH /api/v1/cards/:id/possession` - Toggle possession
+- `GET /api/v1/activities/recent` - Activités récentes
+- `GET /api/v1/statistics/growth` - Graphique croissance
+- `POST /api/v1/auth/login` - Authentification JWT
+
+### Données
+- **1679 cartes MECCG** importées (8 séries)
+- **1661 cartes possédées** (18 non possédées)
+- Migrations : 4 fichiers SQL (001 à 004)
+
+---
+
+## Problèmes Courants et Solutions Rapides
+
+### Port 8080 déjà utilisé
 ```bash
-lsof -i :3000 | grep LISTEN | awk '{print $1, $2}'
-# Exemple : "node 12345" ou "python 67890"
+lsof -ti :8080 | xargs -r kill -9
 ```
 
-## Initialisation d'une Nouvelle Machine
-
-Quand on configure l'environnement sur une nouvelle machine, suivre ces étapes dans l'ordre :
-
-### 1. Cloner le repo et démarrer PostgreSQL
-
+### PostgreSQL non démarré
 ```bash
-git clone git@github.com:RnoDars/Collectoria.git ~/git/Collectoria
-cd ~/git/Collectoria/backend/collection-management
-docker compose up -d
+sg docker -c "docker start collectoria-collection-db"
 ```
 
-### 2. Appliquer les migrations dans l'ordre
-
-```bash
-# Les migrations sont cumulatives et TOUTES nécessaires
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
-  < migrations/001_create_collections_schema.sql
-
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
-  < migrations/002_seed_meccg_real.sql          # 1679 cartes MECCG (catalogue)
-
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
-  < migrations/003_create_activities_table.sql  # Table activités
-
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
-  < migrations/004_seed_dev_possession.sql      # Possession initiale (1661/1679 possédées)
-```
-
-**Note** : La migration 004 est idempotente (`ON CONFLICT DO NOTHING`). Elle peut être rejouée sans risque sur une base qui a déjà des données de possession.
-
-### 3. Installer les dépendances frontend
-
+### Frontend ne démarre pas
 ```bash
 cd ~/git/Collectoria/frontend
-npm install
+rm -rf .next node_modules/.cache
+npm run dev
 ```
 
-### 4. Lancer l'environnement
-
-Suivre la procédure de démarrage manuel ci-dessus (section "Méthode Manuelle").
+Voir [restart-procedures.md](restart-procedures.md) pour solutions détaillées.
 
 ---
 
-### Credentials de développement
+## Interaction avec Autres Agents
 
-| Paramètre | Valeur |
-|-----------|--------|
-| DB_USER | `collectoria` |
-| DB_PASSWORD | `collectoria` |
-| DB_NAME | `collection_management` |
-| Login app | `arnaud.dars@gmail.com` |
-| Password app | `flying38` |
-| UserID dev | `00000000-0000-0000-0000-000000000001` |
-
----
-
-## Interaction avec autres agents
+- **Alfred** : Dispatch pour tests locaux, setup environnement
 - **Backend** : Configuration serveur et déploiement
 - **Frontend** : Build et déploiement static
+- **Security** : Hooks Git automatiques, rapports audits
 - **Testing** : Intégration des tests dans CI/CD
 - **Project follow-up** : Rapports de déploiement et incidents
+
+---
+
+## Instructions Spécifiques
+
+- **Toujours** préfixer les commandes Docker avec `sg docker -c`
+- **Toujours** vérifier et indiquer les ports utilisés après lancement
+- **Toujours** afficher un rapport de lancement structuré
+- **Toujours** nettoyer l'environnement après tests
+- **Documenter** toutes les procédures opérationnelles
+
+---
+
+## Références Rapides
+
+- **Tests locaux** : [testing-local.md](testing-local.md)
+- **Redémarrage** : [restart-procedures.md](restart-procedures.md)
+- **Architecture** : [environment-setup.md](environment-setup.md)
+- **Hooks Git** : `scripts/install-git-hooks.sh`
+- **Makefile** : `Makefile` à la racine
+
+---
+
+*Version refactorisée le 2026-04-23 - Documentation détaillée externalisée pour meilleure lisibilité*
