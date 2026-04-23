@@ -27,6 +27,7 @@ type Server struct {
 	collectionService *application.CollectionService
 	catalogService    *application.CatalogService
 	cardService       *application.CardService
+	bookService       *application.BookService
 	activityService   *application.ActivityService
 	jwtService        *auth.JWTService
 	logger            zerolog.Logger
@@ -37,12 +38,13 @@ type Server struct {
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, activityService *application.ActivityService, jwtService *auth.JWTService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, rateLimitConfig config.RateLimitConfig, db *sqlx.DB) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, bookService *application.BookService, activityService *application.ActivityService, jwtService *auth.JWTService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, rateLimitConfig config.RateLimitConfig, db *sqlx.DB) *Server {
 	s := &Server{
 		router:            chi.NewRouter(),
 		collectionService: collectionService,
 		catalogService:    catalogService,
 		cardService:       cardService,
+		bookService:       bookService,
 		activityService:   activityService,
 		jwtService:        jwtService,
 		logger:            logger,
@@ -186,6 +188,10 @@ func (s *Server) setupRoutes() {
 				// Catalog routes
 				catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
 				r.Get("/cards", catalogHandler.GetCards)
+
+				// Book routes
+				bookHandler := handlers.NewBookHandler(s.bookService, s.logger)
+				r.Get("/books", bookHandler.GetBooks)
 			})
 
 			// Write routes (moderate rate limiting)
@@ -195,6 +201,10 @@ func (s *Server) setupRoutes() {
 				// Card possession routes
 				cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
 				r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
+
+				// Book possession routes
+				bookHandler := handlers.NewBookHandler(s.bookService, s.logger)
+				r.Patch("/books/{id}/possession", bookHandler.UpdateBookPossession)
 			})
 		})
 	})
