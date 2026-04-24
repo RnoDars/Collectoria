@@ -39,6 +39,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
 
   const collectionImages: Record<string, string> = {
     meccg: '/meccg-logo.png',
+    'royaumes-oublies': '/royaumes-oublies.png',
   }
 
   return (
