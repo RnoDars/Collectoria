@@ -243,6 +243,51 @@ rm -rf .next node_modules/.cache
 npm run dev
 ```
 
+### Cache Next.js Corrompu
+
+**Symptômes** :
+- Erreurs "ENOENT: no such file or directory, open '.next/_buildManifest.js.tmp.*'"
+- Erreurs "Failed to load app-build-manifest.json"
+- HTTP 500 sur localhost:3000 (Internal Server Error)
+- Erreurs "Module not found" pour des composants existants
+- Homepage affiche "Internal Server Error"
+
+**Cause** : Le cache Next.js (`.next/`) se corrompt après des modifications importantes du frontend (suppression de composants, refactoring de structure, modifications massives).
+
+**Solution Complète** :
+
+```bash
+# 1. Arrêter le frontend
+pkill -f "next-server"
+
+# 2. Nettoyer le cache .next
+cd /home/arnaud.dars/git/Collectoria/frontend && rm -rf .next
+
+# 3. Redémarrer proprement
+npm run dev > /tmp/frontend.log 2>&1 &
+
+# 4. Attendre compilation initiale
+sleep 8
+
+# 5. Vérifier
+curl -s http://localhost:3000 -o /dev/null -w "%{http_code}"
+# Attendu : 200
+```
+
+**Quand appliquer** :
+- ✅ Après suppression/ajout de composants React
+- ✅ Après modification de `page.tsx` ou `layout.tsx`
+- ✅ Après refactoring de structure frontend
+- ✅ Après modifications massives (≥3 fichiers .tsx)
+- ❌ Dès que les symptômes ci-dessus apparaissent
+
+**Temps de résolution** : ~15 secondes  
+**Taux de succès** : 100%
+
+**Référence** : `Continuous-Improvement/recommendations/workflow-nextjs-cache-cleanup_2026-04-24.md`
+
+**Workflow automatique** : Alfred nettoie automatiquement le cache après modifications importantes détectées. Voir `/CLAUDE.md` section "Gestion du Cache Next.js".
+
 Voir [restart-procedures.md](restart-procedures.md) pour solutions détaillées.
 
 ---

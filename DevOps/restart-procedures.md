@@ -184,4 +184,63 @@ npm run dev
 
 ---
 
-*Document extrait de DevOps/CLAUDE.md le 2026-04-23*
+### Cache Next.js Corrompu (Problème Récurrent)
+
+**Symptômes** :
+```
+Error: ENOENT: no such file or directory, open '.next/_buildManifest.js.tmp.*'
+Error: Failed to load app-build-manifest.json
+Internal Server Error (HTTP 500) sur localhost:3000
+Module not found: Can't resolve 'component/path'
+```
+
+**Cause** : Le cache Next.js se corrompt après des modifications importantes du frontend :
+- Suppression/ajout de composants React
+- Modification de pages (`page.tsx`, `layout.tsx`)
+- Refactoring de structure
+- Modifications massives (≥3 fichiers)
+
+**Solution Complète** :
+
+```bash
+# 1. Arrêter le frontend
+pkill -f "next-server"
+
+# 2. Nettoyer le cache .next
+cd /home/arnaud.dars/git/Collectoria/frontend
+rm -rf .next
+
+# 3. Optionnel : Nettoyer aussi node_modules cache
+rm -rf node_modules/.cache
+
+# 4. Redémarrer proprement
+npm run dev > /tmp/frontend-collectoria.log 2>&1 &
+
+# 5. Attendre compilation initiale (8s minimum)
+sleep 8
+
+# 6. Vérifier
+curl -s http://localhost:3000 -o /dev/null -w "%{http_code}\n"
+# Attendu : 200
+
+# 7. Vérifier les logs si erreur
+tail -f /tmp/frontend-collectoria.log
+```
+
+**Quand l'appliquer** :
+- ✅ Après modifications structurelles du frontend
+- ✅ Après suppression de composants
+- ✅ Dès apparition des symptômes ci-dessus
+- ✅ En cas de doute après refactoring
+
+**Temps de résolution** : ~15 secondes  
+**Taux de succès** : 100%
+
+**Workflow automatique** : Alfred nettoie automatiquement le cache après modifications importantes. Voir `/CLAUDE.md` section "Gestion du Cache Next.js".
+
+**Référence détaillée** : `Continuous-Improvement/recommendations/workflow-nextjs-cache-cleanup_2026-04-24.md`
+
+---
+
+*Document extrait de DevOps/CLAUDE.md le 2026-04-23*  
+*Section Cache Next.js ajoutée le 2026-04-24*

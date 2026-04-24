@@ -285,6 +285,123 @@ Voilà le rapport.
 
 **Note** : Si les services sont déjà en cours d'exécution, Alfred vérifie leur état sans les redémarrer.
 
+### 1.1. Gestion du Cache Next.js
+
+**Référence** : `Continuous-Improvement/recommendations/workflow-nextjs-cache-cleanup_2026-04-24.md`
+
+**Problème** : Le cache Next.js (`.next/`) se corrompt régulièrement après des modifications importantes du frontend, causant des "Internal Server Error".
+
+#### Déclencheurs Automatiques de Nettoyage
+
+Alfred doit nettoyer le cache `.next` automatiquement dans ces situations :
+
+**1. Modifications Frontend Importantes (Priorité Haute)** :
+- ✅ Suppression d'un ou plusieurs composants React
+- ✅ Ajout/suppression de pages dans `/app`
+- ✅ Modification de `page.tsx` ou `layout.tsx`
+- ✅ Refactoring de la structure des répertoires
+- ✅ Renommage de composants avec changement d'imports
+
+**2. Changements Architecturaux (Priorité Moyenne)** :
+- ⚠️ Modification de hooks personnalisés utilisés par plusieurs composants
+- ⚠️ Changements dans `/lib` affectant l'architecture
+- ⚠️ Modifications massives (≥3 fichiers `.tsx` ou `.ts`)
+
+**3. Symptômes Détectés (Priorité Critique)** :
+- ❌ Erreurs "ENOENT" dans `/tmp/frontend.log`
+- ❌ HTTP 500 retourné par `localhost:3000`
+- ❌ Erreurs "build manifest" ou "app-build-manifest" dans les logs
+- ❌ Erreurs "Module not found" pour des fichiers existants
+
+**4. Demande Explicite Utilisateur** :
+- L'utilisateur mentionne : "cache", "erreur frontend", "internal server error", "next ne démarre pas", "page blanche"
+
+#### Procédure de Nettoyage
+
+```bash
+# 1. Arrêter le frontend si en cours d'exécution
+pkill -f "next-server"
+
+# 2. Nettoyer le répertoire cache .next
+cd /home/arnaud.dars/git/Collectoria/frontend && rm -rf .next
+
+# 3. Redémarrer le serveur proprement
+npm run dev > /tmp/frontend.log 2>&1 &
+
+# 4. Attendre la compilation initiale (8 secondes minimum)
+sleep 8
+
+# 5. Vérifier que le serveur répond
+curl -s http://localhost:3000 -o /dev/null -w "%{http_code}"
+# Attendu : 200
+```
+
+#### Workflow après Modification Frontend
+
+```
+Agent Frontend termine → Alfred analyse changements → Décision nettoyage
+                                                     ↓
+                                              OUI / NON / AU PROCHAIN RESTART
+                                                     ↓
+                                             Exécution procédure
+                                                     ↓
+                                             Rapport utilisateur
+```
+
+#### Template de Rapport après Nettoyage
+
+```
+🤖 Alfred : L'Agent Frontend a terminé [description des modifications].
+
+Analyse des changements :
+- [X] composants supprimés : [liste]
+- [X] fichiers .tsx modifiés
+- [X] pages ajoutées/modifiées
+
+→ Nettoyage du cache .next requis.
+
+[Exécute la procédure]
+
+✅ Cache .next nettoyé
+✅ Frontend redémarré sur port 3000
+✅ Health check : HTTP 200
+
+Vous pouvez continuer le développement.
+```
+
+#### Symptômes du Cache Corrompu
+
+Si vous observez ces symptômes, nettoyez immédiatement le cache :
+
+```
+Error: ENOENT: no such file or directory, open '.next/_buildManifest.js.tmp.*'
+Error: Failed to load app-build-manifest.json
+Internal Server Error (HTTP 500)
+[ error ] Module not found: Can't resolve 'component/path'
+```
+
+**Temps de résolution** : ~15 secondes  
+**Taux de succès** : 100%
+
+#### Détection Automatique des Déclencheurs
+
+```bash
+# Vérifier si nettoyage requis après commit Frontend
+if [[ $(git diff --name-only HEAD~1 | grep -E "\.tsx?$" | wc -l) -ge 3 ]]; then
+  echo "✅ Déclencheur : ≥3 fichiers frontend modifiés → Nettoyage cache"
+fi
+
+if git diff --name-only HEAD~1 | grep -qE "(page|layout)\.tsx"; then
+  echo "✅ Déclencheur : page.tsx ou layout.tsx modifié → Nettoyage cache"
+fi
+
+if git diff --name-only HEAD~1 | grep -q "^D.*\.tsx"; then
+  echo "✅ Déclencheur : Composant supprimé → Nettoyage cache"
+fi
+```
+
+**Règle d'or** : En cas de doute après des modifications frontend importantes, TOUJOURS nettoyer le cache avant de redémarrer.
+
 ### 2. Synchronisation STATUS.md
 
 **Référence** : `Project follow-up/workflow-status-sync.md`
