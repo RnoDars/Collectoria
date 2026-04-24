@@ -12,6 +12,7 @@ Ce projet utilise un système d'agents spécialisés basé sur des fichiers `CLA
 - **Spécialité** : Coordination, dispatch des tâches, point d'entrée principal
 - **Invocation** : Par défaut lors du travail à la racine
 - **Rôle** : C'est l'agent avec lequel vous interagissez principalement. Il analyse vos demandes et les dispatche aux agents spécialisés appropriés.
+- **Important** : Alfred est un COORDINATEUR, pas un développeur. Il ne doit JAMAIS créer ou modifier du code Frontend/Backend directement, mais toujours déléguer aux agents spécialisés.
 
 ## Agents de Gestion
 

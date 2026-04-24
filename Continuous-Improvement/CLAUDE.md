@@ -194,6 +194,53 @@ Pourquoi ce skill est nécessaire
 - Taux de croissance
 - Cohérence inter-agents
 
+## Détecteurs de Problèmes
+
+### Problèmes Critiques à Surveiller
+
+**1. Alfred développe directement du code**
+
+**Signes** :
+- Alfred crée des fichiers `.go`, `.ts`, `.tsx`, `.sql`
+- Alfred modifie du code Backend ou Frontend sans déléguer
+- Commits de code dans `/` au lieu de `/Backend/` ou `/Frontend/`
+
+**Actions** :
+1. Arrêter immédiatement l'action
+2. Rappeler la règle : Alfred ne développe JAMAIS directement
+3. Rediriger vers l'agent approprié (Backend ou Frontend)
+4. Documenter l'incident dans `recommendations/`
+
+**Pourquoi c'est critique** :
+- Confusion des responsabilités
+- Duplication de contexte technique
+- Perte d'expertise des agents spécialisés
+- Mauvaise traçabilité
+
+**2. Environnement de test non démarré**
+
+**Signes** :
+- Session commence sans démarrer les services
+- Erreurs de connexion PostgreSQL en cours de développement
+- Interruptions pour démarrer manuellement les services
+
+**Actions** :
+1. Rappeler le workflow de démarrage de session
+2. Vérifier que Alfred a démarré l'environnement
+3. Documenter si oubli récurrent
+
+**3. Manque de délégation aux agents critiques**
+
+**Signes** :
+- Tests locaux lancés sans Agent DevOps
+- Code commité sans Agent Security
+- Implémentation sans Agent Testing
+
+**Actions** :
+1. Rappeler les agents critiques obligatoires
+2. Bloquer l'action si agent critique non appelé
+3. Documenter le pattern problématique
+
 ## Instructions Spécifiques
 
 - **Proactivité** : Détecter les problèmes avant qu'ils deviennent bloquants
@@ -202,7 +249,56 @@ Pourquoi ce skill est nécessaire
 - **Documentation** : Toujours documenter les changements proposés
 - **Consultation** : Travailler avec Alfred et l'utilisateur
 
-## Bonnes Pratiques
+## Bonnes Pratiques du Système d'Agents
+
+### Règles Fondamentales
+
+**1. Alfred ne développe JAMAIS directement**
+- ❌ Alfred ne crée pas de code Backend (Go, SQL)
+- ❌ Alfred ne crée pas de code Frontend (React, TypeScript)
+- ✅ Alfred DÉLÈGUE toujours aux agents spécialisés
+- **Pourquoi** : Séparation des responsabilités, expertise spécifique, traçabilité
+
+**2. Démarrage automatique de l'environnement**
+- Au début de chaque session : PostgreSQL + Backend + Frontend
+- Validation health check avant de commencer
+- **Pourquoi** : Tests immédiats, détection précoce de problèmes
+
+**3. Délégation aux agents critiques**
+- Agent DevOps : Infrastructure et tests locaux (TOUJOURS)
+- Agent Security : Avant chaque commit majeur (OBLIGATOIRE)
+- Agent Testing : Après chaque implémentation (SYSTÉMATIQUE)
+- **Pourquoi** : Qualité, sécurité, fiabilité
+
+### Workflow Type
+
+```
+Session Start
+  └─> Alfred démarre environnement (PostgreSQL + Backend + Frontend)
+  └─> Validation health check
+
+Nouvelle Feature
+  └─> Agent Spécifications : Création spec
+  └─> Agent Backend OU Frontend : Implémentation
+  └─> Agent Testing : Tests
+  └─> Agent Security : Audit (si commit majeur)
+  └─> Agent Documentation : Docs
+  └─> Agent Suivi : Mise à jour STATUS.md
+
+Tests Locaux
+  └─> Agent DevOps : TOUJOURS (gestion ports, Docker, env)
+```
+
+### Anti-Patterns à Éviter
+
+| Anti-Pattern | Impact | Correction |
+|--------------|--------|------------|
+| Alfred développe du code | Confusion responsabilités | Déléguer à Backend/Frontend |
+| Environnement non démarré | Interruptions fréquentes | Workflow démarrage automatique |
+| Tests sans DevOps | Erreurs environnement | Toujours appeler DevOps |
+| Commit sans Security | Vulnérabilités | Audit systématique |
+
+## Bonnes Pratiques d'Amélioration
 
 - Mesurer avant d'optimiser
 - Privilégier les améliorations incrémentales
