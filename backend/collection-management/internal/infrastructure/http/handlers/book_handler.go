@@ -86,10 +86,10 @@ func (h *BookHandler) GetBooks(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if l := q.Get("limit"); l != "" {
-		if v, err := strconv.Atoi(l); err == nil && v > 0 && v <= 100 {
+		if v, err := strconv.Atoi(l); err == nil && v > 0 && v <= 500 {
 			limit = v
 		} else {
-			writeJSONError(w, h.logger, http.StatusBadRequest, "INVALID_PARAM", "Invalid limit parameter (must be 1-100)")
+			writeJSONError(w, h.logger, http.StatusBadRequest, "INVALID_PARAM", "Invalid limit parameter (must be 1-500)")
 			return
 		}
 	}
