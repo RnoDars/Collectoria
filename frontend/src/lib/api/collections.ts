@@ -64,21 +64,6 @@ export interface ActivityFeed {
   hasMore: boolean
 }
 
-export interface GrowthDataPoint {
-  period: string
-  label: string
-  cardsAdded: number
-  totalCards: number
-}
-
-export interface GrowthStats {
-  period: string
-  granularity: string
-  dataPoints: GrowthDataPoint[]
-  growthRatePercentage: number
-  trend: 'increasing' | 'decreasing' | 'stable'
-}
-
 export async function fetchRecentActivities(limit = 10): Promise<ActivityFeed> {
   const response = await apiClient.get(`/api/v1/activities/recent?limit=${limit}`)
   if (!response.ok) throw new Error(`Failed to fetch activities: ${response.statusText}`)
@@ -97,26 +82,6 @@ export async function fetchRecentActivities(limit = 10): Promise<ActivityFeed> {
     })),
     totalCount: data.total_count,
     hasMore: data.has_more,
-  }
-}
-
-export async function fetchGrowthStats(period = '6m', granularity = 'month'): Promise<GrowthStats> {
-  const response = await apiClient.get(
-    `/api/v1/statistics/growth?period=${period}&granularity=${granularity}`
-  )
-  if (!response.ok) throw new Error(`Failed to fetch growth stats: ${response.statusText}`)
-  const data = await response.json()
-  return {
-    period: data.period,
-    granularity: data.granularity,
-    dataPoints: data.data_points.map((dp: any) => ({
-      period: dp.period,
-      label: dp.label,
-      cardsAdded: dp.cards_added,
-      totalCards: dp.total_cards,
-    })),
-    growthRatePercentage: data.growth_rate_percentage,
-    trend: data.trend,
   }
 }
 

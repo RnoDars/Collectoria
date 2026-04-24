@@ -179,12 +179,31 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
         alignItems: 'center',
       }}>
         <div style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '0.875rem',
-          fontWeight: '600',
-          color: '#191c1d',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
         }}>
-          {collection.totalCardsOwned} / {collection.totalCardsAvailable} {collection.slug === 'royaumes-oublies' ? 'livres' : 'cards'}
+          <div style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            color: '#191c1d',
+          }}>
+            {collection.totalCardsOwned} / {collection.totalCardsAvailable} {collection.slug === 'royaumes-oublies' ? 'livres' : 'cards'}
+          </div>
+          {(collection.totalCardsAvailable - collection.totalCardsOwned) > 0 && (
+            <div style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '0.75rem',
+              color: '#43474e',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}>
+              <span style={{ fontSize: '0.875rem' }}>🎯</span>
+              <span><strong style={{ color: '#191c1d' }}>{collection.totalCardsAvailable - collection.totalCardsOwned}</strong> to go</span>
+            </div>
+          )}
         </div>
 
         <div style={{
