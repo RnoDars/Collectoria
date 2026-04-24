@@ -1,9 +1,11 @@
 # Collection Books - Problèmes Restants
 
 **Date** : 2026-04-23  
+**Date résolution** : 2026-04-24  
 **Priorité** : MOYENNE  
 **Effort estimé** : 1-2h  
-**Status** : TODO
+**Temps réel** : 1h  
+**Status** : ✅ COMPLÉTÉ
 
 ---
 
@@ -20,9 +22,12 @@ Cependant, 2 problèmes restants ont été identifiés en fin de session.
 
 ---
 
-## Problème 1 : Activités Books sans titre/description
+## ✅ Problème 1 : Activités Books sans titre/description — RÉSOLU
 
-### Symptôme
+**Commits** : 6ae5923  
+**Temps** : 30 min  
+
+### Symptôme (avant fix)
 
 Dans la section "Activité récente" de la homepage, les activités de books s'affichent **sans nom** :
 - Un événement apparaît
@@ -140,9 +145,12 @@ _, err := r.db.ExecContext(ctx, query,
 
 ---
 
-## Problème 2 : Pas de modale de confirmation au toggle
+## ✅ Problème 2 : Pas de modale de confirmation au toggle — RÉSOLU
 
-### Symptôme
+**Commits** : b2fd85f  
+**Temps** : 30 min  
+
+### Symptôme (avant fix)
 
 Quand l'utilisateur clique sur le toggle de possession d'un livre :
 - Le toggle bascule immédiatement
@@ -371,3 +379,62 @@ Si le temps manque, utiliser Option 2 (`window.confirm()`) comme solution tempor
 **Date** : 2026-04-23  
 **Session** : Implémentation collection Books  
 **Status** : Documenté, prêt pour prochaine session
+
+---
+
+## 🎉 Résolution Complète (2026-04-24)
+
+### Résumé
+
+Les 2 problèmes identifiés le 23 avril ont été résolus en 1h le 24 avril :
+
+1. **Activités Books sans titre/description** (30 min)
+   - Migration 006 : Ajout colonnes `title` et `description` à la table `activities`
+   - Repository mis à jour pour persister ces champs à l'INSERT
+   - SELECT mis à jour pour récupérer depuis la BDD
+   - Fallback pour anciennes activités (reconstruction depuis metadata)
+   - Support card ET book entity types
+
+2. **Modale de confirmation toggle** (30 min)
+   - Composant `BookConfirmModal` créé (228 lignes)
+   - Design Ethos V1 respecté (Tonal Layering, Dual-Type System, gradient violet)
+   - Intégration dans `/books` page avec state management
+   - Accessibilité : Escape key, focus trap, backdrop click
+   - Animations fluides (fade + scale)
+
+### Validation
+
+**Backend** :
+- Migration appliquée avec succès
+- Toggle book crée activité avec title "Ajout d'un roman" et description "Ajout du roman: Valombre"
+- API `/api/v1/activities/recent` retourne title et description correctement
+
+**Frontend** :
+- npm run build : ✅ Compiled successfully
+- TypeScript validation passed
+- All pages generated
+
+### Commits
+
+- `6ae5923` — Backend: Persist activity title/description in database
+- `b2fd85f` — Frontend: Add confirmation modal for book possession toggle
+- `e25817c` — Chore: Add security audit reports
+
+### Tests Effectués
+
+1. ✅ Migration SQL appliquée sans erreur
+2. ✅ Toggle book crée activité avec title/description en BDD
+3. ✅ API `/api/v1/activities/recent` retourne title et description
+4. ✅ Build TypeScript passe sans erreur
+5. ✅ Modale affiche correctement titre et auteur du livre
+
+### Prochaines Étapes
+
+Collection Books est maintenant **100% fonctionnelle** ! 🚀
+
+---
+
+**Résolu par** : Alfred  
+**Date** : 2026-04-24  
+**Temps total** : 1h  
+**Commits** : 3
