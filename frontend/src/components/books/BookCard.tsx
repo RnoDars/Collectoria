@@ -4,7 +4,7 @@ import { Book } from '@/lib/api/books'
 
 interface BookCardProps {
   book: Book
-  onToggle: (bookId: string, isOwned: boolean) => void
+  onToggle: (book: Book) => void
   isTogglingId?: string
 }
 
@@ -157,7 +157,7 @@ export default function BookCard({ book, onToggle, isTogglingId }: BookCardProps
         </span>
 
         <button
-          onClick={() => !isToggling && onToggle(book.id, !book.isOwned)}
+          onClick={() => !isToggling && onToggle(book)}
           disabled={isToggling}
           style={toggleStyle}
           aria-label={book.isOwned ? 'Retirer de la collection' : 'Ajouter à la collection'}

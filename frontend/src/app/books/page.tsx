@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useBooks } from '@/hooks/useBooks'
 import { useBookToggle } from '@/hooks/useBookToggle'
-import { BookFilters } from '@/lib/api/books'
+import { BookFilters, Book } from '@/lib/api/books'
 import Link from 'next/link'
 import BookCard from '@/components/books/BookCard'
+import BookConfirmModal from '@/components/books/BookConfirmModal'
 
 // ─── Skeleton Loading ─────────────────────────────────────────────────────────
 
@@ -53,6 +54,11 @@ export default function BooksPage() {
   const [page, setPage] = useState(1)
   const [togglingBookId, setTogglingBookId] = useState<string>()
 
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [pendingBook, setPendingBook] = useState<Book | null>(null)
+  const [pendingState, setPendingState] = useState<boolean>(false)
+
   // Debounce search input
   const [debouncedSearch, setDebouncedSearch] = useState('')
   useEffect(() => {
@@ -86,12 +92,32 @@ export default function BooksPage() {
     setPage(1)
   }, [debouncedSearch, author, bookType, series, owned])
 
-  const handleToggle = (bookId: string, isOwned: boolean) => {
-    setTogglingBookId(bookId)
+  const handleToggleClick = (book: Book) => {
+    // Open modal for confirmation
+    setPendingBook(book)
+    setPendingState(!book.isOwned)
+    setIsModalOpen(true)
+  }
+
+  const handleConfirmToggle = () => {
+    if (!pendingBook) return
+
+    setTogglingBookId(pendingBook.id)
     toggleBook(
-      { bookId, isOwned },
-      { onSettled: () => setTogglingBookId(undefined) }
+      { bookId: pendingBook.id, isOwned: pendingState },
+      {
+        onSettled: () => {
+          setTogglingBookId(undefined)
+          setIsModalOpen(false)
+          setPendingBook(null)
+        }
+      }
     )
+  }
+
+  const handleCancelToggle = () => {
+    setIsModalOpen(false)
+    setPendingBook(null)
   }
 
   // ─── Styles ───────────────────────────────────────────────────────────────
@@ -427,7 +453,7 @@ export default function BooksPage() {
                     <BookCard
                       key={book.id}
                       book={book}
-                      onToggle={handleToggle}
+                      onToggle={handleToggleClick}
                       isTogglingId={togglingBookId}
                     />
                   ))}
@@ -462,6 +488,17 @@ export default function BooksPage() {
           </>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      {pendingBook && (
+        <BookConfirmModal
+          book={pendingBook}
+          newState={pendingState}
+          isOpen={isModalOpen}
+          onConfirm={handleConfirmToggle}
+          onCancel={handleCancelToggle}
+        />
+      )}
     </div>
   )
 }
