@@ -51,7 +51,6 @@ export default function BooksPage() {
   const [bookType, setBookType] = useState('')
   const [series, setSeries] = useState<SeriesFilter>('all')
   const [owned, setOwned] = useState<OwnedFilter>('all')
-  const [page, setPage] = useState(1)
   const [togglingBookId, setTogglingBookId] = useState<string>()
 
   // Modal state
@@ -67,8 +66,7 @@ export default function BooksPage() {
   }, [search])
 
   const filters: BookFilters = {
-    page,
-    limit: 50,
+    limit: 500,
     ...(debouncedSearch && { search: debouncedSearch }),
     ...(author && { author }),
     ...(bookType && { bookType }),
@@ -86,11 +84,6 @@ export default function BooksPage() {
   const totalBooks = pagination.total
   const ownedBooks = books.filter((b) => b.isOwned).length
   const totalOwned = data?.pagination.total ?? 0 // This would need a separate query for accurate count
-
-  // Reset page when filters change
-  useEffect(() => {
-    setPage(1)
-  }, [debouncedSearch, author, bookType, series, owned])
 
   const handleToggleClick = (book: Book) => {
     // Open modal for confirmation
@@ -230,34 +223,6 @@ export default function BooksPage() {
     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
     gap: '1.25rem',
     marginBottom: '2rem',
-  }
-
-  const paginationStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.75rem',
-    marginTop: '2rem',
-  }
-
-  const paginationButtonStyle = (disabled: boolean): React.CSSProperties => ({
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    padding: '0.625rem 1.25rem',
-    borderRadius: '10px',
-    border: 'none',
-    background: disabled ? 'var(--surface-container-high)' : '#667eea',
-    color: disabled ? 'var(--on-surface-variant)' : '#ffffff',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.5 : 1,
-    transition: 'all 0.2s',
-  })
-
-  const pageInfoStyle: React.CSSProperties = {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '0.875rem',
-    color: 'var(--on-surface-variant)',
   }
 
   // ─── Render ───────────────────────────────────────────────────────────────
@@ -458,33 +423,6 @@ export default function BooksPage() {
                     />
                   ))}
             </div>
-
-            {/* Pagination */}
-            {!isLoading && books.length > 0 && (
-              <div style={paginationStyle}>
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  style={paginationButtonStyle(page === 1)}
-                  aria-label="Page précédente"
-                >
-                  ← Précédent
-                </button>
-
-                <span style={pageInfoStyle}>
-                  Page {pagination.page} sur {pagination.totalPages}
-                </span>
-
-                <button
-                  onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-                  disabled={page >= pagination.totalPages}
-                  style={paginationButtonStyle(page >= pagination.totalPages)}
-                  aria-label="Page suivante"
-                >
-                  Suivant →
-                </button>
-              </div>
-            )}
           </>
         )}
       </div>
