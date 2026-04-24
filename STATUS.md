@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-24 - Collection Books Complétée  
-**Focus du jour** : Collection Books finalisée (activités + modale)  
-**Prochaine session** : Collection Romans "Royaumes oubliés" (6-8h)
+**Date** : 2026-04-24 - Collection Books + MECCG French Names Cleanup  
+**Focus du jour** : Collection Books finalisée + Nettoyage complet des noms français MECCG  
+**Prochaine session** : Nouvelles fonctionnalités ou corrections
 
 ---
 
@@ -459,6 +459,67 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 - 9da48ea : Documentation
 
 **Résultat** : Collection Books 100% fonctionnelle avec activités riches et UX complète
+
+### 🧹 MECCG French Names Cleanup (24 avril - après-midi) ⭐ NOUVEAU
+**Nettoyage complet des noms français des cartes MECCG en 4 phases**
+
+#### Phase 1 : Modification du Schéma
+- ✅ **Migration 007** : `007_allow_null_name_fr.sql`
+  - Autoriser NULL pour `name_fr` (certaines extensions non traduites)
+  - Rationale : Balrog, White Hand, Promo n'ont jamais été traduits officiellement
+
+#### Phase 2 : Nettoyage Automatisé
+- ✅ **Script Python** : `cleanup_meccg_french_names.py` (134 lignes)
+  - Source officielle : Council of Elrond JSON database (GitHub)
+  - Télécharge et parse 1,679 cartes de référence
+  - Compare avec notre base de données
+  - Génère rapport détaillé des différences
+- ✅ **Résultats automatiques** :
+  - 578 cartes auto-corrigées (34.4%)
+  - 1,616 cartes appariées avec succès (96.2%)
+  - 63 cartes non trouvées (3.8%) → correction manuelle requise
+
+#### Phase 3 : Corrections Manuelles
+- ✅ **Export CSV complet** : `meccg_all_cards_review.csv` (1,679 cartes)
+  - Colonnes : id, current_name_en, current_name_fr, series, has_issue, issue_type, new_name_en, new_name_fr, notes
+  - 385 cartes avec problèmes identifiés (YES)
+  - 1,294 cartes OK (NO)
+- ✅ **Types de problèmes détectés** :
+  - `FRENCH_CHARS_IN_EN` : Accents/cédilles dans name_en (98 cartes)
+  - `NO_FR_TRANSLATION_EXPECTED` : Extensions non traduites (normal)
+  - `IDENTICAL_NAMES_CHECK` : Noms identiques EN/FR à vérifier
+- ✅ **Corrections manuelles** : 385 cartes corrigées par l'utilisateur
+  - Exemples :
+    * "Creature of and Older World" → "Créature d'un monde plus ancien"
+    * "Durin's Folk" → "Le peuple de Durin"
+    * "Dwarven Ring of Thrár's Tribe" → "Anneau Nain de la tribu de Thrár"
+
+#### Phase 4 : Application des Corrections
+- ✅ **Migration 008** : `008_update_meccg_corrected_names.sql` (2,715 lignes)
+  - Générée par `generate_corrections_migration.py`
+  - 385 UPDATE statements
+  - Groupées par type de problème pour lisibilité
+- ✅ **Application réussie** : Toutes les corrections appliquées
+
+#### Résultat Final
+- ✅ **1,679 cartes MECCG** avec noms corrects
+- ✅ **100% des cartes** ont un nom anglais (name_en)
+- ✅ **100% des cartes** ont un nom français (name_fr) ou NULL si non traduit
+- ✅ **88 cartes** gardent des accents dans name_en (noms propres Tolkien : Bûrat, Mîonid, etc.)
+- ✅ **296 cartes** avec noms identiques EN/FR (noms propres : Moria, Bree, Sauron, etc.)
+- ✅ **0 cartes** avec name_fr NULL (toutes ont au moins un nom)
+
+#### Fichiers Livrés
+1. `migrations/007_allow_null_name_fr.sql` - Modification schéma
+2. `migrations/008_update_meccg_corrected_names.sql` - 385 corrections
+3. `data/cleanup_meccg_french_names.py` - Script nettoyage automatique
+4. `data/generate_corrections_migration.py` - Générateur de migration
+5. `data/CLEANUP_SUMMARY.md` - Résumé complet de l'opération
+6. `data/meccg_all_cards_review.csv` - Export complet avec corrections
+
+**Commit** : 3e5b6e6 "feat(data): Complete MECCG French names cleanup with manual corrections"
+
+**Impact** : Les utilisateurs voient maintenant les vrais noms français officiels des cartes MECCG !
 
 ### 🔒 Sécurité (21 avril) ⭐ NOUVEAU
 **Audit complet et Phase 1 Quick Wins implémentés**
@@ -1132,4 +1193,4 @@ Collectoria/
 
 ---
 
-**Prochaine session** : Collection Romans "Royaumes oubliés" (6-8h) 🎯
+**Prochaine session** : Nouvelles fonctionnalités (détail carte, wishlist, import/export) 🎯
