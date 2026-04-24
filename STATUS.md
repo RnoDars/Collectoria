@@ -1,7 +1,7 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-23 - Security Phase 2 Complétée  
-**Focus du jour** : Rate Limiting + SQL Injection Audit, Production-ready baseline atteinte (9.0/10)  
+**Date** : 2026-04-24 - Collection Books Complétée  
+**Focus du jour** : Collection Books finalisée (activités + modale)  
 **Prochaine session** : Collection Romans "Royaumes oubliés" (6-8h)
 
 ---
@@ -426,6 +426,39 @@ curl http://localhost:8080/api/v1/collections/summary | jq
   - Tests de responsive design
 - ✅ **Tous les tests passent** : 43/43 ✅
 - ✅ **Commit** : 603d49b "test: setup Vitest and create frontend component tests"
+
+### 📚 Collection Books - Phase Finale (24 avril) ⭐ NOUVEAU
+**Collection Books 100% fonctionnelle**
+
+**Problème 1 - Activités sans titre (30 min)** :
+- ✅ Migration 006 : Ajout colonnes `title` et `description` à la table `activities`
+- ✅ Repository PostgreSQL mis à jour pour persister ces champs
+- ✅ Support card ET book entity types
+- ✅ Fallback pour anciennes activités (rétrocompatibilité)
+- ✅ Backend testé : activités créées avec title/description
+- ✅ API retourne title et description correctement
+
+**Problème 2 - Modale de confirmation (30 min)** :
+- ✅ Composant `BookConfirmModal` créé (228 lignes)
+- ✅ Design Ethos V1 respecté (Tonal Layering, gradient violet)
+- ✅ Accessibilité : Escape, focus trap, backdrop click
+- ✅ Animations fluides (fade + scale)
+- ✅ Affichage titre et auteur du livre
+
+**Tests validés** :
+- ✅ Migration SQL appliquée sans erreur
+- ✅ Toggle book crée activité avec title/description en BDD
+- ✅ API retourne title et description correctement
+- ✅ Build TypeScript passe
+- ✅ Modale affiche titre et auteur
+
+**Commits** :
+- 6ae5923 : Backend fix activities (migration + repository)
+- b2fd85f : Frontend modal (BookConfirmModal)
+- e25817c : Security reports
+- 9da48ea : Documentation
+
+**Résultat** : Collection Books 100% fonctionnelle avec activités riches et UX complète
 
 ### 🔒 Sécurité (21 avril) ⭐ NOUVEAU
 **Audit complet et Phase 1 Quick Wins implémentés**
@@ -879,11 +912,11 @@ Collectoria/
 
 ---
 
-## 📌 Métriques du Projet (2026-04-23)
+## 📌 Métriques du Projet (2026-04-24)
 
 ### Documentation
-- **~20,000+ lignes** de documentation technique (+2,000 lignes le 23/04)
-- **Commits Git** : 73 au total (3 nouveaux le 23/04)
+- **~20,000+ lignes** de documentation technique
+- **Commits Git** : 77 au total (4 nouveaux le 24/04)
 
 ### Code
 - **Backend** : ~65 fichiers (~10,500 lignes de Go)
@@ -956,7 +989,7 @@ Collectoria/
 - **Vulnérabilité CRITICAL résolue** : Authentification manquante
 - **Application maintenant sécurisée** : Authentification JWT fonctionnelle end-to-end
 
-### Productivité du 23 avril 2026 ⭐ NOUVEAU
+### Productivité du 23 avril 2026 ⭐
 - **3 commits** pushés (3f30dd1, 587abef, 7a8a71c)
 - **~2,000 lignes** de code/tests/documentation ajoutées
 - **114 nouveaux tests** créés (9 rate limiting + 105 SQL injection)
@@ -972,6 +1005,15 @@ Collectoria/
 - **Score sécurité** : 8.0/10 → 9.0/10 (+1.0 point, +12.5%)
 - **Milestone atteint** : Production-ready baseline (9.0/10)
 - **CI/CD enrichi** : GitHub Actions avec tests rate limiting + SQL injection
+
+### Productivité du 24 avril 2026 ⭐ NOUVEAU
+- **4 commits** pushés (6ae5923, b2fd85f, e25817c, 9da48ea)
+- **~350 lignes** de code ajoutées (migration + modal + repository)
+- **2 fixes critiques** livrés :
+  - Backend : Activités avec titre/description (migration 006 + repository)
+  - Frontend : Modale de confirmation Books (BookConfirmModal 228 lignes)
+- **Collection Books** : 100% fonctionnelle
+- **Tests validés** : Migration SQL + activités BDD + API + build TypeScript + modale
 
 ---
 
