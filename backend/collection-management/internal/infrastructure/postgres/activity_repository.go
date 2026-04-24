@@ -28,26 +28,34 @@ func (r *PostgresActivityRepository) Create(ctx context.Context, activity *domai
 	}
 
 	query := `
-		INSERT INTO activities (id, user_id, activity_type, entity_type, entity_id, metadata, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO activities (id, user_id, activity_type, entity_type, entity_id, title, description, metadata, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	`
 
 	// Extract user_id and entity_id from metadata
 	userIDStr, _ := activity.Metadata["user_id"]
 	cardIDStr, _ := activity.Metadata["card_id"]
+	bookIDStr, _ := activity.Metadata["book_id"]
 
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
 		userID = activity.ID // Fallback to activity ID
 	}
 
+	// Try card_id first, then book_id
 	entityID, err := uuid.Parse(cardIDStr)
 	if err != nil {
-		entityID = activity.ID // Fallback to activity ID
+		entityID, err = uuid.Parse(bookIDStr)
+		if err != nil {
+			entityID = activity.ID // Fallback to activity ID
+		}
 	}
 
-	// Determine entity_type (for now, hardcode to "card" for card activities)
+	// Determine entity_type from metadata or activity type
 	entityType := domain.EntityTypeCard
+	if bookIDStr != "" {
+		entityType = domain.EntityTypeBook
+	}
 
 	_, err = r.db.ExecContext(
 		ctx,
@@ -57,6 +65,8 @@ func (r *PostgresActivityRepository) Create(ctx context.Context, activity *domai
 		activity.Type,
 		entityType,
 		entityID,
+		activity.Title,       // Now persisting title
+		activity.Description, // Now persisting description
 		metadataJSON,
 		activity.Timestamp,
 	)
@@ -75,7 +85,7 @@ func (r *PostgresActivityRepository) GetRecentByUserID(ctx context.Context, user
 	}
 
 	query := `
-		SELECT id, user_id, activity_type, entity_type, entity_id, metadata, created_at
+		SELECT id, user_id, activity_type, entity_type, entity_id, title, description, metadata, created_at
 		FROM activities
 		WHERE user_id = $1
 		ORDER BY created_at DESC
@@ -96,6 +106,7 @@ func (r *PostgresActivityRepository) GetRecentByUserID(ctx context.Context, user
 		var entityType string
 		var scannedUserID uuid.UUID
 		var scannedEntityID uuid.UUID
+		var title, description *string // Use pointers to handle NULL values
 		var metadataJSON []byte
 
 		err := rows.Scan(
@@ -104,6 +115,8 @@ func (r *PostgresActivityRepository) GetRecentByUserID(ctx context.Context, user
 			&activityType,
 			&entityType,
 			&scannedEntityID,
+			&title,
+			&description,
 			&metadataJSON,
 			&a.Timestamp,
 		)
@@ -112,6 +125,14 @@ func (r *PostgresActivityRepository) GetRecentByUserID(ctx context.Context, user
 		}
 
 		a.Type = domain.ActivityType(activityType)
+
+		// Set title and description from database (NULL-safe)
+		if title != nil {
+			a.Title = *title
+		}
+		if description != nil {
+			a.Description = *description
+		}
 
 		// Unmarshal metadata
 		metadata := make(map[string]string)
@@ -122,14 +143,25 @@ func (r *PostgresActivityRepository) GetRecentByUserID(ctx context.Context, user
 		}
 		a.Metadata = metadata
 
-		// Build Title and Description from metadata
-		if cardName, ok := metadata["card_name"]; ok {
-			if activityType == string(domain.ActivityCardAdded) {
-				a.Title = fmt.Sprintf("Carte %s ajoutée", cardName)
-				a.Description = fmt.Sprintf("Carte ajoutée à votre collection")
-			} else if activityType == string(domain.ActivityCardRemoved) {
-				a.Title = fmt.Sprintf("Carte %s retirée", cardName)
-				a.Description = fmt.Sprintf("Carte retirée de votre collection")
+		// Fallback: Build Title and Description from metadata if not in DB (for old records)
+		if a.Title == "" {
+			if cardName, ok := metadata["card_name"]; ok {
+				if activityType == string(domain.ActivityCardAdded) {
+					a.Title = fmt.Sprintf("Carte %s ajoutée", cardName)
+					a.Description = fmt.Sprintf("Carte ajoutée à votre collection")
+				} else if activityType == string(domain.ActivityCardRemoved) {
+					a.Title = fmt.Sprintf("Carte %s retirée", cardName)
+					a.Description = fmt.Sprintf("Carte retirée de votre collection")
+				}
+			}
+			if bookTitle, ok := metadata["book_title"]; ok {
+				if activityType == string(domain.ActivityBookAdded) {
+					a.Title = "Ajout d'un roman"
+					a.Description = fmt.Sprintf("Ajout du roman: %s", bookTitle)
+				} else if activityType == string(domain.ActivityBookRemoved) {
+					a.Title = "Retrait d'un roman"
+					a.Description = fmt.Sprintf("Retrait du roman: %s", bookTitle)
+				}
 			}
 		}
 
