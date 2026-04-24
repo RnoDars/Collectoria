@@ -23,7 +23,9 @@ Ouvrir [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 ### Pages Disponibles
 
 - **Page d'accueil** : `/` - Page d'accueil avec liens vers les fonctionnalités
-- **Page de test** : `/test` - Page interactive pour tester le déploiement
+- **Page Cartes** : `/cards` - Gestion des cartes à collectionner
+- **Page Livres** : `/books` - Gestion des livres et BD
+- **Page de test** : `/test` - Page unifiée pour tests backend et UI (développement uniquement)
 
 ### Structure
 
@@ -34,10 +36,18 @@ frontend/
 │   │   ├── layout.tsx        # Layout principal
 │   │   ├── page.tsx          # Page d'accueil
 │   │   ├── globals.css       # Styles globaux
+│   │   ├── cards/            # Pages cartes
+│   │   ├── books/            # Pages livres
 │   │   └── test/
-│   │       └── page.tsx      # Page de test interactive
-│   └── components/           # Composants réutilisables (à venir)
+│   │       └── page.tsx      # Page de test (dev)
+│   ├── components/           # Composants réutilisables
+│   │   ├── layout/           # TopNav, Footer
+│   │   └── homepage/         # Composants page accueil
+│   ├── hooks/                # Custom React hooks
+│   ├── lib/                  # Utilitaires, helpers
+│   └── types/                # Types TypeScript
 ├── public/                   # Assets statiques
+├── DEVELOPMENT_PRACTICES.md  # Bonnes pratiques
 ├── package.json
 ├── tsconfig.json
 └── next.config.js
@@ -45,18 +55,20 @@ frontend/
 
 ## 🧪 Page de Test
 
-La page `/test` permet de :
-- Tester le bon fonctionnement de Next.js
-- Valider le déploiement local
-- Servir de destination pour les liens non implémentés
-- Éviter les liens morts pendant le développement
+La page `/test` est la page de test unifiée pour le développement. Elle combine :
+- **Tests d'intégration backend** : Connexion API, CollectionsGrid avec données réelles
+- **Tests UI interactifs** : Formulaire, états React, interactions utilisateur
+- **Debug info** : Variables d'environnement, données techniques
 
-**Fonctionnalités** :
-- Formulaire interactif
-- Affichage dynamique
-- Historique des saisies
-- State management React
-- CSS-in-JS
+**Accès** : `http://localhost:3000/test` (pas de lien dans la navigation)
+
+**Utilisation** :
+- Tester l'intégration avec le backend
+- Valider les composants UI
+- Débugger les problèmes de connexion
+- Servir de destination pour les liens non implémentés
+
+Voir `DEVELOPMENT_PRACTICES.md` pour plus de détails sur l'utilisation de la page de test et les bonnes pratiques.
 
 ## 📦 Technologies
 

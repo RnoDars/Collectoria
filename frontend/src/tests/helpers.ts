@@ -1,20 +1,4 @@
-import { CollectionSummary, Collection } from '@/lib/api/collections'
-
-/**
- * Mock data factory for CollectionSummary
- */
-export function createMockCollectionSummary(
-  overrides?: Partial<CollectionSummary>
-): CollectionSummary {
-  return {
-    userId: 'user-123',
-    totalCardsOwned: 150,
-    totalCardsAvailable: 500,
-    completionPercentage: 30,
-    lastUpdated: '2024-03-15T10:00:00Z',
-    ...overrides,
-  }
-}
+import { Collection } from '@/lib/api/collections'
 
 /**
  * Mock data factory for Collection
