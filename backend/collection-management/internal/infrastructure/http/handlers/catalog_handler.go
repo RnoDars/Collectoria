@@ -95,14 +95,26 @@ func (h *CatalogHandler) GetCards(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Validation des paramètres de tri avec défauts silencieux
+	sortBy := q.Get("sort_by")
+	if sortBy != "name_fr" && sortBy != "name_en" {
+		sortBy = "name_fr"
+	}
+	sortDir := q.Get("sort_dir")
+	if sortDir != "asc" && sortDir != "desc" {
+		sortDir = "asc"
+	}
+
 	filter := domain.CardFilter{
-		Search: search,
-		Series: series,
-		Type:   q.Get("type"),
-		Rarity: q.Get("rarity"),
-		Owned:  q.Get("owned"),
-		Page:   page,
-		Limit:  limit,
+		Search:  search,
+		Series:  series,
+		Type:    q.Get("type"),
+		Rarity:  q.Get("rarity"),
+		Owned:   q.Get("owned"),
+		Page:    page,
+		Limit:   limit,
+		SortBy:  sortBy,
+		SortDir: sortDir,
 	}
 
 	result, err := h.service.GetCatalog(ctx, userID, filter)

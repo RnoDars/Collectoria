@@ -27,13 +27,15 @@ type CardWithOwnership struct {
 
 // CardFilter regroupe les critères de filtrage du catalogue
 type CardFilter struct {
-	Search string
-	Series string
-	Type   string
-	Rarity string
-	Owned  string // "true", "false", ou "" pour tout
-	Page   int
-	Limit  int
+	Search  string
+	Series  string
+	Type    string
+	Rarity  string
+	Owned   string // "true", "false", ou "" pour tout
+	Page    int
+	Limit   int
+	SortBy  string // "name_fr" | "name_en" — défaut : "name_fr"
+	SortDir string // "asc" | "desc" — défaut : "asc"
 }
 
 // CardPage représente une page de résultats du catalogue

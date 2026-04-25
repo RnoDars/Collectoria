@@ -105,6 +105,24 @@ func (r *CardRepository) GetCardsCatalog(ctx context.Context, userID uuid.UUID, 
 		return nil, err
 	}
 
+	// Whitelist stricte — protection SQL injection
+	var sortColumnWhitelist = map[string]string{
+		"name_fr": "c.name_fr",
+		"name_en": "c.name_en",
+	}
+
+	sortCol, ok := sortColumnWhitelist[filter.SortBy]
+	if !ok {
+		sortCol = "c.name_fr"
+	}
+	sortDir := "ASC"
+	if strings.ToLower(filter.SortDir) == "desc" {
+		sortDir = "DESC"
+	}
+	// unaccent : normalise accents (é→e, à→a) et œ→oe
+	// REPLACE : ignore les guillemets " dans l'ordre alphabétique
+	orderClause := fmt.Sprintf("ORDER BY unaccent(REPLACE(%s, '\"', '')) %s NULLS FIRST", sortCol, sortDir)
+
 	offset := (filter.Page - 1) * filter.Limit
 	args = append(args, filter.Limit, offset)
 
@@ -118,8 +136,8 @@ func (r *CardRepository) GetCardsCatalog(ctx context.Context, userID uuid.UUID, 
 		WHERE c.collection_id IN (
 			SELECT collection_id FROM user_collections WHERE user_id = $1
 		) %s
-		ORDER BY c.series, c.name_fr
-		LIMIT $%d OFFSET $%d`, whereClause, idx, idx+1)
+		%s
+		LIMIT $%d OFFSET $%d`, whereClause, orderClause, idx, idx+1)
 
 	type row struct {
 		ID           uuid.UUID `db:"id"`

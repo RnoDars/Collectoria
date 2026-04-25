@@ -78,12 +78,17 @@ export interface CardPage {
   timestamp: string
 }
 
+export type SortBy  = 'name_fr' | 'name_en'
+export type SortDir = 'asc' | 'desc'
+
 export interface CardFilters {
   search?: string
   series?: string
   type?: string
   rarity?: string
   owned?: 'true' | 'false'
+  sort_by?:  SortBy
+  sort_dir?: SortDir
 }
 
 export async function fetchCards(filters: CardFilters, page: number): Promise<CardPage> {
@@ -94,7 +99,9 @@ export async function fetchCards(filters: CardFilters, page: number): Promise<Ca
   if (filters.series)  params.set('series',  filters.series)
   if (filters.type)    params.set('type',    filters.type)
   if (filters.rarity)  params.set('rarity',  filters.rarity)
-  if (filters.owned)   params.set('owned',   filters.owned)
+  if (filters.owned)    params.set('owned',    filters.owned)
+  if (filters.sort_by)  params.set('sort_by',  filters.sort_by)
+  if (filters.sort_dir) params.set('sort_dir', filters.sort_dir)
 
   const response = await apiClient.get(`/api/v1/cards?${params.toString()}`)
 

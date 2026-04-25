@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useCards } from '@/hooks/useCards'
 import { useCardToggle } from '@/hooks/useCardToggle'
-import { CardFilters, Card } from '@/lib/api/collections'
+import { CardFilters, Card, SortBy, SortDir } from '@/lib/api/collections'
 import Link from 'next/link'
 import ConfirmToggleModal from '@/components/cards/ConfirmToggleModal'
 
@@ -119,11 +119,12 @@ function CardToggle({ card, onToggle, isLoading }: CardToggleProps) {
 
 interface CardItemProps {
   card: Card
+  sortBy: SortBy
   onToggle: (cardId: string, isOwned: boolean) => void
   isTogglingId?: string
 }
 
-function CardItem({ card, onToggle, isTogglingId }: CardItemProps) {
+function CardItem({ card, sortBy, onToggle, isTogglingId }: CardItemProps) {
   const isToggling = isTogglingId === card.id
 
   const cardStyle: React.CSSProperties = {
@@ -168,11 +169,20 @@ function CardItem({ card, onToggle, isTogglingId }: CardItemProps) {
   return (
     <div style={cardStyle}>
       <div style={{ flex: 1 }}>
-        <div style={nameStyle}>{card.nameFr || card.nameEn}</div>
-        {card.nameFr && card.nameEn && (
-          <div style={{ ...metaStyle, marginBottom: '0.5rem', opacity: 0.8 }}>
-            {card.nameEn}
-          </div>
+        {sortBy === 'name_fr' ? (
+          <>
+            <div style={nameStyle}>{card.nameFr || card.nameEn}</div>
+            {card.nameFr && card.nameEn && (
+              <div style={{ ...metaStyle, marginBottom: '0.5rem', opacity: 0.8 }}>{card.nameEn}</div>
+            )}
+          </>
+        ) : (
+          <>
+            <div style={nameStyle}>{card.nameEn}</div>
+            {card.nameFr && (
+              <div style={{ ...metaStyle, marginBottom: '0.5rem', opacity: 0.8 }}>{card.nameFr}</div>
+            )}
+          </>
         )}
         <div style={metaStyle}>
           <strong>Type:</strong> {card.cardType}
@@ -244,6 +254,8 @@ export default function AddCardsPage() {
   const [type, setType] = useState('')
   const [rarity, setRarity] = useState('')
   const [owned, setOwned] = useState<OwnedFilter>('all')
+  const [sortBy,  setSortBy]  = useState<SortBy>('name_fr')
+  const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [togglingCardId, setTogglingCardId] = useState<string>()
   const [confirmModal, setConfirmModal] = useState<{
     card: Card
@@ -263,6 +275,8 @@ export default function AddCardsPage() {
     ...(type && { type }),
     ...(rarity && { rarity }),
     ...(owned !== 'all' && { owned: owned as 'true' | 'false' }),
+    sort_by:  sortBy,
+    sort_dir: sortDir,
   }
 
   const {
@@ -526,6 +540,18 @@ export default function AddCardsPage() {
               </button>
             ))}
           </div>
+
+          {/* Toggle langue de tri */}
+          <div style={toggleGroupStyle} role="group" aria-label="Langue de tri">
+            <button onClick={() => setSortBy('name_fr')} style={toggleBtnStyle(sortBy === 'name_fr')} aria-pressed={sortBy === 'name_fr'}>FR</button>
+            <button onClick={() => setSortBy('name_en')} style={toggleBtnStyle(sortBy === 'name_en')} aria-pressed={sortBy === 'name_en'}>EN</button>
+          </div>
+
+          {/* Toggle ordre de tri */}
+          <div style={toggleGroupStyle} role="group" aria-label="Ordre de tri">
+            <button onClick={() => setSortDir('asc')}  style={toggleBtnStyle(sortDir === 'asc')}  aria-pressed={sortDir === 'asc'}>A→Z</button>
+            <button onClick={() => setSortDir('desc')} style={toggleBtnStyle(sortDir === 'desc')} aria-pressed={sortDir === 'desc'}>Z→A</button>
+          </div>
         </div>
 
         {/* Error State */}
@@ -604,6 +630,7 @@ export default function AddCardsPage() {
                     <CardItem
                       key={card.id}
                       card={card}
+                      sortBy={sortBy}
                       onToggle={handleToggle}
                       isTogglingId={togglingCardId}
                     />
