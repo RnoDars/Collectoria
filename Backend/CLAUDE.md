@@ -300,6 +300,45 @@ func (r *postgresCollectionRepository) GetSummary(ctx context.Context, userID uu
 
 **Tests d'intégration** : Utiliser testcontainers-go pour PostgreSQL (à venir).
 
+### Tri et Normalisation (données multilingues)
+
+**Contexte** : Implémenté le 2026-04-25 pour la page `/cards` (données MECCG avec accents et guillemets typographiques).
+
+**Pattern à réutiliser** pour tout endpoint nécessitant un tri alphabétique sur des données multilingues :
+
+```go
+// 1. Whitelist stricte dans le repository (protection SQL injection)
+var sortColumnWhitelist = map[string]string{
+    "name_fr": "c.name_fr",
+    "name_en": "c.name_en",
+}
+sortCol, ok := sortColumnWhitelist[filter.SortBy]
+if !ok {
+    sortCol = "c.name_fr"
+}
+
+// 2. Direction par comparaison stricte (jamais d'interpolation directe)
+sortDir := "ASC"
+if strings.ToLower(filter.SortDir) == "desc" {
+    sortDir = "DESC"
+}
+
+// 3. Clause ORDER BY avec normalisation
+// unaccent : é→e, à→a, œ→oe — REPLACE : guillemets " ignorés
+orderClause := fmt.Sprintf(
+    "ORDER BY unaccent(REPLACE(%s, '\"', '')) %s NULLS FIRST",
+    sortCol, sortDir,
+)
+```
+
+**Prérequis PostgreSQL** : extension `unaccent` activée (`CREATE EXTENSION IF NOT EXISTS unaccent;`).
+
+**Défauts silencieux dans le handler** : valeurs invalides de `sort_by` / `sort_dir` retombent sur les défauts sans retourner d'erreur HTTP.
+
+**Documentation détaillée** : `backend/collection-management/docs/SORTING.md`
+
+---
+
 ## Interaction avec autres agents
 - **Frontend** : Définition des contrats API (snake_case backend, conversion camelCase frontend)
 - **DevOps** : Configuration de déploiement, tests locaux

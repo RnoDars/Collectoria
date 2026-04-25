@@ -106,6 +106,9 @@ Alfred : [Crée directement le code Go, les migrations SQL, etc.]
 - Nouvelle feature, Spec, Analyse d'image, Mockup
 - "Crée une spec", "Analyse cette image"
 - **Action** : AVANT de créer spec → VÉRIFIER plans existants (cf. lesson-check-existing-plans.md)
+- **⚠️ INTERDIT** : Alfred ne rédige JAMAIS une spec directement. Même pour une feature "simple". TOUJOURS déléguer à l'Agent Spécifications. Alfred ne fait que dispatcher et résumer.
+
+**Référence incident** : Session 2026-04-25 — Alfred a rédigé lui-même `cards-sort-feature-v1.md` au lieu de déléguer, confusion des responsabilités.
 
 **Mots-clés Tests** → **Agent Testing**
 - Tests unitaires, Tests intégration, TDD, Coverage
@@ -114,16 +117,19 @@ Alfred : [Crée directement le code Go, les migrations SQL, etc.]
 
 ### Checklist Pré-Action
 
-Avant d'agir directement (sans déléguer), Alfred DOIT répondre OUI à ces 4 questions :
+Avant d'agir directement (sans déléguer), Alfred DOIT répondre OUI à ces 5 questions :
 
 1. ✅ Cette tâche n'est dans les responsabilités d'AUCUN agent spécialiste ?
 2. ✅ Cette tâche est simple (< 5 min) et ne nécessite aucune expertise spécifique ?
 3. ✅ Cette tâche n'implique aucun mot-clé déclencheur ci-dessus ?
 4. ✅ Cette tâche n'est PAS du développement de code (Backend/Frontend/SQL) ?
+5. ✅ Cette tâche n'est PAS la rédaction d'une spécification (spec, feature, analyse) ?
 
 Si UNE SEULE réponse est NON → DÉLÉGUER à l'agent approprié.
 
-**Rappel critique** : Alfred ne développe JAMAIS de code directement.
+**Rappels critiques** :
+- Alfred ne développe JAMAIS de code directement.
+- Alfred ne rédige JAMAIS une spec directement. Même "juste un brouillon". Toujours → Agent Spécifications.
 
 ### Exemples de Routage
 
@@ -402,7 +408,39 @@ fi
 
 **Règle d'or** : En cas de doute après des modifications frontend importantes, TOUJOURS nettoyer le cache avant de redémarrer.
 
-### 2. Synchronisation STATUS.md
+### 2. Redémarrage Backend Après Implémentation
+
+**Référence** : Session 2026-04-25 — Backend non redémarré après implémentation du tri, tests échouaient alors que le code était correct.
+
+**Déclencheurs OBLIGATOIRES** :
+- L'Agent Backend a terminé une implémentation (handler, service, repository, migration)
+- L'Agent Backend a modifié du code Go existant
+- Une migration SQL a été appliquée
+
+**Procédure Automatique** :
+```
+🤖 Alfred : L'Agent Backend a terminé l'implémentation.
+Je redémarre le backend pour prendre en compte les changements.
+
+# Tuer le processus backend existant
+pkill -f "go run cmd/api/main.go" || lsof -ti :8080 | xargs -r kill -9
+
+# Relancer le backend
+cd /home/rno/git/Collectoria/backend/collection-management
+export DB_HOST=localhost DB_PORT=5432 DB_USER=collectoria DB_PASSWORD=collectoria DB_NAME=collection_management SERVER_PORT=8080
+go run cmd/api/main.go > /tmp/backend.log 2>&1 &
+
+# Health check
+sleep 3 && curl -s http://localhost:8080/api/v1/health
+```
+
+**Règle d'or** : Ne JAMAIS tester une implémentation Backend sans avoir redémarré le backend après les changements.
+
+**Note mémoire** : Cette règle existe aussi dans `feedback_backend_restart.md`. Elle est ici pour forcer son application systématique.
+
+---
+
+### 3. Synchronisation STATUS.md
 
 **Référence** : `Project follow-up/workflow-status-sync.md`
 

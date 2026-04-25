@@ -251,17 +251,32 @@ docker compose up -d
 
 ```bash
 # Les migrations sont cumulatives et TOUTES nécessaires
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
   < migrations/001_create_collections_schema.sql
 
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
   < migrations/002_seed_meccg_real.sql          # 1679 cartes MECCG (catalogue)
 
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
   < migrations/003_create_activities_table.sql  # Table activités
 
-docker exec -i collectoria-collection-db psql -U collectoria -d collection_management \
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
   < migrations/004_seed_dev_possession.sql      # Possession initiale (1661/1679 possédées)
+
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
+  < migrations/005_add_books_collection.sql     # Table books + 94 livres (Royaumes Oubliés, Dragonlance...)
+
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
+  < migrations/006_add_title_description_to_activities.sql  # Colonnes title/description sur activities
+
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
+  < migrations/007_allow_null_name_fr.sql       # Autorise NULL sur name_fr (extensions non traduites)
+
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
+  < migrations/008_update_meccg_corrected_names.sql  # 385 corrections noms FR des cartes MECCG
+
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
+  < migrations/009_fix_all_meccg_names_from_csv.sql  # 1679 corrections complètes depuis meccg_all_cards_review.csv
 ```
 
 **Note** : La migration 004 est idempotente (`ON CONFLICT DO NOTHING`). Elle peut être rejouée sans risque sur une base qui a déjà des données de possession.

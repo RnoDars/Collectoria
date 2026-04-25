@@ -128,11 +128,27 @@ Voir [restart-procedures.md](restart-procedures.md) pour procédure manuelle com
 **Étapes** :
 1. Cloner repo
 2. Démarrer PostgreSQL (`docker compose up -d`)
-3. Appliquer les 4 migrations dans l'ordre (001, 002, 003, 004)
+3. Appliquer TOUTES les migrations dans l'ordre (voir [testing-local.md](testing-local.md) pour la liste exhaustive et à jour)
 4. Installer dépendances frontend (`npm install`)
 5. Lancer environnement
 
 Voir [testing-local.md](testing-local.md) section "Initialisation d'une Nouvelle Machine" pour commandes détaillées.
+
+### ⚠️ Règle : Mise à Jour de testing-local.md à Chaque Nouvelle Migration
+
+**CRITIQUE** : À chaque fois qu'une nouvelle migration SQL est ajoutée dans `backend/collection-management/migrations/`, l'Agent DevOps ou l'Agent Backend DOIT mettre à jour la section "Appliquer les migrations dans l'ordre" de `DevOps/testing-local.md`.
+
+**Pourquoi** : Si ce fichier est obsolète, une nouvelle machine sera initialisée avec une base incomplète (tables manquantes, données manquantes), causant des erreurs silencieuses difficiles à diagnostiquer.
+
+**Vérification rapide** :
+```bash
+# Compter les migrations réelles
+ls backend/collection-management/migrations/*.sql | wc -l
+
+# Compter les migrations documentées dans testing-local.md
+grep -c "< migrations/" DevOps/testing-local.md
+```
+Si les deux chiffres diffèrent → mettre à jour testing-local.md immédiatement.
 
 ---
 
@@ -220,7 +236,7 @@ Base de Données
 ### Données
 - **1679 cartes MECCG** importées (8 séries)
 - **1661 cartes possédées** (18 non possédées)
-- Migrations : 4 fichiers SQL (001 à 004)
+- Migrations : 9 fichiers SQL (001 à 009) — voir [testing-local.md](testing-local.md) pour la liste complète et à jour
 
 ---
 

@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-24 - Collection Books + MECCG French Names Cleanup  
-**Focus du jour** : Collection Books finalisée + Nettoyage complet des noms français MECCG  
-**Prochaine session** : Nouvelles fonctionnalités ou corrections
+**Date** : 2026-04-25 - Tri Alphabétique /cards + Migration 009 Noms MECCG  
+**Focus du jour** : Feature tri alphabétique sur /cards + Correction complète noms MECCG (1679 cartes)  
+**Prochaine session** : Nouvelles fonctionnalités
 
 ---
 
@@ -521,6 +521,46 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 
 **Impact** : Les utilisateurs voient maintenant les vrais noms français officiels des cartes MECCG !
 
+### 🔤 Tri Alphabétique /cards (25 avril) ⭐ NOUVEAU
+
+**Spec créée** : `Specifications/technical/cards-sort-feature-v1.md`
+
+#### Backend (3 fichiers modifiés)
+- ✅ `domain/card.go` : Ajout `SortBy` et `SortDir` dans `CardFilter`
+- ✅ `card_repository.go` : ORDER BY dynamique avec whitelist SQL stricte
+  - Normalisation : `unaccent(REPLACE(col, '"', ''))` — guillemets ignorés, accents normalisés
+  - Extension PostgreSQL `unaccent` utilisée pour é→e, œ→oe
+  - `NULLS FIRST` sur les colonnes concernées
+- ✅ `catalog_handler.go` : Query params `sort_by` / `sort_dir` avec défauts silencieux
+
+#### Frontend (2 fichiers modifiés)
+- ✅ `lib/api/collections.ts` : Types `SortBy`/`SortDir`, paramètres dans `fetchCards`
+- ✅ `cards/page.tsx` : États UI, deux ToggleGroups (tri FR/EN + A→Z/Z→A), affichage conditionnel des noms
+
+#### Règles de Normalisation du Tri (3 règles)
+1. Guillemets ignorés dans le tri (ex. : "The Ring" trié comme "The Ring")
+2. Accents normalisés via `unaccent` PostgreSQL (é→e, à→a, etc.)
+3. œ→oe via même extension `unaccent`
+
+### 🧹 Correction Complète Noms MECCG — Migration 009 (25 avril) ⭐ NOUVEAU
+
+**Problème identifié** : La migration 008 ne couvrait que 385 cartes (`has_issue=YES`). Environ 1 000 cartes avaient des traductions correctes dans le CSV `meccg_all_cards_review.csv` mais celles-ci n'étaient pas encore appliquées en base.
+
+#### Solution
+- ✅ **Migration 009** : `009_fix_all_meccg_names_from_csv.sql`
+  - Générée depuis `meccg_all_cards_review.csv` (colonne `new_name_fr` comme source de vérité)
+  - 1 679 UPDATE statements couvrant l'intégralité des cartes MECCG
+  - Application réussie sans erreur
+
+#### Résultat Final
+- ✅ **1 381 cartes** avec `name_fr ≠ name_en` (vs 928 avant la migration 009)
+- ✅ **298 noms propres** identiques EN/FR (Sauron, Moria, Bree, etc. — attendu et normal)
+- ✅ **0 cartes** avec `name_fr` vide ou incorrect
+
+#### Infrastructure DevOps
+- ✅ `DevOps/testing-local.md` mis à jour avec les migrations 005-009 (procédures `sg docker -c`)
+- ✅ Container Docker recréé en début de session — migrations 005-008 manquantes appliquées manuellement
+
 ### 🔒 Sécurité (21 avril) ⭐ NOUVEAU
 **Audit complet et Phase 1 Quick Wins implémentés**
 
@@ -973,11 +1013,12 @@ Collectoria/
 
 ---
 
-## 📌 Métriques du Projet (2026-04-24)
+## 📌 Métriques du Projet (2026-04-25)
 
 ### Documentation
 - **~20,000+ lignes** de documentation technique
-- **Commits Git** : 77 au total (4 nouveaux le 24/04)
+- **Commits Git** : 77+ au total (4 nouveaux le 24/04, nouveaux le 25/04)
+- **Migrations SQL** : 9 migrations appliquées (001–009)
 
 ### Code
 - **Backend** : ~65 fichiers (~10,500 lignes de Go)
@@ -1067,7 +1108,7 @@ Collectoria/
 - **Milestone atteint** : Production-ready baseline (9.0/10)
 - **CI/CD enrichi** : GitHub Actions avec tests rate limiting + SQL injection
 
-### Productivité du 24 avril 2026 ⭐ NOUVEAU
+### Productivité du 24 avril 2026 ⭐
 - **4 commits** pushés (6ae5923, b2fd85f, e25817c, 9da48ea)
 - **~350 lignes** de code ajoutées (migration + modal + repository)
 - **2 fixes critiques** livrés :
@@ -1076,9 +1117,21 @@ Collectoria/
 - **Collection Books** : 100% fonctionnelle
 - **Tests validés** : Migration SQL + activités BDD + API + build TypeScript + modale
 
+### Productivité du 25 avril 2026 ⭐ NOUVEAU
+- **Migrations** : 009 (correction complète noms MECCG) + corrections manuelles 005-008 appliquées
+- **Feature tri alphabétique /cards** livraée end-to-end :
+  - 1 spec créée (`cards-sort-feature-v1.md`)
+  - 3 fichiers backend modifiés (domain, repository, handler)
+  - 2 fichiers frontend modifiés (api/collections.ts, cards/page.tsx)
+  - Normalisation tri : 3 règles (guillemets, accents `unaccent`, œ→oe)
+- **Migration 009** : 1 679 UPDATE statements — couverture complète noms MECCG
+  - 1 381 cartes avec name_fr ≠ name_en (vs 928 avant)
+  - 298 noms propres identiques EN/FR (normal)
+- **Documentation DevOps** : `testing-local.md` mis à jour avec migrations 005-009
+
 ---
 
-## 🎉 Bilan Global (2026-04-23)
+## 🎉 Bilan Global (2026-04-25)
 
 ### Accomplissements Majeurs
 - ✅ **Vision et architecture** : Fondations solides posées
@@ -1138,20 +1191,22 @@ Collectoria/
 **État actuel** : Application avec authentification production-ready, prête pour l'ajout de nouvelles fonctionnalités !
 
 ### État Actuel
-**Le MVP est maintenant production-ready avec sécurité complète (9.0/10) !** 🚀
+**Le MVP est maintenant production-ready avec sécurité complète (9.0/10) !**
 
 - **Backend** : Microservice opérationnel avec **1,679 vraies cartes MECCG** et **6 endpoints REST**
+  - Tri alphabétique sur `/cards` (sort_by / sort_dir) avec normalisation `unaccent`
+- **Données** : 1 381 cartes MECCG avec noms FR corrects (migration 009), 298 noms propres identiques EN/FR
 - **Authentification** : JWT Authentication complète (Backend + Frontend) — **Application sécurisée**
 - **Rate Limiting** : 3-tier middleware opérationnel (protection DoS et brute-force)
 - **SQL Security** : 0 vulnérabilités détectées, 105 scénarios d'injection testés
-- **Frontend** : Homepage complète + page `/cards/add` + page `/login` fonctionnelles
+- **Frontend** : Homepage complète + page `/cards` avec tri + page `/login` fonctionnelles
 - **Intégration** : Frontend ↔ Backend connectés avec JWT + données réelles + CORS configuré
 - **Activités** : Système Phase 1 implémenté (BDD + services), dashboard affiche vraies activités
-- **Tests** : 
+- **Tests** :
   - Infrastructure TDD en place (backend + frontend)
   - 253+ tests (109 frontend + 144+ backend)
   - Tous les tests passent ✅
-- **Sécurité** : 
+- **Sécurité** :
   - Phase 1 complète (Quick Wins : 7.0/10)
   - Phase 2 complète (JWT + Rate Limiting + SQL Audit : 9.0/10) ⭐
   - Production-ready baseline atteinte
@@ -1193,4 +1248,4 @@ Collectoria/
 
 ---
 
-**Prochaine session** : Nouvelles fonctionnalités (détail carte, wishlist, import/export) 🎯
+**Prochaine session** : Nouvelles fonctionnalités (détail carte, wishlist, import/export, statistiques avancées)
