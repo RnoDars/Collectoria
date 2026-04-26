@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-26 - Préparation Production : VPS OVH + Monitoring + Instrumentation  
-**Focus du jour** : Procédures de mise en production (VPS OVH), stack monitoring (Uptime Kuma + Prometheus + Grafana + Loki), instrumentation backend Go  
-**Prochaine session** : Acquisition VPS OVH + nom de domaine → exécuter les procédures DevOps
+**Date** : 2026-04-26 - Production + Monitoring + Fixes UI + Spec D&D 5  
+**Focus du jour** : Procédures mise en production VPS OVH, stack monitoring, instrumentation Go, fixes UI (fonds collections, modale Books, activités), spec collection D&D 5e  
+**Prochaine session** : Fournir la liste des livres D&D 5 → implémenter collection D&D 5 (Backend + Frontend)
 
 ---
 
@@ -1118,6 +1118,29 @@ Collectoria/
 - **Collection Books** : 100% fonctionnelle
 - **Tests validés** : Migration SQL + activités BDD + API + build TypeScript + modale
 
+### 📐 Spec Collection D&D 5e (26 avril) ⭐ NOUVEAU
+
+**Spec créée** : `Specifications/technical/dnd5-books-collection-v1.md` (v1.2, ~500 lignes)
+
+#### Modèle de données retenu
+- Extension de la table `books` avec `edition` (fixe `"D&D 5"`) et `book_type` (6 valeurs : Core Rules, Supplément de règles, Setting, Campagnes, Recueil d'aventures, Starter Set)
+- Champs `name_en` / `name_fr` bilingues (déjà en place)
+- Séparation par `collection_id` UUID dédié D&D 5e
+
+#### Possession bilingue (Option A retenue)
+- 2 colonnes `owned_en` / `owned_fr` dans `user_books` (nullables)
+- Les livres Royaumes Oubliés : `is_owned` inchangé, `owned_en/fr = NULL` → zéro régression
+- UI : deux toggles indépendants EN / FR dans `DnD5BookCard`
+- `PATCH /api/v1/books/{id}/possession` avec body `{ "owned_en": bool, "owned_fr": bool }`
+- "Possédé" dans les filtres = au moins une version
+
+#### Route et composants
+- Page `/dnd5` dédiée
+- `DnD5BookCard.tsx` dérivé de `BookCard.tsx` (pas de régression sur `/books`)
+
+#### Prochaine étape
+- ⏳ En attente de la liste des livres D&D 5 (nom EN, nom FR, type) pour la seed
+
 ### 🚀 Préparation Production (26 avril) ⭐ NOUVEAU
 
 **Objectif** : Préparer la mise en production sur VPS OVH sans déployer (VPS pas encore acquis)
@@ -1288,4 +1311,4 @@ Collectoria/
 
 ---
 
-**Prochaine session** : Nouvelles fonctionnalités (détail carte, wishlist, import/export, statistiques avancées)
+**Prochaine session** : Fournir liste livres D&D 5 → implémenter collection D&D 5 (Backend + Frontend)
