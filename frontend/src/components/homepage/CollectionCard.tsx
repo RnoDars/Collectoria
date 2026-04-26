@@ -26,17 +26,6 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
     }
   }
 
-  const getGradient = (slug: string) => {
-    switch (slug) {
-      case 'doomtrooper':
-        return 'linear-gradient(135deg, #8b0000 0%, #2b0000 50%, #000000 100%)'
-      case 'royaumes-oublies':
-        return 'linear-gradient(135deg, #2c5f2d 0%, #1a3a1b 50%, #0d1f0e 100%)'
-      default:
-        return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    }
-  }
-
   const collectionImages: Record<string, string> = {
     meccg: '/meccg-logo.png',
     'royaumes-oublies': '/royaumes-oublies.png',
@@ -67,7 +56,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
         width: '100%',
         height: '160px',
         borderRadius: '16px',
-        background: collectionImages[collection.slug] ? '#f3f4f5' : getGradient(collection.slug),
+        background: '#eaebec',
         marginBottom: '16px',
         overflow: 'hidden',
       }}>
@@ -80,13 +69,6 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
             sizes="(max-width: 768px) 100vw, 400px"
           />
         )}
-        {/* Overlay gradient for text readability */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%)',
-        }} />
-
         {/* Complete Badge */}
         {isComplete && (
           <div style={{
