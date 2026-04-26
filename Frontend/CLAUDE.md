@@ -60,6 +60,59 @@ Le cache Next.js (`.next/`) se corrompt après des modifications structurelles, 
 
 **Référence complète** : `Continuous-Improvement/recommendations/workflow-nextjs-cache-cleanup_2026-04-24.md`
 
+## ⚠️ RÈGLE CRITIQUE : Variables CSS — Utiliser Uniquement le Design System
+
+**JAMAIS** de variable CSS inventée. **TOUJOURS** vérifier l'existence dans `frontend/src/app/globals.css` avant utilisation.
+
+### Variables CSS Disponibles (liste exhaustive)
+
+```css
+/* Surfaces (tonal layering) */
+--surface                    /* #f8f9fa  — fond de page */
+--surface-container-lowest   /* #ffffff  — cartes / éléments interactifs */
+--surface-container-low      /* #f3f4f5  — groupes / sections */
+--surface-container-high     /* #e8e9ea  — zones d'emphase */
+--surface-container-highest  /* #e1e3e4  — états actifs */
+
+/* Couleurs primaires */
+--primary                    /* #667eea */
+--primary-container          /* #764ba2 */
+--on-primary                 /* #ffffff */
+
+/* Texte */
+--on-surface                 /* #191c1d  — texte principal */
+--on-surface-variant         /* #43474e  — texte secondaire */
+
+/* Typographie */
+--font-editorial             /* 'Manrope', sans-serif */
+--font-utility               /* 'Inter', sans-serif */
+
+/* Border radius */
+--radius-sm: 4px  |  --radius-md: 8px  |  --radius-lg: 16px  |  --radius-xl: 24px
+
+/* Spacing */
+--spacing-xs: 4px  |  --spacing-sm: 8px  |  --spacing-md: 12px  |  --spacing-lg: 16px
+--spacing-xl: 24px  |  --spacing-2xl: 32px  |  --spacing-3xl: 48px
+```
+
+### Ce Qui N'Existe PAS dans le Design System
+
+❌ `--outline-variant` — non défini (erreur silencieuse dans TopNav.tsx, à corriger)  
+❌ `--surface-container` (sans suffixe)  
+❌ `--secondary`, `--tertiary`, `--error`  
+❌ Toute autre variable non listée ci-dessus
+
+### Règle d'Application
+
+Avant d'écrire `var(--quelque-chose)` dans un composant :
+1. Vérifier que la variable est dans la liste ci-dessus
+2. Si elle n'y est pas → utiliser la valeur directe (ex: `rgba(25, 28, 29, 0.12)`) ou la variable la plus proche
+3. Ne JAMAIS créer une nouvelle variable CSS sans la définir d'abord dans `globals.css`
+
+**Référence incident** : Session 2026-04-26 — `BookConfirmModal.tsx` utilisait des variables inexistantes, rendu cassé. `TopNav.tsx` utilise `--outline-variant` (inexistante) → border invisible.
+
+---
+
 ## Design System - "The Digital Curator"
 
 **⚠️ CRITIQUE : Tous les composants doivent respecter l'Ethos de design de Collectoria.**

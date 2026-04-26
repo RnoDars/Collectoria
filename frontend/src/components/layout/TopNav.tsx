@@ -112,7 +112,7 @@ export default function TopNav() {
                   padding: '0.375rem 0.75rem',
                   borderRadius: '8px',
                   background: 'transparent',
-                  border: '1px solid var(--outline-variant)',
+                  border: '1px solid rgba(25, 28, 29, 0.12)',
                   cursor: 'pointer',
                   transition: 'all 0.15s',
                 }}

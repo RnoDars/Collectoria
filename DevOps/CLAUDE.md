@@ -242,6 +242,23 @@ Base de Données
 
 ## Problèmes Courants et Solutions Rapides
 
+### Backend ne démarre pas — JWT_SECRET manquant
+
+**Symptôme** : Le backend Go refuse de démarrer avec une erreur `JWT_SECRET must be set` ou `JWT_SECRET must be at least 32 characters long`.
+
+**Cause** : Variables d'environnement JWT non exportées avant `go run`.
+
+**Solution** : Toujours inclure les trois variables JWT dans la commande de démarrage backend :
+```bash
+export JWT_SECRET=collectoria-super-secret-jwt-key-64-chars-minimum-for-security-ok
+export JWT_EXPIRATION_HOURS=24
+export JWT_ISSUER=collectoria-api
+```
+
+Voir `DevOps/restart-procedures.md` pour la commande complète incluant toutes les variables (DB + JWT + CORS + LOG).
+
+---
+
 ### Port 8080 déjà utilisé
 ```bash
 lsof -ti :8080 | xargs -r kill -9

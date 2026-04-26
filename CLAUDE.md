@@ -264,11 +264,15 @@ Voilà le rapport.
    cd /home/arnaud.dars/git/Collectoria/backend/collection-management/
    export DB_HOST=localhost
    export DB_PORT=5432
-   export DB_USER=collection_user
-   export DB_PASSWORD=collection_pass
-   export DB_NAME=collection_db
+   export DB_USER=collectoria
+   export DB_PASSWORD=collectoria
+   export DB_NAME=collection_management
    export SERVER_PORT=8080
+   export JWT_SECRET=collectoria-super-secret-jwt-key-64-chars-minimum-for-security-ok
+   export JWT_EXPIRATION_HOURS=24
+   export JWT_ISSUER=collectoria-api
    go run cmd/api/main.go (en background)
+   ⚠️ CRITIQUE : JWT_SECRET est OBLIGATOIRE — le backend refuse de démarrer sans lui
 
 3. Frontend Next.js
    cd /home/arnaud.dars/git/Collectoria/frontend/
@@ -428,6 +432,7 @@ pkill -f "go run cmd/api/main.go" || lsof -ti :8080 | xargs -r kill -9
 # Relancer le backend
 cd /home/rno/git/Collectoria/backend/collection-management
 export DB_HOST=localhost DB_PORT=5432 DB_USER=collectoria DB_PASSWORD=collectoria DB_NAME=collection_management SERVER_PORT=8080
+export JWT_SECRET=collectoria-super-secret-jwt-key-64-chars-minimum-for-security-ok JWT_EXPIRATION_HOURS=24 JWT_ISSUER=collectoria-api
 go run cmd/api/main.go > /tmp/backend.log 2>&1 &
 
 # Health check
