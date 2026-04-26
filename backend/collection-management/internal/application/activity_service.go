@@ -72,15 +72,21 @@ func (s *ActivityService) RecordBookActivity(
 		description = fmt.Sprintf("%v", desc)
 	}
 
-	// Set title based on activity type
-	title := ""
-	switch activityType {
-	case string(domain.ActivityBookAdded):
-		title = "Ajout d'un roman"
-	case string(domain.ActivityBookRemoved):
-		title = "Retrait d'un roman"
-	default:
-		title = "Activité livre"
+	// Use the book title as the activity title, fall back to generic label
+	bookTitle := ""
+	if bt, ok := metadata["book_title"]; ok {
+		bookTitle = fmt.Sprintf("%v", bt)
+	}
+	title := bookTitle
+	if title == "" {
+		switch activityType {
+		case string(domain.ActivityBookAdded):
+			title = "Ajout d'un roman"
+		case string(domain.ActivityBookRemoved):
+			title = "Retrait d'un roman"
+		default:
+			title = "Activité livre"
+		}
 	}
 
 	activity := &domain.Activity{
