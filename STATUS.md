@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-25 - Tri Alphabétique /cards + Migration 009 Noms MECCG  
-**Focus du jour** : Feature tri alphabétique sur /cards + Correction complète noms MECCG (1679 cartes)  
-**Prochaine session** : Nouvelles fonctionnalités
+**Date** : 2026-04-26 - Préparation Production : VPS OVH + Monitoring + Instrumentation  
+**Focus du jour** : Procédures de mise en production (VPS OVH), stack monitoring (Uptime Kuma + Prometheus + Grafana + Loki), instrumentation backend Go  
+**Prochaine session** : Acquisition VPS OVH + nom de domaine → exécuter les procédures DevOps
 
 ---
 
@@ -913,9 +913,10 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 - 🔜 Amélioration couverture de tests (cible : 90%+)
 
 ### Priorité 3 — DevOps 🚀
-- 🔜 Docker Compose multi-services (PostgreSQL + backend + frontend)
-- 🔜 Scripts start/stop centralisés
-- 🔜 CI/CD GitHub Actions (lint, test, build)
+- ✅ **Procédure production VPS OVH** : `DevOps/production-setup.md` (1 855 lignes) — provisioning, Docker, Traefik, CI/CD GitHub Actions, secrets, backup
+- ✅ **Stack monitoring documentée** : `DevOps/monitoring/` (2 104 lignes, 6 documents)
+- ✅ **Backend instrumenté** : endpoint `/metrics` Prometheus + middleware Chi `http_requests_total` / `http_request_duration_seconds`
+- 🔜 Exécution des procédures (bloqué : VPS + domaine non encore acquis)
 - 🔜 Documentation OpenAPI/Swagger interactive
 
 ---
@@ -1013,11 +1014,11 @@ Collectoria/
 
 ---
 
-## 📌 Métriques du Projet (2026-04-25)
+## 📌 Métriques du Projet (2026-04-26)
 
 ### Documentation
 - **~20,000+ lignes** de documentation technique
-- **Commits Git** : 77+ au total (4 nouveaux le 24/04, nouveaux le 25/04)
+- **Commits Git** : 78+ au total (1 nouveau le 26/04)
 - **Migrations SQL** : 9 migrations appliquées (001–009)
 
 ### Code
@@ -1116,6 +1117,45 @@ Collectoria/
   - Frontend : Modale de confirmation Books (BookConfirmModal 228 lignes)
 - **Collection Books** : 100% fonctionnelle
 - **Tests validés** : Migration SQL + activités BDD + API + build TypeScript + modale
+
+### 🚀 Préparation Production (26 avril) ⭐ NOUVEAU
+
+**Objectif** : Préparer la mise en production sur VPS OVH sans déployer (VPS pas encore acquis)
+
+#### Procédure de mise en production complète
+- ✅ **`DevOps/production-setup.md`** (1 855 lignes) — document de référence complet :
+  - Provisioning Ubuntu 24.10 (SSH sécurisé, ufw, fail2ban, mises à jour auto)
+  - Docker Engine + Docker Compose v2
+  - Traefik v3 + Let's Encrypt TLS automatique
+  - Architecture docker-compose.prod.yml (backend, frontend, PostgreSQL, Traefik)
+  - Gestion des secrets : stratégie `.env` sur serveur uniquement, jamais dans git
+  - Configuration DNS OVH → VPS
+  - Build images Docker multi-stage (backend Go + frontend Next.js)
+  - Pipeline CI/CD GitHub Actions (build → test → push ghcr.io → deploy SSH)
+  - Backup PostgreSQL + rotation + procédure de restauration
+  - Checklist premier déploiement + procédure de mise à jour
+
+#### Stack monitoring documentée
+- ✅ **`DevOps/monitoring/00-overview.md`** — schéma architecture, ports, RAM (~555 Mo), ordre d'installation
+- ✅ **`DevOps/monitoring/01-uptime-kuma.md`** — monitors HTTP + alertes Telegram step-by-step
+- ✅ **`DevOps/monitoring/02-prometheus.md`** — scrape backend Go, node_exporter, postgres_exporter
+- ✅ **`DevOps/monitoring/03-grafana.md`** — datasources auto-provisionnées, 3 dashboards (Node Exporter 1860, Go runtime 13240, PostgreSQL 9628)
+- ✅ **`DevOps/monitoring/04-loki-promtail.md`** — logs Docker centralisés + 10 exemples LogQL
+- ✅ **`DevOps/monitoring/05-backend-instrumentation.md`** — référence implémentation Go
+
+#### Instrumentation backend Go
+- ✅ **Middleware `PrometheusInstrumentation`** : `middleware/prometheus.go`
+  - Compteur `http_requests_total` (labels : method, path, status_code)
+  - Histogramme `http_request_duration_seconds` (labels : method, path)
+  - Pattern de route Chi pour éviter la cardinality explosion
+- ✅ **Endpoint `/metrics`** ajouté dans `server.go` — hors auth JWT, accès réseau interne uniquement
+- ✅ **Dépendance** `github.com/prometheus/client_golang v1.23.2` ajoutée
+- ✅ **Test validé** : `curl http://localhost:8080/metrics` retourne `go_goroutines`, `http_request_duration_seconds`, `http_requests_total`
+
+#### Serveur cible retenu
+- **VPS OVH VPS-1** : 4 vCore / 8 Go RAM / 75 Go SSD NVMe / Ubuntu 24.10 / 400 Mbit/s
+- **Backup automatique OVH** activé
+- **Domaine** : à acquérir chez OVH (procédure dans `production-setup.md`)
 
 ### Productivité du 25 avril 2026 ⭐ NOUVEAU
 - **Migrations** : 009 (correction complète noms MECCG) + corrections manuelles 005-008 appliquées

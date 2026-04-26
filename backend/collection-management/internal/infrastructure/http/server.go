@@ -18,6 +18,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jmoiron/sqlx"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 )
 
@@ -73,6 +74,9 @@ func (s *Server) setupMiddleware() {
 
 	// CORS configurable
 	s.router.Use(s.corsMiddleware)
+
+	// Prometheus HTTP instrumentation (all routes, no auth required)
+	s.router.Use(customMiddleware.PrometheusInstrumentation)
 }
 
 // corsMiddleware configure CORS avec les origines autorisées
@@ -134,6 +138,10 @@ func securityHeadersMiddleware(next http.Handler) http.Handler {
 
 // setupRoutes configure les routes
 func (s *Server) setupRoutes() {
+	// Prometheus metrics endpoint — no auth, accessible from internal network only.
+	// Network-level restriction (Docker internal only) is enforced at the Docker Compose layer.
+	s.router.Handle("/metrics", promhttp.Handler())
+
 	// Auth middleware
 	authMiddleware := customMiddleware.NewAuthMiddleware(s.jwtService, s.logger)
 
