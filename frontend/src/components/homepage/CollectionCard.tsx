@@ -21,6 +21,8 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
     switch (slug) {
       case 'royaumes-oublies':
         return '/books'
+      case 'dnd5':
+        return '/dnd5'
       default:
         return '/cards'
     }
@@ -172,7 +174,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
             fontWeight: '600',
             color: '#191c1d',
           }}>
-            {collection.totalCardsOwned} / {collection.totalCardsAvailable} {collection.slug === 'royaumes-oublies' ? 'livres' : 'cards'}
+            {collection.totalCardsOwned} / {collection.totalCardsAvailable} {(collection.slug === 'royaumes-oublies' || collection.slug === 'dnd5') ? 'livres' : 'cards'}
           </div>
           {(collection.totalCardsAvailable - collection.totalCardsOwned) > 0 && (
             <div style={{

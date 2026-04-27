@@ -2,6 +2,7 @@
 
 import { Collection } from '@/lib/api/collections'
 import CollectionCard from './CollectionCard'
+import { useDnD5Books } from '@/hooks/useDnD5Books'
 
 interface CollectionsGridProps {
   collections?: Collection[]
@@ -10,6 +11,11 @@ interface CollectionsGridProps {
 }
 
 export default function CollectionsGrid({ collections, isLoading, error }: CollectionsGridProps) {
+  // Fetch D&D 5e books data
+  const { data: dnd5Data } = useDnD5Books({ limit: 500 })
+  const dnd5Books = dnd5Data?.books ?? []
+  const dnd5Owned = dnd5Books.filter(b => b.ownedFr || b.ownedEn).length
+
   // Loading State
   if (isLoading) {
     return <CollectionsGridSkeleton />
@@ -95,7 +101,20 @@ export default function CollectionsGrid({ collections, isLoading, error }: Colle
     lastUpdated: null,
   }
 
-  const allCollections = collections ? [...collections, booksCollection] : [booksCollection]
+  // Add D&D 5e collection
+  const dnd5Collection: Collection = {
+    id: 'dnd5',
+    name: 'D&D 5e',
+    slug: 'dnd5',
+    description: 'Livres officiels Dungeons & Dragons 5e',
+    totalCardsOwned: dnd5Owned,
+    totalCardsAvailable: 53,
+    completionPercentage: dnd5Books.length > 0 ? Math.round((dnd5Owned / 53) * 100 * 10) / 10 : 0,
+    heroImageUrl: '',
+    lastUpdated: null,
+  }
+
+  const allCollections = collections ? [...collections, booksCollection, dnd5Collection] : [booksCollection, dnd5Collection]
 
   return (
     <div style={{

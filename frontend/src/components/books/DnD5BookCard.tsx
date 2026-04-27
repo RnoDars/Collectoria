@@ -4,6 +4,7 @@ import { DnD5Book } from '@/lib/api/dnd5'
 
 interface DnD5BookCardProps {
   book: DnD5Book
+  language: 'fr' | 'en'
   onToggleFr: (book: DnD5Book) => void
   onToggleEn: (book: DnD5Book) => void
   isTogglingId?: string
@@ -11,16 +12,21 @@ interface DnD5BookCardProps {
 
 export default function DnD5BookCard({
   book,
+  language,
   onToggleFr,
   onToggleEn,
   isTogglingId
 }: DnD5BookCardProps) {
   const isToggling = isTogglingId === book.id
 
-  // Determine display names
-  const displayNameFr = book.nameFr || null
-  const displayNameEn = book.nameEn
-  const isUntranslated = !displayNameFr
+  // Determine display names based on selected language
+  const primaryName = language === 'fr'
+    ? (book.nameFr || book.nameEn)
+    : book.nameEn
+
+  const secondaryName = language === 'fr'
+    ? (book.nameFr ? book.nameEn : null)
+    : book.nameFr
 
   // Format publication date (YYYY-MM-DD -> YYYY)
   const formatYear = (dateStr: string) => {
@@ -100,7 +106,7 @@ export default function DnD5BookCard({
     color: 'var(--on-surface-variant)',
   }
 
-  const titleFrStyle: React.CSSProperties = {
+  const titlePrimaryStyle: React.CSSProperties = {
     fontFamily: 'Manrope, sans-serif',
     fontWeight: '700',
     fontSize: '1rem',
@@ -109,7 +115,7 @@ export default function DnD5BookCard({
     paddingRight: '3rem',
   }
 
-  const titleEnStyle: React.CSSProperties = {
+  const titleSecondaryStyle: React.CSSProperties = {
     fontFamily: 'Manrope, sans-serif',
     fontWeight: '500',
     fontSize: '0.875rem',
@@ -137,19 +143,6 @@ export default function DnD5BookCard({
     borderRadius: '6px',
     background: typeColors.bg,
     color: typeColors.color,
-    marginRight: '0.5rem',
-  }
-
-  const untranslatedBadgeStyle: React.CSSProperties = {
-    display: 'inline-block',
-    fontFamily: 'Inter, sans-serif',
-    fontWeight: '600',
-    fontSize: '0.6875rem',
-    letterSpacing: '0.02em',
-    padding: '0.25rem 0.625rem',
-    borderRadius: '6px',
-    background: 'rgba(249, 115, 22, 0.15)',
-    color: '#f97316',
   }
 
   const toggleSectionStyle: React.CSSProperties = {
@@ -177,43 +170,42 @@ export default function DnD5BookCard({
       <span style={numberBadgeStyle}>#{book.number}</span>
 
       <div style={{ flex: 1 }}>
-        {/* Title FR (primary) or EN if no FR */}
-        <div style={titleFrStyle}>
-          {displayNameFr || displayNameEn}
+        {/* Primary title (based on selected language) */}
+        <div style={titlePrimaryStyle}>
+          {primaryName}
         </div>
 
-        {/* Title EN (if different from FR) */}
-        {displayNameFr && displayNameEn !== displayNameFr && (
-          <div style={titleEnStyle}>{displayNameEn}</div>
+        {/* Secondary title (if different from primary) */}
+        {secondaryName && secondaryName !== primaryName && (
+          <div style={titleSecondaryStyle}>{secondaryName}</div>
         )}
 
         {/* Badges */}
         <div style={{ marginTop: '0.5rem' }}>
           <span style={badgeStyle}>{book.bookType}</span>
-          {isUntranslated && (
-            <span style={untranslatedBadgeStyle}>Non traduit</span>
-          )}
         </div>
       </div>
 
       {/* Dual Toggle Section */}
       <div style={toggleSectionStyle}>
-        {/* French Version Toggle */}
-        <div style={toggleRowStyle}>
-          <span style={toggleLabelStyle}>Version FR</span>
-          <button
-            onClick={() => !isToggling && onToggleFr(book)}
-            disabled={isToggling || isUntranslated}
-            style={createToggleStyle(book.ownedFr ?? undefined)}
-            aria-label={book.ownedFr ? 'Retirer version FR' : 'Ajouter version FR'}
-            aria-pressed={book.ownedFr ?? false}
-            role="switch"
-          >
-            <div style={createKnobStyle(book.ownedFr ?? undefined)} />
-          </button>
-        </div>
+        {/* French Version Toggle - Only if translated */}
+        {book.nameFr && (
+          <div style={toggleRowStyle}>
+            <span style={toggleLabelStyle}>Version FR</span>
+            <button
+              onClick={() => !isToggling && onToggleFr(book)}
+              disabled={isToggling}
+              style={createToggleStyle(book.ownedFr ?? undefined)}
+              aria-label={book.ownedFr ? 'Retirer version FR' : 'Ajouter version FR'}
+              aria-pressed={book.ownedFr ?? false}
+              role="switch"
+            >
+              <div style={createKnobStyle(book.ownedFr ?? undefined)} />
+            </button>
+          </div>
+        )}
 
-        {/* English Version Toggle */}
+        {/* English Version Toggle - Always shown */}
         <div style={toggleRowStyle}>
           <span style={toggleLabelStyle}>Version EN</span>
           <button

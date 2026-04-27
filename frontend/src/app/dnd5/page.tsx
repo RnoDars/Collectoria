@@ -46,6 +46,7 @@ export default function DnD5Page() {
   const [search, setSearch] = useState('')
   const [bookType, setBookType] = useState('')
   const [owned, setOwned] = useState<OwnedFilter>('all')
+  const [language, setLanguage] = useState<'fr' | 'en'>('fr')
   const [togglingBookId, setTogglingBookId] = useState<string>()
 
   // Modal state
@@ -72,6 +73,11 @@ export default function DnD5Page() {
 
   let books = data?.books ?? []
   const pagination = data?.pagination ?? { total: 0, page: 1, limit: 50, totalPages: 1 }
+
+  // Apply language filter first (client-side)
+  if (language === 'fr') {
+    books = books.filter((book) => book.nameFr !== null)
+  }
 
   // Apply owned filter client-side
   if (owned !== 'all') {
@@ -298,6 +304,23 @@ export default function DnD5Page() {
             <option value="Recueil d'aventures">Recueil d&apos;aventures</option>
           </select>
 
+          <div style={toggleGroupStyle} role="group" aria-label="Langue">
+            <button
+              onClick={() => setLanguage('fr')}
+              style={toggleBtnStyle(language === 'fr')}
+              aria-pressed={language === 'fr'}
+            >
+              🇫🇷 Français
+            </button>
+            <button
+              onClick={() => setLanguage('en')}
+              style={toggleBtnStyle(language === 'en')}
+              aria-pressed={language === 'en'}
+            >
+              🇬🇧 Anglais
+            </button>
+          </div>
+
           <div style={toggleGroupStyle} role="group" aria-label="Filtre possession">
             <button
               onClick={() => setOwned('all')}
@@ -406,6 +429,7 @@ export default function DnD5Page() {
                     <DnD5BookCard
                       key={book.id}
                       book={book}
+                      language={language}
                       onToggleFr={handleToggleFr}
                       onToggleEn={handleToggleEn}
                       isTogglingId={togglingBookId}
