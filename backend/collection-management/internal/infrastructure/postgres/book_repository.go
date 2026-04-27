@@ -22,7 +22,7 @@ func NewBookRepository(db *sqlx.DB) *BookRepository {
 // GetBookByID récupère un livre par son ID
 func (r *BookRepository) GetBookByID(ctx context.Context, id uuid.UUID) (*domain.Book, error) {
 	query := `
-		SELECT id, collection_id, number, title, author, publication_date, book_type, created_at, updated_at
+		SELECT id, collection_id, number, title, name_en, name_fr, author, publication_date, edition, book_type, created_at, updated_at
 		FROM books
 		WHERE id = $1`
 
@@ -38,7 +38,7 @@ func (r *BookRepository) GetBookByID(ctx context.Context, id uuid.UUID) (*domain
 // GetUserBook récupère la relation utilisateur-livre
 func (r *BookRepository) GetUserBook(ctx context.Context, userID, bookID uuid.UUID) (*domain.UserBook, error) {
 	query := `
-		SELECT id, user_id, book_id, is_owned, created_at, updated_at
+		SELECT id, user_id, book_id, is_owned, owned_en, owned_fr, created_at, updated_at
 		FROM user_books
 		WHERE user_id = $1 AND book_id = $2`
 
@@ -52,6 +52,7 @@ func (r *BookRepository) GetUserBook(ctx context.Context, userID, bookID uuid.UU
 }
 
 // UpdateUserBook met à jour ou crée la possession d'un livre (UPSERT)
+// DEPRECATED: Utiliser UpdateBookOwnership à la place
 func (r *BookRepository) UpdateUserBook(ctx context.Context, userID, bookID uuid.UUID, isOwned bool) error {
 	query := `
 		INSERT INTO user_books (user_id, book_id, is_owned, created_at, updated_at)
@@ -63,12 +64,63 @@ func (r *BookRepository) UpdateUserBook(ctx context.Context, userID, bookID uuid
 	return err
 }
 
+// UpdateBookOwnership met à jour la possession selon la collection (dispatch automatique)
+func (r *BookRepository) UpdateBookOwnership(ctx context.Context, userID, bookID uuid.UUID, ownership domain.OwnershipUpdate) error {
+	// 1. Déterminer la collection du livre
+	var collectionID uuid.UUID
+	err := r.db.GetContext(ctx, &collectionID, "SELECT collection_id FROM books WHERE id = $1", bookID)
+	if err != nil {
+		return fmt.Errorf("failed to get book collection: %w", err)
+	}
+
+	// UUIDs des collections
+	royaumesOubliesID := uuid.MustParse("22222222-2222-2222-2222-222222222222")
+	dnd5eID := uuid.MustParse("33333333-3333-3333-3333-333333333333")
+
+	// 2. Dispatch selon la collection
+	if collectionID == royaumesOubliesID {
+		// Royaumes Oubliés: UPDATE is_owned
+		if ownership.IsOwned == nil {
+			return fmt.Errorf("is_owned is required for Royaumes Oubliés collection")
+		}
+		query := `
+			INSERT INTO user_books (user_id, book_id, is_owned, created_at, updated_at)
+			VALUES ($1, $2, $3, NOW(), NOW())
+			ON CONFLICT (user_id, book_id)
+			DO UPDATE SET is_owned = $3, updated_at = NOW()`
+		_, err = r.db.ExecContext(ctx, query, userID, bookID, *ownership.IsOwned)
+		return err
+	} else if collectionID == dnd5eID {
+		// D&D 5e: UPDATE owned_en et owned_fr
+		query := `
+			INSERT INTO user_books (user_id, book_id, is_owned, owned_en, owned_fr, created_at, updated_at)
+			VALUES ($1, $2, false, $3, $4, NOW(), NOW())
+			ON CONFLICT (user_id, book_id)
+			DO UPDATE SET owned_en = $3, owned_fr = $4, updated_at = NOW()`
+		_, err = r.db.ExecContext(ctx, query, userID, bookID, ownership.OwnedEn, ownership.OwnedFr)
+		return err
+	}
+
+	return fmt.Errorf("unsupported collection ID: %s", collectionID)
+}
+
 // GetBooksCatalog récupère le catalogue de livres avec filtres et pagination
 func (r *BookRepository) GetBooksCatalog(ctx context.Context, userID uuid.UUID, filter domain.BookFilter) (*domain.BookPage, error) {
 	args := []interface{}{userID}
 	idx := 2
 
 	where := []string{}
+
+	// Filtre par collection_id
+	if filter.CollectionID != nil {
+		where = append(where, fmt.Sprintf("b.collection_id = $%d", idx))
+		collectionUUID, err := uuid.Parse(*filter.CollectionID)
+		if err != nil {
+			return nil, fmt.Errorf("invalid collection_id: %w", err)
+		}
+		args = append(args, collectionUUID)
+		idx++
+	}
 
 	// Filtre de recherche dans le titre
 	if filter.Search != "" {
@@ -137,9 +189,12 @@ func (r *BookRepository) GetBooksCatalog(ctx context.Context, userID uuid.UUID, 
 	// Ordre par numéro avec tri naturel (1, 2, 3... 10, 11... 84, HS1, HS2...)
 	dataQuery := fmt.Sprintf(`
 		SELECT
-			b.id, b.collection_id, b.number, b.title, b.author, b.publication_date, b.book_type,
+			b.id, b.collection_id, b.number, b.title, b.name_en, b.name_fr, b.author,
+			b.publication_date, b.edition, b.book_type,
 			b.created_at, b.updated_at,
-			COALESCE(ub.is_owned, false) AS is_owned
+			COALESCE(ub.is_owned, false) AS is_owned,
+			ub.owned_en,
+			ub.owned_fr
 		FROM books b
 		LEFT JOIN user_books ub ON b.id = ub.book_id AND ub.user_id = $1
 		WHERE 1=1 %s
@@ -156,16 +211,21 @@ func (r *BookRepository) GetBooksCatalog(ctx context.Context, userID uuid.UUID, 
 		LIMIT $%d OFFSET $%d`, whereClause, idx, idx+1)
 
 	type row struct {
-		ID              uuid.UUID `db:"id"`
-		CollectionID    uuid.UUID `db:"collection_id"`
-		Number          string    `db:"number"`
-		Title           string    `db:"title"`
-		Author          string    `db:"author"`
+		ID              uuid.UUID   `db:"id"`
+		CollectionID    uuid.UUID   `db:"collection_id"`
+		Number          string      `db:"number"`
+		Title           string      `db:"title"`
+		NameEn          *string     `db:"name_en"`
+		NameFr          *string     `db:"name_fr"`
+		Author          string      `db:"author"`
 		PublicationDate interface{} `db:"publication_date"`
-		BookType        string    `db:"book_type"`
+		Edition         *string     `db:"edition"`
+		BookType        string      `db:"book_type"`
 		CreatedAt       interface{} `db:"created_at"`
 		UpdatedAt       interface{} `db:"updated_at"`
-		IsOwned         bool      `db:"is_owned"`
+		IsOwned         bool        `db:"is_owned"`
+		OwnedEn         *bool       `db:"owned_en"`
+		OwnedFr         *bool       `db:"owned_fr"`
 	}
 
 	var rows []row
@@ -181,10 +241,15 @@ func (r *BookRepository) GetBooksCatalog(ctx context.Context, userID uuid.UUID, 
 				CollectionID: r.CollectionID,
 				Number:       r.Number,
 				Title:        r.Title,
+				NameEn:       r.NameEn,
+				NameFr:       r.NameFr,
 				Author:       r.Author,
+				Edition:      r.Edition,
 				BookType:     r.BookType,
 			},
 			IsOwned: r.IsOwned,
+			OwnedEn: r.OwnedEn,
+			OwnedFr: r.OwnedFr,
 		}
 	}
 

@@ -210,9 +210,9 @@ func (s *Server) setupRoutes() {
 				cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
 				r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
 
-				// Book possession routes
+				// Book ownership routes (unified endpoint for all collections)
 				bookHandler := handlers.NewBookHandler(s.bookService, s.logger)
-				r.Patch("/books/{id}/possession", bookHandler.UpdateBookPossession)
+				r.Patch("/books/{id}/possession", bookHandler.UpdateBookOwnership)
 			})
 		})
 	})
