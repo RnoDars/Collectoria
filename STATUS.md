@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-26 - Production + Monitoring + Fixes UI + Spec D&D 5  
-**Focus du jour** : Procédures mise en production VPS OVH, stack monitoring, instrumentation Go, fixes UI (fonds collections, modale Books, activités), spec collection D&D 5e  
-**Prochaine session** : Fournir la liste des livres D&D 5 → implémenter collection D&D 5 (Backend + Frontend)
+**Date** : 2026-04-27 (matin) - Environnement + Préparation Collection D&D 5e  
+**Focus du jour** : Démarrage environnement complet (PostgreSQL + Backend + Frontend), analyse fichier source 53 livres D&D 5e officiels, enrichissement données avec abréviations, validation complète  
+**Prochaine session** : Génération migration 010 D&D 5e (après-midi)
 
 ---
 
@@ -880,7 +880,14 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 
 **Résultat** : Application production-ready avec score 9.0/10 (+100% depuis début Phase 1)
 
-### Priorité 1 — Améliorations UX/Fonctionnelles
+### Priorité 1 — Collection D&D 5e (EN COURS)
+- ✅ **Spécification v1.2** (26 avril) — Modèle de données, possession bilingue, UI
+- ✅ **Préparation données** (27 avril matin) — 53 livres officiels, enrichissement, validation
+- 🚧 **Migration 010** (27 avril après-midi) — Génération SQL avec seed data complet
+- 🔜 **Backend D&D 5e** : Endpoints API + service + repository
+- 🔜 **Frontend D&D 5e** : Page `/dnd5` + composant `DnD5BookCard` + filtres
+
+### Priorité 2 — Améliorations UX/Fonctionnelles
 - ✅ **Modal de confirmation toggle (1-2h)** - **COMPLÉTÉ le 22 avril**
   - ✅ Composant ConfirmToggleModal complet (302 lignes)
   - ✅ 20 tests Vitest (tous passants)
@@ -907,12 +914,12 @@ curl http://localhost:8080/api/v1/collections/summary | jq
   - Page `/wishlist`
   - Estimation : 1 jour
 
-### Priorité 2 — Tests & Qualité 🧪
+### Priorité 3 — Tests & Qualité 🧪
 - 🔜 Tests d'intégration backend (testcontainers-go)
 - 🔜 Tests E2E frontend (Playwright)
 - 🔜 Amélioration couverture de tests (cible : 90%+)
 
-### Priorité 3 — DevOps 🚀
+### Priorité 4 — DevOps 🚀
 - ✅ **Procédure production VPS OVH** : `DevOps/production-setup.md` (1 855 lignes) — provisioning, Docker, Traefik, CI/CD GitHub Actions, secrets, backup
 - ✅ **Stack monitoring documentée** : `DevOps/monitoring/` (2 104 lignes, 6 documents)
 - ✅ **Backend instrumenté** : endpoint `/metrics` Prometheus + middleware Chi `http_requests_total` / `http_request_duration_seconds`
@@ -1014,12 +1021,13 @@ Collectoria/
 
 ---
 
-## 📌 Métriques du Projet (2026-04-26)
+## 📌 Métriques du Projet (2026-04-27 matin)
 
 ### Documentation
 - **~20,000+ lignes** de documentation technique
-- **Commits Git** : 78+ au total (1 nouveau le 26/04)
+- **Commits Git** : 79 au total (+1 le 27/04 matin)
 - **Migrations SQL** : 9 migrations appliquées (001–009)
+- **Rapports amélioration continue** : 1 rapport session 27/04 matin
 
 ### Code
 - **Backend** : ~65 fichiers (~10,500 lignes de Go)
@@ -1138,8 +1146,34 @@ Collectoria/
 - Page `/dnd5` dédiée
 - `DnD5BookCard.tsx` dérivé de `BookCard.tsx` (pas de régression sur `/books`)
 
-#### Prochaine étape
-- ⏳ En attente de la liste des livres D&D 5 (nom EN, nom FR, type) pour la seed
+### 📚 Préparation Collection D&D 5e (27 avril matin) ⭐ NOUVEAU
+
+**Session démarrage (09:41 - 10:30)** :
+- ✅ PostgreSQL recréé avec volume propre (credentials corrects)
+- ✅ Extension PostgreSQL `unaccent` installée (requise pour tri alphabétique)
+- ✅ Backend + Frontend opérationnels
+- ✅ Authentification JWT validée fonctionnelle
+- ✅ Health checks : tous services OK
+
+**Analyse fichier source (10:30 - 12:00)** :
+- ✅ **Fichier reçu** : `dnd5-books-source.xlsx` (53 livres D&D 5e officiels Wizards of the Coast)
+- ✅ **Analyse complète** :
+  - 53 livres D&D 5e officiels (Wizards of the Coast)
+  - 28 traduits FR (52.8%), 25 non traduits (47.2%)
+  - Répartition : 17 Campagnes, 11 Setting, 8 Suppléments, 7 Recueils, 6 Core Rules, 4 Starter Set
+  - Possession initiale : 19 FR + 17 EN = 36 livres possédés
+- ✅ **Génération automatique 53 abréviations officielles** (PHB, DMG, CoS, OotA, etc.)
+- ✅ **Fichier enrichi créé** : `data/dnd5-books-enriched.csv` (avec colonne `number`)
+- ✅ **Validation complète** : Abréviations uniques, données cohérentes, doublons éliminés
+- ✅ **Commit** : 0aebf01 "data: add D&D 5e books source data (53 books)"
+
+**Rapport amélioration continue** :
+- ✅ **Rapport créé** : `Continuous-Improvement/reports/2026-04-27_session-matin.md`
+- ✅ 5 recommandations DevOps documentées
+- ✅ 5 patterns réutilisables identifiés
+
+**Prochaine étape** :
+- ⏳ Génération migration 010 D&D 5e (après-midi)
 
 ### 🚀 Préparation Production (26 avril) ⭐ NOUVEAU
 
@@ -1191,6 +1225,25 @@ Collectoria/
   - 1 381 cartes avec name_fr ≠ name_en (vs 928 avant)
   - 298 noms propres identiques EN/FR (normal)
 - **Documentation DevOps** : `testing-local.md` mis à jour avec migrations 005-009
+
+### Productivité du 27 avril 2026 (matin) ⭐ NOUVEAU
+- **Session démarrage environnement** (09:41 - 10:30, ~50 min) :
+  - PostgreSQL recréé proprement avec extension `unaccent`
+  - Backend + Frontend opérationnels
+  - Authentification JWT validée
+  - Health checks : tous services OK
+- **Préparation Collection D&D 5e** (10:30 - 12:00, ~90 min) :
+  - Fichier source reçu : dnd5-books-source.xlsx (53 livres officiels)
+  - Analyse complète : 28 traduits FR (52.8%), 25 non traduits (47.2%)
+  - Répartition : 17 Campagnes, 11 Setting, 8 Suppléments, 7 Recueils, 6 Core Rules, 4 Starter Set
+  - Génération automatique 53 abréviations officielles (PHB, DMG, CoS, etc.)
+  - Fichier enrichi créé : dnd5-books-enriched.csv (avec colonne `number`)
+  - Validation complète : abréviations uniques, données cohérentes
+  - Possession initiale : 19 FR + 17 EN = 36 livres possédés
+- **1 commit pushé** : 0aebf01 "data: add D&D 5e books source data (53 books)"
+- **Rapport amélioration continue** : `Continuous-Improvement/reports/2026-04-27_session-matin.md` (5 recommandations DevOps)
+- **Temps total session** : ~140 min
+- **Prochaine étape** : Génération migration 010 D&D 5e (après-midi)
 
 ---
 
