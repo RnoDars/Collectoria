@@ -98,7 +98,6 @@ export default function DnD5BookConfirmModal({
     : `Voulez-vous retirer la version ${versionLabel} de ce livre de votre collection ?`
 
   const displayTitle = book.nameFr || book.nameEn
-  const displayEdition = book.edition
 
   // Styles
   const backdropStyle: React.CSSProperties = {
@@ -170,13 +169,6 @@ export default function DnD5BookConfirmModal({
     fontWeight: '700',
     fontSize: '1rem',
     color: 'var(--on-surface)',
-    lineHeight: '1.4',
-  }
-
-  const editionStyle: React.CSSProperties = {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '0.875rem',
-    color: 'var(--on-surface-variant)',
     lineHeight: '1.4',
   }
 
@@ -282,7 +274,6 @@ export default function DnD5BookConfirmModal({
               <span style={iconStyle}>📚</span>
               <div style={bookDetailsStyle}>
                 <div style={titleTextStyle}>{displayTitle}</div>
-                {displayEdition && <div style={editionStyle}>{displayEdition}</div>}
                 <span style={versionBadgeStyle}>
                   {version === 'fr' ? 'Version FR' : 'Version EN'}
                 </span>

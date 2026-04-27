@@ -187,17 +187,6 @@ export default function DnD5BookCard({
           <div style={titleEnStyle}>{displayNameEn}</div>
         )}
 
-        {/* Edition & Year */}
-        {book.edition && (
-          <div style={metaStyle}>
-            <strong>Édition:</strong> {book.edition}
-          </div>
-        )}
-
-        <div style={metaStyle}>
-          <strong>Année:</strong> {formatYear(book.publicationDate)}
-        </div>
-
         {/* Badges */}
         <div style={{ marginTop: '0.5rem' }}>
           <span style={badgeStyle}>{book.bookType}</span>

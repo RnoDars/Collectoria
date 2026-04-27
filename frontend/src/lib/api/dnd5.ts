@@ -10,8 +10,6 @@ export interface DnD5Book {
   bookType: string
   ownedEn: boolean | null
   ownedFr: boolean | null
-  edition?: string
-  publicationDate: string
   createdAt: string
   updatedAt: string
 }
@@ -65,8 +63,6 @@ export async function fetchBooks(filters: DnD5Filters = {}): Promise<DnD5BooksRe
       bookType: b.book_type,
       ownedEn: b.owned_en,
       ownedFr: b.owned_fr,
-      edition: b.edition,
-      publicationDate: b.publication_date,
       createdAt: b.created_at,
       updatedAt: b.updated_at,
     })),
@@ -104,8 +100,6 @@ export async function updateBookOwnership(
     bookType: data.book_type,
     ownedEn: data.owned_en,
     ownedFr: data.owned_fr,
-    edition: data.edition,
-    publicationDate: data.publication_date,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
   }
