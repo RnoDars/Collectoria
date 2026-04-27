@@ -7,15 +7,21 @@ export interface Book {
   collectionId: string
   number: string
   title: string
+  nameEn?: string
+  nameFr?: string
   author: string
   publicationDate: string
-  bookType: 'roman' | 'recueil de romans'
-  isOwned: boolean
+  edition?: string
+  bookType: string
+  isOwned?: boolean
+  ownedEn?: boolean
+  ownedFr?: boolean
   createdAt: string
   updatedAt: string
 }
 
 export interface BookFilters {
+  collectionId?: string
   search?: string
   author?: string
   bookType?: string
@@ -40,6 +46,7 @@ export interface BooksResponse {
 export async function fetchBooks(filters: BookFilters = {}): Promise<BooksResponse> {
   const params = new URLSearchParams()
 
+  if (filters.collectionId) params.set('collection_id', filters.collectionId)
   if (filters.page) params.set('page', String(filters.page))
   if (filters.limit) params.set('limit', String(filters.limit))
   if (filters.search) params.set('search', filters.search)
@@ -63,10 +70,15 @@ export async function fetchBooks(filters: BookFilters = {}): Promise<BooksRespon
       collectionId: b.collection_id,
       number: b.number,
       title: b.title,
+      nameEn: b.name_en,
+      nameFr: b.name_fr,
       author: b.author,
       publicationDate: b.publication_date,
+      edition: b.edition,
       bookType: b.book_type,
       isOwned: b.is_owned,
+      ownedEn: b.owned_en,
+      ownedFr: b.owned_fr,
       createdAt: b.created_at,
       updatedAt: b.updated_at,
     })),
@@ -100,10 +112,15 @@ export async function toggleBookPossession(
     collectionId: data.collection_id,
     number: data.number,
     title: data.title,
+    nameEn: data.name_en,
+    nameFr: data.name_fr,
     author: data.author,
     publicationDate: data.publication_date,
+    edition: data.edition,
     bookType: data.book_type,
     isOwned: data.is_owned,
+    ownedEn: data.owned_en,
+    ownedFr: data.owned_fr,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
   }

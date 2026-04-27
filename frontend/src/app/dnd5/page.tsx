@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useBooks } from '@/hooks/useBooks'
-import { useBookToggle } from '@/hooks/useBookToggle'
+import { useDnD5BookToggle } from '@/hooks/useDnD5BookToggle'
 import { BookFilters, Book } from '@/lib/api/books'
 import Link from 'next/link'
-import BookCard from '@/components/books/BookCard'
-import BookConfirmModal from '@/components/books/BookConfirmModal'
+import DnD5BookCard from '@/components/books/DnD5BookCard'
+import DnD5BookConfirmModal from '@/components/books/DnD5BookConfirmModal'
 
-// ─── Skeleton Loading ─────────────────────────────────────────────────────────
-
+// Skeleton Loading
 function BookSkeleton() {
   return (
     <div
@@ -17,7 +16,7 @@ function BookSkeleton() {
         background: 'var(--surface-container-lowest)',
         borderRadius: '12px',
         padding: '1.25rem',
-        height: '220px',
+        height: '280px',
       }}
     >
       <style>{`
@@ -40,22 +39,19 @@ function BookSkeleton() {
   )
 }
 
-// ─── Main Page Component ──────────────────────────────────────────────────────
+// Main Page Component
+type OwnedFilter = 'all' | 'fr' | 'en' | 'none'
 
-type OwnedFilter = 'all' | 'true' | 'false'
-type SeriesFilter = 'all' | 'principal' | 'hors-serie'
-
-export default function BooksPage() {
+export default function DnD5Page() {
   const [search, setSearch] = useState('')
-  const [author, setAuthor] = useState('')
   const [bookType, setBookType] = useState('')
-  const [series, setSeries] = useState<SeriesFilter>('all')
   const [owned, setOwned] = useState<OwnedFilter>('all')
   const [togglingBookId, setTogglingBookId] = useState<string>()
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [pendingBook, setPendingBook] = useState<Book | null>(null)
+  const [pendingVersion, setPendingVersion] = useState<'fr' | 'en'>('fr')
   const [pendingState, setPendingState] = useState<boolean>(false)
 
   // Debounce search input
@@ -66,30 +62,45 @@ export default function BooksPage() {
   }, [search])
 
   const filters: BookFilters = {
-    collectionId: '22222222-2222-2222-2222-222222222222',
+    collectionId: '33333333-3333-3333-3333-333333333333',
     limit: 500,
     ...(debouncedSearch && { search: debouncedSearch }),
-    ...(author && { author }),
     ...(bookType && { bookType }),
-    ...(series !== 'all' && { series: series as 'principal' | 'hors-serie' }),
-    ...(owned !== 'all' && { isOwned: owned === 'true' }),
   }
 
   const { data, isLoading, isError, error } = useBooks(filters)
-  const { toggleBook, isLoading: isToggling } = useBookToggle()
+  const { toggleBook, isLoading: isToggling } = useDnD5BookToggle()
 
-  const books = data?.books ?? []
+  let books = data?.books ?? []
   const pagination = data?.pagination ?? { total: 0, page: 1, limit: 50, totalPages: 1 }
 
-  // Calculate stats
-  const totalBooks = pagination.total
-  const ownedBooks = books.filter((b) => b.isOwned).length
-  const totalOwned = data?.pagination.total ?? 0 // This would need a separate query for accurate count
+  // Apply owned filter client-side
+  if (owned !== 'all') {
+    books = books.filter((book) => {
+      if (owned === 'fr') return book.ownedFr === true
+      if (owned === 'en') return book.ownedEn === true
+      if (owned === 'none') return !book.ownedFr && !book.ownedEn
+      return true
+    })
+  }
 
-  const handleToggleClick = (book: Book) => {
-    // Open modal for confirmation
+  // Calculate stats
+  const totalBooks = books.length
+  const ownedFrBooks = books.filter((b) => b.ownedFr).length
+  const ownedEnBooks = books.filter((b) => b.ownedEn).length
+
+  const handleToggleFr = (book: Book) => {
+    if (!book.nameFr) return // Cannot toggle FR if not translated
     setPendingBook(book)
-    setPendingState(!book.isOwned)
+    setPendingVersion('fr')
+    setPendingState(!book.ownedFr)
+    setIsModalOpen(true)
+  }
+
+  const handleToggleEn = (book: Book) => {
+    setPendingBook(book)
+    setPendingVersion('en')
+    setPendingState(!book.ownedEn)
     setIsModalOpen(true)
   }
 
@@ -98,7 +109,11 @@ export default function BooksPage() {
 
     setTogglingBookId(pendingBook.id)
     toggleBook(
-      { bookId: pendingBook.id, isOwned: pendingState },
+      {
+        bookId: pendingBook.id,
+        version: pendingVersion,
+        isOwned: pendingState,
+      },
       {
         onSettled: () => {
           setTogglingBookId(undefined)
@@ -114,8 +129,7 @@ export default function BooksPage() {
     setPendingBook(null)
   }
 
-  // ─── Styles ───────────────────────────────────────────────────────────────
-
+  // Styles
   const pageStyle: React.CSSProperties = {
     minHeight: '100vh',
     background: 'var(--surface)',
@@ -192,8 +206,8 @@ export default function BooksPage() {
   const selectStyle: React.CSSProperties = {
     ...inputStyle,
     cursor: 'pointer',
-    flex: '0 1 180px',
-    minWidth: '160px',
+    flex: '0 1 200px',
+    minWidth: '180px',
   }
 
   const toggleGroupStyle: React.CSSProperties = {
@@ -226,8 +240,6 @@ export default function BooksPage() {
     marginBottom: '2rem',
   }
 
-  // ─── Render ───────────────────────────────────────────────────────────────
-
   return (
     <div style={pageStyle}>
       <div style={containerStyle}>
@@ -236,17 +248,25 @@ export default function BooksPage() {
           <Link href="/" style={backLinkStyle}>
             ← Retour au dashboard
           </Link>
-          <h1 style={headingStyle}>Collection Royaumes Oubliés</h1>
+          <h1 style={headingStyle}>Collection D&D 5e</h1>
           <div style={statsStyle}>
             <div style={statItemStyle}>
               <span>Total:</span>
-              <strong>94 livres</strong>
+              <strong>53 livres</strong>
             </div>
             {!isLoading && (
               <>
                 <div style={statItemStyle}>
                   <span>Affichés:</span>
                   <strong>{totalBooks} livre{totalBooks > 1 ? 's' : ''}</strong>
+                </div>
+                <div style={statItemStyle}>
+                  <span>Version FR:</span>
+                  <strong>{ownedFrBooks}</strong>
+                </div>
+                <div style={statItemStyle}>
+                  <span>Version EN:</span>
+                  <strong>{ownedEnBooks}</strong>
                 </div>
               </>
             )}
@@ -265,58 +285,19 @@ export default function BooksPage() {
           />
 
           <select
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            style={selectStyle}
-            aria-label="Filtrer par auteur"
-          >
-            <option value="">Tous les auteurs</option>
-            <option value="Troy Denning">Troy Denning</option>
-            <option value="R.A. Salvatore">R.A. Salvatore</option>
-            <option value="Ed Greenwood">Ed Greenwood</option>
-            <option value="Elaine Cunningham">Elaine Cunningham</option>
-            <option value="James Lowder">James Lowder</option>
-            <option value="Douglas Niles">Douglas Niles</option>
-            <option value="Christie Golden">Christie Golden</option>
-            <option value="Richard Awlinson">Richard Awlinson</option>
-            <option value="Richard Lee Byers">Richard Lee Byers</option>
-            <option value="Jean Rabe">Jean Rabe</option>
-          </select>
-
-          <select
             value={bookType}
             onChange={(e) => setBookType(e.target.value)}
             style={selectStyle}
             aria-label="Filtrer par type"
           >
             <option value="">Tous les types</option>
-            <option value="roman">Roman</option>
-            <option value="recueil de romans">Recueil de romans</option>
+            <option value="Core Rules">Core Rules</option>
+            <option value="Starter Set">Starter Set</option>
+            <option value="Supplément de règles">Supplément de règles</option>
+            <option value="Setting">Setting</option>
+            <option value="Campagnes">Campagnes</option>
+            <option value="Recueil d'aventures">Recueil d&apos;aventures</option>
           </select>
-
-          <div style={toggleGroupStyle} role="group" aria-label="Filtre série">
-            <button
-              onClick={() => setSeries('all')}
-              style={toggleBtnStyle(series === 'all')}
-              aria-pressed={series === 'all'}
-            >
-              Tous
-            </button>
-            <button
-              onClick={() => setSeries('principal')}
-              style={toggleBtnStyle(series === 'principal')}
-              aria-pressed={series === 'principal'}
-            >
-              Principal
-            </button>
-            <button
-              onClick={() => setSeries('hors-serie')}
-              style={toggleBtnStyle(series === 'hors-serie')}
-              aria-pressed={series === 'hors-serie'}
-            >
-              Hors-série
-            </button>
-          </div>
 
           <div style={toggleGroupStyle} role="group" aria-label="Filtre possession">
             <button
@@ -327,18 +308,25 @@ export default function BooksPage() {
               Tous
             </button>
             <button
-              onClick={() => setOwned('true')}
-              style={toggleBtnStyle(owned === 'true')}
-              aria-pressed={owned === 'true'}
+              onClick={() => setOwned('fr')}
+              style={toggleBtnStyle(owned === 'fr')}
+              aria-pressed={owned === 'fr'}
             >
-              Possédés
+              Version FR
             </button>
             <button
-              onClick={() => setOwned('false')}
-              style={toggleBtnStyle(owned === 'false')}
-              aria-pressed={owned === 'false'}
+              onClick={() => setOwned('en')}
+              style={toggleBtnStyle(owned === 'en')}
+              aria-pressed={owned === 'en'}
             >
-              Manquants
+              Version EN
+            </button>
+            <button
+              onClick={() => setOwned('none')}
+              style={toggleBtnStyle(owned === 'none')}
+              aria-pressed={owned === 'none'}
+            >
+              Non possédé
             </button>
           </div>
         </div>
@@ -416,10 +404,11 @@ export default function BooksPage() {
                   </div>
                 )
                 : books.map((book) => (
-                    <BookCard
+                    <DnD5BookCard
                       key={book.id}
                       book={book}
-                      onToggle={handleToggleClick}
+                      onToggleFr={handleToggleFr}
+                      onToggleEn={handleToggleEn}
                       isTogglingId={togglingBookId}
                     />
                   ))}
@@ -430,8 +419,9 @@ export default function BooksPage() {
 
       {/* Confirmation Modal */}
       {pendingBook && (
-        <BookConfirmModal
+        <DnD5BookConfirmModal
           book={pendingBook}
+          version={pendingVersion}
           newState={pendingState}
           isOpen={isModalOpen}
           onConfirm={handleConfirmToggle}

@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: '/', label: 'Accueil' },
   { href: '/cards', label: 'Cartes' },
   { href: '/books', label: 'Livres' },
+  { href: '/dnd5', label: 'D&D 5e' },
 ]
 
 export default function TopNav() {

@@ -1,0 +1,536 @@
+================================================================================
+MECCG Card Names Cleanup Report
+================================================================================
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total cards processed: 1679
+Updated: 578 (34.4%)
+Already correct: 1038 (61.8%)
+Not found in reference: 63 (3.8%)
+
+BREAKDOWN BY SERIES
+--------------------------------------------------------------------------------
+Series                          Total  Updated  Correct  Not Found
+--------------------------------------------------------------------------------
+Against the Shadow                170        1      162          7
+L'Oeil de Sauron                  417       36      379          2
+Les Dragons                       180      146       19         15
+Les Sorciers                      483      337      128         18
+Promo                              23        3       17          3
+Sombres Séides                    180       55      122          3
+The Balrog                        104        0      102          2
+The White Hand                    122        0      109         13
+
+CARDS UPDATED
+--------------------------------------------------------------------------------
+Total updated: 578 cards
+
+Series: Against the Shadow
+  OLD EN: All the Bells Ringing 
+  OLD FR: All the Bells Ringing 
+  NEW EN: All the Bells Ringing
+  NEW FR: Sonner le tocsin
+
+Series: L'Oeil de Sauron
+  OLD EN: All Thought Bent Upon It
+  OLD FR: Toute sa pensée fixée dessus
+  NEW EN: All Thought Bent upon It
+  NEW FR: Toute sa pensée fixée dessus
+
+Series: L'Oeil de Sauron
+  OLD EN: Beorn's House
+  OLD FR: Maison de Beorn
+  NEW EN: Beorn’s House
+  NEW FR: Maison de Beorn
+
+Series: L'Oeil de Sauron
+  OLD EN: Burh Widu
+  OLD FR: Buhr Wídu
+  NEW EN: Buhr Widu
+  NEW FR: Buhr Wídu
+
+Series: L'Oeil de Sauron
+  OLD EN: By the Ringwraith's Word
+  OLD FR: Aux ordres du Spectre
+  NEW EN: By the Ringwraith’s Word
+  NEW FR: Aux ordres du Spectre
+
+Series: L'Oeil de Sauron
+  OLD EN: Darkness under Tree
+  OLD FR: Ténèbres sous les arbres
+  NEW EN: Darkness Under Tree
+  NEW FR: Ténèbres sous les arbres
+
+Series: L'Oeil de Sauron
+  OLD EN: Dwarven Ring of Barin's Tribe
+  OLD FR: Anneau nain de la tribu de Barïn
+  NEW EN: Dwarven Ring of Barin’s Tribe
+  NEW FR: Anneau Nain de la Tribu de Barïn
+
+Series: L'Oeil de Sauron
+  OLD EN: Dwarven Ring of Bávor's Tribe
+  OLD FR: Anneau nain de la tribu de Bávor
+  NEW EN: Dwarven Ring of Bávor’s Tribe
+  NEW FR: Anneau Nain de la Tribu de Bávor
+
+Series: L'Oeil de Sauron
+  OLD EN: Dwarven Ring of Drúin's Tribe
+  OLD FR: Anneau nain de la tribu de Drúïn
+  NEW EN: Dwarven Ring of Drúin’s Tribe
+  NEW FR: Anneau Nain de la Tribu de Drúïn
+
+Series: L'Oeil de Sauron
+  OLD EN: Dwarven Ring of Durin's Trib
+  OLD FR: Anneau nain de la Tribu de Durïn
+  NEW EN: Dwarven Ring of Durin’s Tribe
+  NEW FR: Anneau Nain de la Tribu de Durïn
+
+Series: L'Oeil de Sauron
+  OLD EN: Dwarven Ring of Dwálin's Tribe
+  OLD FR: Anneau nain de la tribu de Dwálïn
+  NEW EN: Dwarven Ring of Dwálin’s Tribe
+  NEW FR: Anneau Nain de la Tribu de Dwálïn
+
+Series: L'Oeil de Sauron
+  OLD EN: Elves Upon Errantry
+  OLD FR: Elfes en errance
+  NEW EN: Elves upon Errantry
+  NEW FR: Elfes en errance
+
+Series: L'Oeil de Sauron
+  OLD EN: Hermit's Hill
+  OLD FR: Colline de l'Ermite
+  NEW EN: Hermit’s Hill
+  NEW FR: Colline de l'Ermite
+
+Series: L'Oeil de Sauron
+  OLD EN: Hobgoblins
+  OLD FR: Hobgobelins
+  NEW EN: Hobgoblins 
+  NEW FR: Hobgobelins
+
+Series: L'Oeil de Sauron
+  OLD EN: I'll Report You
+  OLD FR: Je vais te signaler
+  NEW EN: I’ll Report You
+  NEW FR: Je vais te signaler
+
+Series: L'Oeil de Sauron
+  OLD EN: Iron Road
+  OLD FR: Route de fer
+  NEW EN: Iron-road
+  NEW FR: Route de fer
+
+Series: L'Oeil de Sauron
+  OLD EN: Lost in Wilderness
+  OLD FR: Perdus dans les contrées sauvages
+  NEW EN: Lost in the Wilderness
+  NEW FR: Perdus dans les contrées sauvages
+
+Series: L'Oeil de Sauron
+  OLD EN: Magic Ring of guile
+  OLD FR: Anneau magique de ruse
+  NEW EN: Magic Ring of Guile
+  NEW FR: Anneau magique de ruse
+
+Series: L'Oeil de Sauron
+  OLD EN: News Must Get Through
+  OLD FR: Il faut transmettre les nouvelles
+  NEW EN: News Must Get Trough
+  NEW FR: Il faut transmettre les nouvelles
+
+Series: L'Oeil de Sauron
+  OLD EN: Rats
+  OLD FR: Des rats !
+  NEW EN: Rats!
+  NEW FR: Des rats !
+
+Series: L'Oeil de Sauron
+  OLD EN: Sarn Gorwing
+  OLD FR: Sarn Goriwing
+  NEW EN: Sarn Goriwing
+  NEW FR: Sarn Goriwing
+
+Series: L'Oeil de Sauron
+  OLD EN: Secrets of their Forging
+  OLD FR: Secrets de leur fabrication
+  NEW EN: Secrets of Their Forging
+  NEW FR: Secrets de leur fabrication
+
+Series: L'Oeil de Sauron
+  OLD EN: Shelob's Lair
+  OLD FR: Antre d'Arachne
+  NEW EN: Shelob’s Lair
+  NEW FR: Antre d'Arachne
+
+Series: L'Oeil de Sauron
+  OLD EN: Sneakin'
+  OLD FR: Maraude
+  NEW EN: Sneakin’
+  NEW FR: Maraude
+
+Series: L'Oeil de Sauron
+  OLD EN: So You've Come Back
+  OLD FR: Vous voilà donc revenus ?
+  NEW EN: So You’ve Come Back 
+  NEW FR: Vous voilà donc revenus ?
+
+Series: L'Oeil de Sauron
+  OLD EN: That Ain't No Secret
+  OLD FR: Ce n'est pas un secret
+  NEW EN: That Ain’t No Secret
+  NEW FR: Ce n'est pas un secret
+
+Series: L'Oeil de Sauron
+  OLD EN: That's Been Heard Before Tonight
+  OLD FR: On a déjà entendu ça
+  NEW EN: That’s Been Heard Before Tonight
+  NEW FR: On a déjà entendu ça
+
+Series: L'Oeil de Sauron
+  OLD EN: The Oracle's Ring
+  OLD FR: L'anneau de l'oracle
+  NEW EN: The Oracle’s Ring
+  NEW FR: L'anneau de l'oracle
+
+Series: L'Oeil de Sauron
+  OLD EN: The Water's Tithe
+  OLD FR: Le tribut de l'eau
+  NEW EN: The Water’s Tithe
+  NEW FR: Le tribut de l'eau
+
+Series: L'Oeil de Sauron
+  OLD EN: Thranduil's Folk
+  OLD FR: Gens de Thranduil
+  NEW EN: Thranduil’s Folk
+  NEW FR: Gens de Thranduil
+
+Series: L'Oeil de Sauron
+  OLD EN: Thranduil's Halls
+  OLD FR: Palais de Thranduil
+  NEW EN: Thranduil’s Halls
+  NEW FR: Palais de Thranduil
+
+Series: L'Oeil de Sauron
+  OLD EN: Thunder's Companion
+  OLD FR: Compagnon du tonnerre
+  NEW EN: Thunder’s Companion
+  NEW FR: Compagnon du tonnerre
+
+Series: L'Oeil de Sauron
+  OLD EN: Tiding of Death
+  OLD FR: Rumeurs de mort
+  NEW EN: Tidings of Death
+  NEW FR: Rumeurs de mort
+
+Series: L'Oeil de Sauron
+  OLD EN: Under his Blow
+  OLD FR: Sous son coup
+  NEW EN: Under His Blow
+  NEW FR: Sous son coup
+
+Series: L'Oeil de Sauron
+  OLD EN: Ungol-Orcs
+  OLD FR: Orques d'Ungol
+  NEW EN: Ungol-orcs
+  NEW FR: Orques d'Ungol
+
+Series: L'Oeil de Sauron
+  OLD EN: Webs of Fear and Treachery
+  OLD FR: Toile de peur et de traîtrise
+  NEW EN: Webs of Fear & Treachery
+  NEW FR: Toile de peur et de traîtrise
+
+Series: L'Oeil de Sauron
+  OLD EN: Where There's a Whip
+  OLD FR: Où il y a un fouet
+  NEW EN: Where There’s a Whip
+  NEW FR: Où il y a un fouet
+
+Series: Les Dragons
+  OLD EN: Absent du gîte
+  OLD FR: Absent du gîte
+  NEW EN: Not at Home
+  NEW FR: Absent du gîte
+
+Series: Les Dragons
+  OLD EN: Adresse dans l'agilité
+  OLD FR: Adresse dans l'agilité
+  NEW EN: Deftness of Agility
+  NEW FR: Adresse dans l'agilité
+
+Series: Les Dragons
+  OLD EN: Agburanar au gîte
+  OLD FR: Agburanar au gîte
+  NEW EN: Agburanar at Home
+  NEW FR: Agburanar au gîte
+
+Series: Les Dragons
+  OLD EN: Agburanar en chasse
+  OLD FR: Agburanar en chasse
+  NEW EN: Agburanar Ahunt
+  NEW FR: Agburanar en chasse
+
+Series: Les Dragons
+  OLD EN: Alerter le peuple
+  OLD FR: Alerter le peuple
+  NEW EN: Alert the Folk
+  NEW FR: Alerter le peuple
+
+Series: Les Dragons
+  OLD EN: Anciennes merveilles
+  OLD FR: Anciennes merveilles
+  NEW EN: Marvels Told
+  NEW FR: Anciennes merveilles
+
+Series: Les Dragons
+  OLD EN: Animer les résidents
+  OLD FR: Animer les résidents
+  NEW EN: Incite Denizens
+  NEW FR: Animer les résidents
+
+Series: Les Dragons
+  OLD EN: Animer les séides
+  OLD FR: Animer les séides
+  NEW EN: Incite Minions
+  NEW FR: Animer les séides
+
+Series: Les Dragons
+  OLD EN: Appétit de dragon
+  OLD FR: Appétit de dragon
+  NEW EN: Dragon’s Hunger
+  NEW FR: Appétit de Dragon
+
+Series: Les Dragons
+  OLD EN: Araignées mineures
+  OLD FR: Araignées mineures
+  NEW EN: Lesser Spiders
+  NEW FR: Araignées mineures
+
+Series: Les Dragons
+  OLD EN: Arc de corne de dragon
+  OLD FR: Arc de corne de dragon
+  NEW EN: Bow of Dragon-horn
+  NEW FR: Arc de corne de Dragon
+
+Series: Les Dragons
+  OLD EN: Astuce
+  OLD FR: Astuce
+  NEW EN: Wit
+  NEW FR: Astuce
+
+Series: Les Dragons
+  OLD EN: Bairanax
+  OLD FR: Bairanax
+  NEW EN: Bairanax 
+  NEW FR: Bairanax
+
+... and 528 more cards updated.
+
+CARDS NOT FOUND IN REFERENCE DATABASE
+--------------------------------------------------------------------------------
+Total not found: 63 cards
+
+Series: Against the Shadow
+  EN: Creature of and Older World
+  FR: Creature of and Older World
+
+Series: Against the Shadow
+  EN: Durin's Folk
+  FR: Durin's Folk
+
+Series: Against the Shadow
+  EN: Dwarven Ring of Thrár's Tribe
+  FR: Dwarven Ring of Thrár's Tribe
+
+Series: Against the Shadow
+  EN: Dwarven Ring of Thélor's Tribe 
+  FR: Dwarven Ring of Thélor's Tribe 
+
+Series: Against the Shadow
+  EN: Eagles' Eyrie
+  FR: Eagles' Eyrie
+
+Series: Against the Shadow
+  EN: Steward's Guard
+  FR: Steward's Guard
+
+Series: Against the Shadow
+  EN: Thrór's Map
+  FR: Thrór's Map
+
+Series: L'Oeil de Sauron
+  EN: "Two-headed" Troll
+  FR: Troll "à deux têtes"
+
+Series: L'Oeil de Sauron
+  EN: I'll Be At Your Heels
+  FR: Je serais sur vos talons
+
+Series: Les Dragons
+  EN: A examiner par la suite
+  FR: A examiner par la suite
+
+Series: Les Dragons
+  EN: A une once près
+  FR: A une once près
+
+Series: Les Dragons
+  EN: Connaissance des mathoms
+  FR: Connaissance des mathoms
+
+Series: Les Dragons
+  EN: Disparais dans la lumière !
+  FR: Disparais dans la lumière !
+
+Series: Les Dragons
+  EN: Holà ! Venez gai dol !
+  FR: Holà ! Venez gai dol !
+
+Series: Les Dragons
+  EN: Issu des fosses d'Angband
+  FR: Issu des fosses d'Angband
+
+Series: Les Dragons
+  EN: Le heaume de son secret
+  FR: Le heaume de son secret
+
+Series: Les Dragons
+  EN: Oeil inquisiteur
+  FR: Oeil inquisiteur
+
+Series: Les Dragons
+  EN: Que coeurs et membres se réchauffent !
+  FR: Que coeurs et membres se réchauffent !
+
+Series: Les Dragons
+  EN: Sentier elfique
+  FR: Sentier elfique
+
+Series: Les Dragons
+  EN: Thráïn II
+  FR: Thráïn II
+
+Series: Les Dragons
+  EN: Un oeil à moitié ouvert
+  FR: Un oeil à moitié ouvert
+
+Series: Les Dragons
+  EN: Émeraude de Doriath
+  FR: Émeraude de Doriath
+
+Series: Les Dragons
+  EN: Épuises et affamés
+  FR: Épuises et affamés
+
+Series: Les Dragons
+  EN: Épée vaillante
+  FR: Épée vaillante
+
+Series: Les Sorciers
+  EN: "Bert" (Bûrat)
+  FR: "Bert" (Bûrat)
+
+Series: Les Sorciers
+  EN: "Tom" (Tûma)
+  FR: "Tom" (Tûma)
+
+Series: Les Sorciers
+  EN: "William" (Wûluag)
+  FR: "William" (Wûluag)
+
+Series: Les Sorciers
+  EN: Contrôler un Palantir
+  FR: Contrôler un Palantir
+
+Series: Les Sorciers
+  EN: Dáïn II
+  FR: Dáïn II
+
+Series: Les Sorciers
+  EN: Désespoir du coeur
+  FR: Désespoir du coeur
+
+Series: Les Sorciers
+  EN: Enedwaith
+  FR: Enedwaith
+
+Series: Les Sorciers
+  EN: Eomer
+  FR: Eomer
+
+Series: Les Sorciers
+  EN: Eowyn
+  FR: Eowyn
+
+Series: Les Sorciers
+  EN: Lassitude du coeur
+  FR: Lassitude du coeur
+
+Series: Les Sorciers
+  EN: Oeil de Sauron
+  FR: Oeil de Sauron
+
+Series: Les Sorciers
+  EN: Oïn
+  FR: Oïn
+
+Series: Les Sorciers
+  EN: Parole de persuasion
+  FR: Parole de persuasion
+
+Series: Les Sorciers
+  EN: Rhovanion Septentrional
+  FR: Rhovanion Septentrional
+
+Series: Les Sorciers
+  EN: Utiliser un Palantir
+  FR: Utiliser un Palantir
+
+Series: Les Sorciers
+  EN: Uvatha le Cavalier
+  FR: Uvatha le Cavalier
+
+Series: Les Sorciers
+  EN: Épée de Gondolin
+  FR: Épée de Gondolin
+
+Series: Les Sorciers
+  EN: Île des Morts qui Vivent
+  FR: Île des Morts qui Vivent
+
+Series: Promo
+  EN: Baugur
+  FR: Baugur
+
+Series: Promo
+  EN: Sword Master
+  FR: Maître d'armes
+
+Series: Promo
+  EN: The Pack at the Door
+  FR: The Pack at the Door
+
+Series: Sombres Séides
+  EN: Lindion the Oronin
+  FR: Lindion l'Oronín
+
+Series: Sombres Séides
+  EN: The Drawes are upon you
+  FR: Les Nains sont sur vous !
+
+Series: Sombres Séides
+  EN: Urlutsu Nurn
+  FR: Urlutsu Nurn
+
+Series: The Balrog
+  EN: Press Gang
+  FR: Press Gang
+
+Series: The Balrog
+  EN: Whip of Many Tongues
+  FR: Whip of Many Tongues
+
+... and 13 more cards not found.
+
