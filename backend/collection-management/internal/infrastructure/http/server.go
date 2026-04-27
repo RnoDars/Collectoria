@@ -24,35 +24,37 @@ import (
 
 // Server représente le serveur HTTP
 type Server struct {
-	router            *chi.Mux
-	collectionService *application.CollectionService
-	catalogService    *application.CatalogService
-	cardService       *application.CardService
-	bookService       *application.BookService
-	activityService   *application.ActivityService
-	jwtService        *auth.JWTService
-	logger            zerolog.Logger
-	port              int
-	corsConfig        config.CORSConfig
-	rateLimitConfig   config.RateLimitConfig
-	db                *sqlx.DB
+	router                      *chi.Mux
+	collectionService           *application.CollectionService
+	catalogService              *application.CatalogService
+	cardService                 *application.CardService
+	forgottenRealmsNovelService *application.ForgottenRealmsNovelService
+	dnd5BookService             *application.DnD5BookService
+	activityService             *application.ActivityService
+	jwtService                  *auth.JWTService
+	logger                      zerolog.Logger
+	port                        int
+	corsConfig                  config.CORSConfig
+	rateLimitConfig             config.RateLimitConfig
+	db                          *sqlx.DB
 }
 
 // NewServer crée un nouveau serveur HTTP
-func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, bookService *application.BookService, activityService *application.ActivityService, jwtService *auth.JWTService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, rateLimitConfig config.RateLimitConfig, db *sqlx.DB) *Server {
+func NewServer(collectionService *application.CollectionService, catalogService *application.CatalogService, cardService *application.CardService, forgottenRealmsNovelService *application.ForgottenRealmsNovelService, dnd5BookService *application.DnD5BookService, activityService *application.ActivityService, jwtService *auth.JWTService, logger zerolog.Logger, port int, corsConfig config.CORSConfig, rateLimitConfig config.RateLimitConfig, db *sqlx.DB) *Server {
 	s := &Server{
-		router:            chi.NewRouter(),
-		collectionService: collectionService,
-		catalogService:    catalogService,
-		cardService:       cardService,
-		bookService:       bookService,
-		activityService:   activityService,
-		jwtService:        jwtService,
-		logger:            logger,
-		port:              port,
-		corsConfig:        corsConfig,
-		rateLimitConfig:   rateLimitConfig,
-		db:                db,
+		router:                      chi.NewRouter(),
+		collectionService:           collectionService,
+		catalogService:              catalogService,
+		cardService:                 cardService,
+		forgottenRealmsNovelService: forgottenRealmsNovelService,
+		dnd5BookService:             dnd5BookService,
+		activityService:             activityService,
+		jwtService:                  jwtService,
+		logger:                      logger,
+		port:                        port,
+		corsConfig:                  corsConfig,
+		rateLimitConfig:             rateLimitConfig,
+		db:                          db,
 	}
 
 	s.setupMiddleware()
@@ -197,9 +199,13 @@ func (s *Server) setupRoutes() {
 				catalogHandler := handlers.NewCatalogHandler(s.catalogService, s.logger)
 				r.Get("/cards", catalogHandler.GetCards)
 
-				// Book routes
-				bookHandler := handlers.NewBookHandler(s.bookService, s.logger)
-				r.Get("/books", bookHandler.GetBooks)
+				// Forgotten Realms novels routes
+				forgottenRealmsNovelHandler := handlers.NewForgottenRealmsNovelHandler(s.forgottenRealmsNovelService, s.logger)
+				r.Get("/forgottenrealms/novels", forgottenRealmsNovelHandler.GetNovels)
+
+				// D&D 5e books routes
+				dnd5BookHandler := handlers.NewDnD5BookHandler(s.dnd5BookService, s.logger)
+				r.Get("/dnd5/books", dnd5BookHandler.GetBooks)
 			})
 
 			// Write routes (moderate rate limiting)
@@ -210,9 +216,13 @@ func (s *Server) setupRoutes() {
 				cardHandler := handlers.NewCardHandler(s.cardService, s.logger)
 				r.Patch("/cards/{id}/possession", cardHandler.UpdateCardPossession)
 
-				// Book ownership routes (unified endpoint for all collections)
-				bookHandler := handlers.NewBookHandler(s.bookService, s.logger)
-				r.Patch("/books/{id}/possession", bookHandler.UpdateBookOwnership)
+				// Forgotten Realms novels ownership routes
+				forgottenRealmsNovelHandler := handlers.NewForgottenRealmsNovelHandler(s.forgottenRealmsNovelService, s.logger)
+				r.Patch("/forgottenrealms/novels/{id}/possession", forgottenRealmsNovelHandler.UpdateNovelPossession)
+
+				// D&D 5e books ownership routes
+				dnd5BookHandler := handlers.NewDnD5BookHandler(s.dnd5BookService, s.logger)
+				r.Patch("/dnd5/books/{id}/ownership", dnd5BookHandler.UpdateBookOwnership)
 			})
 		})
 	})

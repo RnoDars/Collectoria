@@ -64,7 +64,8 @@ func main() {
 	// Initialisation des repositories
 	collectionRepo := postgres.NewCollectionRepository(db)
 	cardRepo := postgres.NewCardRepository(db)
-	bookRepo := postgres.NewBookRepository(db)
+	forgottenRealmsNovelRepo := postgres.NewForgottenRealmsNovelRepository(db)
+	dnd5BookRepo := postgres.NewDnD5BookRepository(db)
 	activityRepo := postgres.NewPostgresActivityRepository(db)
 
 	// Initialisation des services
@@ -72,7 +73,8 @@ func main() {
 	collectionService := application.NewCollectionService(collectionRepo, cardRepo)
 	catalogService := application.NewCatalogService(cardRepo)
 	cardService := application.NewCardService(cardRepo, activityService)
-	bookService := application.NewBookService(bookRepo, activityService)
+	forgottenRealmsNovelService := application.NewForgottenRealmsNovelService(forgottenRealmsNovelRepo, activityService)
+	dnd5BookService := application.NewDnD5BookService(dnd5BookRepo, activityService)
 
 	// Initialisation du JWT service
 	jwtService := auth.NewJWTService(
@@ -83,7 +85,7 @@ func main() {
 	log.Info().Msg("JWT service initialized")
 
 	// Initialisation du serveur HTTP
-	server := http.NewServer(collectionService, catalogService, cardService, bookService, activityService, jwtService, log.Logger, cfg.Server.Port, cfg.CORS, cfg.RateLimit, db)
+	server := http.NewServer(collectionService, catalogService, cardService, forgottenRealmsNovelService, dnd5BookService, activityService, jwtService, log.Logger, cfg.Server.Port, cfg.CORS, cfg.RateLimit, db)
 
 	// Démarrage du serveur
 	log.Info().Msgf("Server ready on port %d", cfg.Server.Port)
