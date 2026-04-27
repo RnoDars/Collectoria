@@ -1,11 +1,11 @@
 'use client'
 
-import { Book } from '@/lib/api/books'
+import { DnD5Book } from '@/lib/api/dnd5'
 
 interface DnD5BookCardProps {
-  book: Book
-  onToggleFr: (book: Book) => void
-  onToggleEn: (book: Book) => void
+  book: DnD5Book
+  onToggleFr: (book: DnD5Book) => void
+  onToggleEn: (book: DnD5Book) => void
   isTogglingId?: string
 }
 
@@ -19,7 +19,7 @@ export default function DnD5BookCard({
 
   // Determine display names
   const displayNameFr = book.nameFr || null
-  const displayNameEn = book.nameEn || book.title
+  const displayNameEn = book.nameEn
   const isUntranslated = !displayNameFr
 
   // Format publication date (YYYY-MM-DD -> YYYY)
@@ -215,12 +215,12 @@ export default function DnD5BookCard({
           <button
             onClick={() => !isToggling && onToggleFr(book)}
             disabled={isToggling || isUntranslated}
-            style={createToggleStyle(book.ownedFr)}
+            style={createToggleStyle(book.ownedFr ?? undefined)}
             aria-label={book.ownedFr ? 'Retirer version FR' : 'Ajouter version FR'}
-            aria-pressed={book.ownedFr}
+            aria-pressed={book.ownedFr ?? false}
             role="switch"
           >
-            <div style={createKnobStyle(book.ownedFr)} />
+            <div style={createKnobStyle(book.ownedFr ?? undefined)} />
           </button>
         </div>
 
@@ -230,12 +230,12 @@ export default function DnD5BookCard({
           <button
             onClick={() => !isToggling && onToggleEn(book)}
             disabled={isToggling}
-            style={createToggleStyle(book.ownedEn)}
+            style={createToggleStyle(book.ownedEn ?? undefined)}
             aria-label={book.ownedEn ? 'Retirer version EN' : 'Ajouter version EN'}
-            aria-pressed={book.ownedEn}
+            aria-pressed={book.ownedEn ?? false}
             role="switch"
           >
-            <div style={createKnobStyle(book.ownedEn)} />
+            <div style={createKnobStyle(book.ownedEn ?? undefined)} />
           </button>
         </div>
       </div>

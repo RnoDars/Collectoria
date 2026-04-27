@@ -15,7 +15,7 @@ async function toggleDnD5BookPossession(params: DnD5ToggleParams) {
     ? { owned_fr: isOwned }
     : { owned_en: isOwned }
 
-  const response = await apiClient.patch(`/api/v1/books/${bookId}/possession`, body)
+  const response = await apiClient.patch(`/api/v1/dnd5/books/${bookId}/ownership`, body)
 
   if (!response.ok) {
     throw new Error(`Failed to update book possession: ${response.statusText}`)
@@ -31,7 +31,7 @@ export function useDnD5BookToggle() {
     mutationFn: toggleDnD5BookPossession,
     onSuccess: (_, variables) => {
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['books'] })
+      queryClient.invalidateQueries({ queryKey: ['dnd5-books'] })
       queryClient.invalidateQueries({ queryKey: ['collections'] })
 
       // Show success toast

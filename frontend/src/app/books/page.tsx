@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useBooks } from '@/hooks/useBooks'
-import { useBookToggle } from '@/hooks/useBookToggle'
-import { BookFilters, Book } from '@/lib/api/books'
+import { useForgottenRealmsNovels } from '@/hooks/useForgottenRealmsNovels'
+import { useForgottenRealmsNovelToggle } from '@/hooks/useForgottenRealmsNovelToggle'
+import { NovelFilters, ForgottenRealmsNovel } from '@/lib/api/forgottenrealms'
 import Link from 'next/link'
 import BookCard from '@/components/books/BookCard'
 import BookConfirmModal from '@/components/books/BookConfirmModal'
@@ -55,7 +55,7 @@ export default function BooksPage() {
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [pendingBook, setPendingBook] = useState<Book | null>(null)
+  const [pendingBook, setPendingBook] = useState<ForgottenRealmsNovel | null>(null)
   const [pendingState, setPendingState] = useState<boolean>(false)
 
   // Debounce search input
@@ -65,8 +65,7 @@ export default function BooksPage() {
     return () => clearTimeout(timer)
   }, [search])
 
-  const filters: BookFilters = {
-    collectionId: '22222222-2222-2222-2222-222222222222',
+  const filters: NovelFilters = {
     limit: 500,
     ...(debouncedSearch && { search: debouncedSearch }),
     ...(author && { author }),
@@ -75,10 +74,10 @@ export default function BooksPage() {
     ...(owned !== 'all' && { isOwned: owned === 'true' }),
   }
 
-  const { data, isLoading, isError, error } = useBooks(filters)
-  const { toggleBook, isLoading: isToggling } = useBookToggle()
+  const { data, isLoading, isError, error } = useForgottenRealmsNovels(filters)
+  const { toggleNovel, isLoading: isToggling } = useForgottenRealmsNovelToggle()
 
-  const books = data?.books ?? []
+  const books = data?.novels ?? []
   const pagination = data?.pagination ?? { total: 0, page: 1, limit: 50, totalPages: 1 }
 
   // Calculate stats
@@ -86,7 +85,7 @@ export default function BooksPage() {
   const ownedBooks = books.filter((b) => b.isOwned).length
   const totalOwned = data?.pagination.total ?? 0 // This would need a separate query for accurate count
 
-  const handleToggleClick = (book: Book) => {
+  const handleToggleClick = (book: ForgottenRealmsNovel) => {
     // Open modal for confirmation
     setPendingBook(book)
     setPendingState(!book.isOwned)
@@ -97,8 +96,8 @@ export default function BooksPage() {
     if (!pendingBook) return
 
     setTogglingBookId(pendingBook.id)
-    toggleBook(
-      { bookId: pendingBook.id, isOwned: pendingState },
+    toggleNovel(
+      { novelId: pendingBook.id, isOwned: pendingState },
       {
         onSettled: () => {
           setTogglingBookId(undefined)

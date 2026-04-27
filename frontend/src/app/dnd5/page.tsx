@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useBooks } from '@/hooks/useBooks'
+import { useDnD5Books } from '@/hooks/useDnD5Books'
 import { useDnD5BookToggle } from '@/hooks/useDnD5BookToggle'
-import { BookFilters, Book } from '@/lib/api/books'
+import { DnD5Filters, DnD5Book } from '@/lib/api/dnd5'
 import Link from 'next/link'
 import DnD5BookCard from '@/components/books/DnD5BookCard'
 import DnD5BookConfirmModal from '@/components/books/DnD5BookConfirmModal'
@@ -50,7 +50,7 @@ export default function DnD5Page() {
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [pendingBook, setPendingBook] = useState<Book | null>(null)
+  const [pendingBook, setPendingBook] = useState<DnD5Book | null>(null)
   const [pendingVersion, setPendingVersion] = useState<'fr' | 'en'>('fr')
   const [pendingState, setPendingState] = useState<boolean>(false)
 
@@ -61,14 +61,13 @@ export default function DnD5Page() {
     return () => clearTimeout(timer)
   }, [search])
 
-  const filters: BookFilters = {
-    collectionId: '33333333-3333-3333-3333-333333333333',
+  const filters: DnD5Filters = {
     limit: 500,
     ...(debouncedSearch && { search: debouncedSearch }),
     ...(bookType && { bookType }),
   }
 
-  const { data, isLoading, isError, error } = useBooks(filters)
+  const { data, isLoading, isError, error } = useDnD5Books(filters)
   const { toggleBook, isLoading: isToggling } = useDnD5BookToggle()
 
   let books = data?.books ?? []
@@ -89,7 +88,7 @@ export default function DnD5Page() {
   const ownedFrBooks = books.filter((b) => b.ownedFr).length
   const ownedEnBooks = books.filter((b) => b.ownedEn).length
 
-  const handleToggleFr = (book: Book) => {
+  const handleToggleFr = (book: DnD5Book) => {
     if (!book.nameFr) return // Cannot toggle FR if not translated
     setPendingBook(book)
     setPendingVersion('fr')
@@ -97,7 +96,7 @@ export default function DnD5Page() {
     setIsModalOpen(true)
   }
 
-  const handleToggleEn = (book: Book) => {
+  const handleToggleEn = (book: DnD5Book) => {
     setPendingBook(book)
     setPendingVersion('en')
     setPendingState(!book.ownedEn)

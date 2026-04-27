@@ -1,10 +1,10 @@
 'use client'
 
-import { Book } from '@/lib/api/books'
+import { ForgottenRealmsNovel } from '@/lib/api/forgottenrealms'
 
 interface BookCardProps {
-  book: Book
-  onToggle: (book: Book) => void
+  book: ForgottenRealmsNovel
+  onToggle: (book: ForgottenRealmsNovel) => void
   isTogglingId?: string
 }
 

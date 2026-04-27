@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Book } from '@/lib/api/books'
+import { ForgottenRealmsNovel } from '@/lib/api/forgottenrealms'
 
 export interface BookConfirmModalProps {
-  book: Book
+  book: ForgottenRealmsNovel
   newState: boolean
   isOpen: boolean
   onConfirm: () => void

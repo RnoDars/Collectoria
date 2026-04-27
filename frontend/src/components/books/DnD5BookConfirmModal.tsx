@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Book } from '@/lib/api/books'
+import { DnD5Book } from '@/lib/api/dnd5'
 
 export interface DnD5BookConfirmModalProps {
-  book: Book
+  book: DnD5Book
   version: 'fr' | 'en'
   newState: boolean
   isOpen: boolean
@@ -97,7 +97,7 @@ export default function DnD5BookConfirmModal({
     ? `Voulez-vous ajouter la version ${versionLabel} de ce livre à votre collection ?`
     : `Voulez-vous retirer la version ${versionLabel} de ce livre de votre collection ?`
 
-  const displayTitle = book.nameFr || book.nameEn || book.title
+  const displayTitle = book.nameFr || book.nameEn
   const displayEdition = book.edition
 
   // Styles
