@@ -321,6 +321,117 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 
 **Convention** : Toujours documenter les variables d'environnement avec un fichier `.example`.
 
+### Pattern UI : Page /cards Comme Référence (2026-04-27)
+
+**RÈGLE** : Avant d'implémenter une nouvelle page de collection, consulter `/cards/page.tsx` pour les patterns standards.
+
+**Fichier de référence** : `frontend/src/app/cards/page.tsx`
+
+**Patterns réutilisables** :
+
+#### 1. Switch Langue FR/EN
+```tsx
+<div style={toggleGroupStyle} role="group" aria-label="Langue">
+  <button
+    onClick={() => setLanguage('fr')}
+    style={toggleBtnStyle(language === 'fr')}
+    aria-pressed={language === 'fr'}
+  >
+    🇫🇷 Français
+  </button>
+  <button
+    onClick={() => setLanguage('en')}
+    style={toggleBtnStyle(language === 'en')}
+    aria-pressed={language === 'en'}
+  >
+    🇬🇧 Anglais
+  </button>
+</div>
+```
+
+**Styles standardisés** :
+```tsx
+const toggleGroupStyle: React.CSSProperties = {
+  display: 'flex',
+  background: 'var(--surface-container-lowest)',
+  borderRadius: '10px',
+  boxShadow: '0px 2px 8px rgba(25, 28, 29, 0.06)',
+  overflow: 'hidden',
+}
+
+function toggleBtnStyle(active: boolean): React.CSSProperties {
+  return {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '0.8125rem',
+    fontWeight: active ? '600' : '500',
+    color: active ? '#667eea' : 'var(--on-surface-variant)',
+    background: active ? 'rgba(102, 126, 234, 0.1)' : 'transparent',
+    border: 'none',
+    padding: '0.625rem 1rem',
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+  }
+}
+```
+
+#### 2. Ordre d'Affichage Dynamique
+```tsx
+// Déterminer les noms à afficher selon la langue
+const primaryName = language === 'fr' 
+  ? (book.nameFr || book.nameEn)
+  : book.nameEn
+
+const secondaryName = language === 'fr'
+  ? (book.nameFr ? book.nameEn : null)
+  : book.nameFr
+
+// Affichage avec styles conditionnels
+<div style={titlePrimaryStyle}>{primaryName}</div>
+{secondaryName && secondaryName !== primaryName && (
+  <div style={titleSecondaryStyle}>{secondaryName}</div>
+)}
+```
+
+#### 3. Recherche avec Debounce
+```tsx
+const [search, setSearch] = useState('')
+const [debouncedSearch, setDebouncedSearch] = useState('')
+
+useEffect(() => {
+  const timer = setTimeout(() => setDebouncedSearch(search), 300)
+  return () => clearTimeout(timer)
+}, [search])
+```
+
+**Design System validé** :
+- Couleur primaire : `#667eea` (violet)
+- Transitions : `0.15s` standard
+- Border radius contrôles : `10px`
+- Background toggle actif : `rgba(102, 126, 234, 0.1)`
+
+**Application réussie** : Page `/dnd5` utilise ces patterns avec succès.
+
+**Différence clé /dnd5 vs /cards** :
+- `/cards` : Toutes les cartes ont `name_fr`
+- `/dnd5` : Certains livres non traduits → Filtrage requis en mode FR
+
+```tsx
+// Pattern spécifique /dnd5 (pas dans /cards)
+if (language === 'fr') {
+  books = books.filter(book => book.nameFr !== null)
+}
+```
+
+**Checklist implémentation nouvelle collection** :
+1. [ ] Lire `/cards/page.tsx` pour comprendre les patterns
+2. [ ] Copier `toggleGroupStyle` et `toggleBtnStyle`
+3. [ ] Implémenter switch langue FR/EN
+4. [ ] Adapter ordre d'affichage (primaryName/secondaryName)
+5. [ ] Ajouter filtrage si données incomplètes (ex: traductions)
+6. [ ] Réutiliser debounce pour recherche
+
+**Mémoire complète** : `~/.claude/projects/-home-arnaud-dars/memory/project_frontend_reference_cards_page.md`
+
 ## Interaction avec autres agents
 - **Backend** : Consommation des API (pattern snake_case/camelCase établi)
 - **Testing** : Tests d'interface et E2E

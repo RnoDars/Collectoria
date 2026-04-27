@@ -298,3 +298,60 @@ Scénarios de test essentiels
 - Inclure des exemples concrets
 - Anticiper les cas limites et erreurs
 - Proposer des alternatives quand pertinent
+
+## Patterns Architecturaux Validés (2026-04-27)
+
+### Backend : Table Dédiée par Collection
+
+**À spécifier dans les specs Backend** :
+
+Quand tu spécifies une nouvelle collection, **TOUJOURS créer une table dédiée**, jamais une table générique avec `collection_id`.
+
+**❌ Ne PAS spécifier** :
+```markdown
+## Base de Données
+Table générique `items` avec colonne `collection_type`
+```
+
+**✅ À spécifier** :
+```markdown
+## Base de Données
+- Table `{collection}_items` dédiée
+- Table `user_{collection}_items` pour la possession
+- Domaine `{Collection}Item` dédié
+- Repository `{Collection}ItemRepository` dédié
+- Routes API `/api/v1/{collection}/items`
+```
+
+**Raison** : Leçon du 2026-04-27 - tentative de table générique `books` avec filtrage par `collection_id` a échoué. Séparation en `forgottenrealms_novels` + `dnd5_books` a résolu le problème.
+
+**Citation utilisateur** :
+> "Je pense qu'on a fait une erreur d'architecture en mettant deux collections dans une même table."
+
+### Frontend : Page /cards Comme Référence
+
+**À référencer dans les specs Frontend** :
+
+Quand tu spécifies une nouvelle page de collection, **TOUJOURS référencer `/cards/page.tsx`** comme modèle.
+
+**Patterns à inclure dans la spec** :
+1. Switch langue FR/EN avec `toggleGroupStyle` et `toggleBtnStyle`
+2. Ordre d'affichage dynamique (primaryName/secondaryName)
+3. Recherche avec debounce (300ms)
+4. Filtres avec toggle groups
+
+**Template spec Frontend collection** :
+```markdown
+## Référence UI
+- Page modèle : `/cards/page.tsx`
+- Réutiliser : toggleGroupStyle, toggleBtnStyle
+- Pattern switch langue : lignes 544-548
+- Pattern ordre affichage : lignes 172-186
+
+## Différences spécifiques
+[Détailler ce qui diffère de /cards]
+```
+
+**Mémoires complètes** :
+- Backend : `~/.claude/projects/-home-arnaud-dars/memory/project_architecture_table_per_collection.md`
+- Frontend : `~/.claude/projects/-home-arnaud-dars/memory/project_frontend_reference_cards_page.md`

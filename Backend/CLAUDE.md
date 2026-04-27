@@ -337,6 +337,69 @@ orderClause := fmt.Sprintf(
 
 **Documentation détaillée** : `backend/collection-management/docs/SORTING.md`
 
+### Architecture : Table Dédiée par Collection (2026-04-27)
+
+**RÈGLE CRITIQUE** : Une table par collection, PAS de table générique avec discriminateur.
+
+**❌ ANTI-PATTERN (ne pas reproduire)** :
+```sql
+CREATE TABLE books (
+    id UUID,
+    collection_id UUID,  -- ❌ Discriminateur = mauvaise architecture
+    title VARCHAR,       -- Pour collection A
+    name_en VARCHAR,     -- Pour collection B
+    name_fr VARCHAR,     -- Pour collection B
+    author VARCHAR       -- Pour collection A
+    -- Beaucoup de colonnes NULL selon la collection
+);
+```
+
+**Problème vécu** : Filtre `WHERE collection_id = ...` ne fonctionnait pas, tous les livres étaient retournés.
+
+**✅ PATTERN VALIDÉ (à reproduire)** :
+```sql
+-- Table dédiée collection A
+CREATE TABLE forgottenrealms_novels (
+    id UUID,
+    number VARCHAR(10),
+    title VARCHAR(255),
+    author VARCHAR(255),
+    publication_date DATE,
+    book_type VARCHAR(50)
+);
+
+-- Table dédiée collection B
+CREATE TABLE dnd5_books (
+    id UUID,
+    number VARCHAR(10),
+    name_en VARCHAR(255),
+    name_fr VARCHAR(255),  -- Nullable si non traduit
+    book_type VARCHAR(50)
+    -- Pas de champs inutiles de l'autre collection
+);
+```
+
+**Conséquences backend** :
+- Domaines séparés : `ForgottenRealmsNovel` vs `DnD5Book`
+- Repositories séparés : `ForgottenRealmsNovelRepository` vs `DnD5BookRepository`
+- Services séparés : `ForgottenRealmsNovelService` vs `DnD5BookService`
+- Handlers séparés : `ForgottenRealmsNovelHandler` vs `DnD5BookHandler`
+- Routes API dédiées : `/api/v1/forgottenrealms/novels` vs `/api/v1/dnd5/books`
+
+**Pourquoi** :
+1. **Bounded contexts DDD** : Chaque collection est un domaine métier distinct
+2. **Type safety** : Plus de champs nullable conditionnels
+3. **Évolutivité** : Ajouter une collection ne modifie pas les tables existantes
+4. **Performance** : Pas de filtre `WHERE collection_id` sur chaque requête
+5. **Clarté** : Schéma reflète exactement le domaine
+
+**Citation utilisateur (2026-04-27)** :
+> "Je pense qu'on a fait une erreur d'architecture en mettant deux collections dans une même table. Il faudra dorénavant avoir une table par collection."
+
+**Exception** : Ce principe s'applique aux collections métier distinctes. Il ne s'applique PAS aux variations d'une même entité (ex: `orders` avec `status`) ou hiérarchies simples (ex: `users` avec `role`).
+
+**Mémoire complète** : `~/.claude/projects/-home-arnaud-dars/memory/project_architecture_table_per_collection.md`
+
 ---
 
 ## Interaction avec autres agents
