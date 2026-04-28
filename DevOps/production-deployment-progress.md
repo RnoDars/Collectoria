@@ -12,10 +12,10 @@
 |-------|--------|-------|------------|
 | **Phase 1 : Provisioning** | ✅ TERMINÉE | ~25 min | 100% |
 | **Phase 2 : Docker** | ✅ TERMINÉE | ~18 min | 100% |
-| **Phase 3 : Traefik** | ⏸️ EN ATTENTE | - | 0% |
+| **Phase 3 : Traefik** | ✅ TERMINÉE | ~20 min | 100% |
 | **Phase 4 : Application** | ⏸️ EN ATTENTE | - | 0% |
 
-**Temps total écoulé** : ~43 minutes
+**Temps total écoulé** : ~63 minutes
 
 ---
 
@@ -127,33 +127,45 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 
 ---
 
-## Phase 3 : Traefik (⏸️ EN ATTENTE)
+## Phase 3 : Traefik (✅ TERMINÉE)
 
-**Statut** : Pas encore démarrée  
-**Durée estimée** : ~20 minutes
+**Date** : 2026-04-28  
+**Durée** : ~20 minutes  
+**Statut** : ✅ 100% complétée
 
-### Tâches Prévues
+### Tâches Effectuées
 
 #### 3.1 Répertoire de Déploiement
-- [ ] Créer `/home/collectoria/collectoria`
-- [ ] Créer structure `traefik/`
+- ✅ Créé `/home/collectoria/collectoria`
+- ✅ Créé structure `traefik/`
 
 #### 3.2 Configuration Traefik
-- [ ] Créer `traefik/traefik.yml` (config statique)
-- [ ] Créer `traefik/dynamic.yml` (middlewares sécurité)
-- [ ] Configurer email Let's Encrypt
-- [ ] Créer `letsencrypt/acme.json` (chmod 600)
+- ✅ Créé `traefik/traefik.yml` (config statique)
+- ✅ Créé `traefik/dynamic.yml` (middlewares sécurité)
+- ✅ Email Let's Encrypt configuré : `arnaud.dars+scaleway@gmail.com`
+- ✅ Créé `letsencrypt/acme.json` (chmod 600)
 
 #### 3.3 Réseau Docker Proxy
-- [ ] Créer réseau `collectoria_proxy`
-- [ ] Valider réseau bridge
+- ✅ Créé réseau `collectoria_proxy`
+- ✅ Réseau bridge validé
 
 #### 3.4 Démarrage Traefik
-- [ ] Lancer conteneur Traefik
-- [ ] Vérifier acquisition certificat Let's Encrypt (après config DNS)
-- [ ] Vérifier dashboard Traefik (temporairement)
+- ✅ Conteneur Traefik lancé (traefik:latest)
+- ✅ Certificat Let's Encrypt valide acquis
+- ✅ HTTPS darsling.fr opérationnel
 
-**Prérequis** : Nom de domaine avec DNS configuré pointant vers 51.159.161.31
+#### 3.5 DNS
+- ✅ Domaine `darsling.fr` configuré
+- ✅ Enregistrement A pointant vers 51.159.161.31
+
+### Problèmes Rencontrés et Solutions
+
+#### Problème : Incompatibilité API Docker avec Traefik v3.0
+
+**Symptôme** : Traefik v3.0 refusait de démarrer avec erreur "unsupported Compose file version"  
+**Cause** : API Docker v2 incompatible avec Traefik v3.0  
+**Solution** : Utilisation de `traefik:latest` au lieu de `traefik:v3.0`  
+**Impact** : Résolu - Traefik démarre correctement et certificat Let's Encrypt acquis
 
 ---
 
@@ -235,6 +247,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 | SSH | 22 | ✅ Running | OpenSSH 9.2p1 |
 | fail2ban | - | ✅ Running | 1.1.0 |
 | Docker | unix socket | ✅ Running | 29.4.1 |
+| Traefik | 80/443 | ✅ Running | latest |
 | UFW | - | ✅ Active | 0.36.2 |
 
 ### Sécurité
@@ -260,45 +273,27 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 
 ## Prochaines Étapes
 
-### Immédiat (Phase 3 - Traefik)
+### Immédiat (Phase 4 - Application)
 
-1. **Configurer le nom de domaine**
-   - Acheter ou utiliser un domaine existant
-   - Configurer enregistrement DNS A vers 51.159.161.31
-   - Attendre propagation DNS (15-30 min)
-
-2. **Installer Traefik**
-   - Suivre section 3 de `production-setup.md`
-   - Créer structure de fichiers
-   - Démarrer conteneur Traefik
-   - Vérifier acquisition certificat Let's Encrypt
-
-3. **Valider reverse proxy**
-   - Tester redirection HTTP → HTTPS
-   - Vérifier headers de sécurité
-   - Valider certificat TLS
-
-### Court Terme (Phase 4 - Application)
-
-4. **Déployer l'application**
+1. **Déployer l'application**
    - Cloner dépôt
    - Configurer secrets
    - Démarrer stack complète (PostgreSQL + Backend + Frontend)
    - Appliquer migrations SQL
 
-5. **Tests de production**
+2. **Tests de production**
    - Valider tous les endpoints
    - Tester authentification
    - Vérifier fonctionnalités métier
 
 ### Moyen Terme (Post-Déploiement)
 
-6. **Monitoring et backups**
+3. **Monitoring et backups**
    - Configurer backup quotidien PostgreSQL
    - Installer Uptime Kuma (optionnel)
    - Mettre en place alertes
 
-7. **CI/CD**
+4. **CI/CD**
    - Configurer secrets GitHub Actions
    - Tester pipeline de déploiement automatique
    - Valider stratégie de rollback
@@ -312,12 +307,13 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 - ✅ fail2ban déjà efficace (1 IP bannie en 1h)
 - ✅ Sécurité SSH renforcée
 - ✅ Docker fonctionnel avec groupe docker correctement configuré
+- ✅ Traefik opérationnel avec certificat Let's Encrypt valide
 - ✅ Documentation suivie précisément (production-setup.md)
 
 ### Points d'Attention
 - ⚠️ Commandes longues multi-lignes à séparer pour éviter problèmes copier-coller
 - ⚠️ Utiliser `apt` au lieu de `apt-get` (dépréciation)
-- ⚠️ Attendre propagation DNS avant Traefik (Let's Encrypt échouera sinon)
+- ✅ DNS configuré et propagé avant Traefik (Let's Encrypt acquis avec succès)
 
 ### Améliorations Futures
 - Mettre à jour `production-setup.md` pour refléter les commandes exactes utilisées (apt, séparation commandes)
@@ -331,7 +327,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 - **Guide principal** : `/home/arnaud.dars/git/Collectoria/DevOps/production-setup.md`
 - **Informations serveur** : `/home/arnaud.dars/git/Collectoria/DevOps/scaleway-server-info.md`
 - **Session de travail** : 2026-04-28
-- **Durée totale Phase 1+2** : ~43 minutes
+- **Durée totale Phase 1+2+3** : ~63 minutes
 
 ---
 

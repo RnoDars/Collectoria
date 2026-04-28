@@ -3,7 +3,7 @@
 **Environnement** : Production  
 **Provider** : Scaleway  
 **Date de provisioning** : 2026-04-28  
-**Statut** : ✅ Opérationnel (Phase 1+2 terminées)
+**Statut** : ✅ Opérationnel (Phase 1+2+3 terminées, Traefik OK)
 
 ---
 
@@ -24,6 +24,7 @@
 | Paramètre | Valeur |
 |-----------|--------|
 | **IP Publique** | `51.159.161.31` |
+| **Domaine** | `darsling.fr` |
 | **Hostname** | `scw-condescending-hodgkin` |
 | **Provider** | Scaleway |
 | **Région** | Europe (France) |
@@ -109,6 +110,15 @@ ssh -i ~/.ssh/id_ed25519 collectoria@51.159.161.31
 | **containerd** | 1.7.29 | ✅ Running |
 | **runc** | 2.0.1 | ✅ Installé |
 | **Docker Buildx** | v0.20.4 | ✅ Installé |
+
+### Traefik
+
+| Paramètre | Valeur | Statut |
+|-----------|--------|--------|
+| **Version** | latest | ✅ Running |
+| **Domaine** | darsling.fr | ✅ Configuré |
+| **Let's Encrypt** | arnaud.dars+scaleway@gmail.com | ✅ Certificat valide |
+| **Ports** | 80 (HTTP), 443 (HTTPS) | ✅ Ouverts |
 
 ### Sécurité
 
@@ -206,13 +216,13 @@ openssl rand -base64 24 | tr -d '=+/' | head -c 32
 
 ## Services Docker (État Actuel)
 
-**Phase** : 2/4 (Docker installé, application pas encore déployée)
+**Phase** : 3/4 (Traefik déployé, application à déployer)
 
-### Services Prévus
+### Services Déployés et Prévus
 
 | Service | Container Name | Port(s) | Image | Statut |
 |---------|----------------|---------|-------|--------|
-| Traefik | collectoria-traefik | 80, 443 | traefik:v3.0 | ⏸️ À déployer |
+| Traefik | collectoria-traefik | 80, 443 | traefik:latest | ✅ Running |
 | PostgreSQL | collectoria-postgres-collection | 5432 (interne) | postgres:15-alpine | ⏸️ À déployer |
 | Backend | collectoria-backend-collection | 8080 (interne) | ghcr.io/.../backend | ⏸️ À déployer |
 | Frontend | collectoria-frontend | 3000 (interne) | ghcr.io/.../frontend | ⏸️ À déployer |
@@ -221,7 +231,7 @@ openssl rand -base64 24 | tr -d '=+/' | head -c 32
 
 | Réseau | Type | Statut |
 |--------|------|--------|
-| collectoria_proxy | bridge | ⏸️ À créer |
+| collectoria_proxy | bridge | ✅ Créé |
 | backend_internal | internal | ⏸️ À créer |
 
 ### Volumes Docker
@@ -229,7 +239,7 @@ openssl rand -base64 24 | tr -d '=+/' | head -c 32
 | Volume | Service | Statut |
 |--------|---------|--------|
 | collectoria_postgres_collection_data | PostgreSQL | ⏸️ À créer |
-| collectoria_traefik_letsencrypt | Traefik | ⏸️ À créer |
+| collectoria_traefik_letsencrypt | Traefik | ✅ Créé |
 
 ---
 
@@ -309,6 +319,7 @@ docker system df
 |------|-------|------------|--------|
 | 2026-04-28 | Phase 1 | Provisioning initial complet | Agent DevOps |
 | 2026-04-28 | Phase 2 | Installation Docker + Compose | Agent DevOps |
+| 2026-04-28 | Phase 3 | Traefik + Let's Encrypt + darsling.fr | Agent DevOps |
 
 ---
 
@@ -364,11 +375,12 @@ Si nécessaire, snapshot Scaleway à créer AVANT déploiement Phase 3.
 - ✅ fail2ban déjà efficace (1 IP bannie en 1h)
 - ✅ Sécurité SSH renforcée
 - ✅ Docker fonctionnel
+- ✅ Traefik déployé avec certificat Let's Encrypt valide
+- ✅ Domaine darsling.fr opérationnel
 
 ### Points d'Attention
-- ⚠️ Nom de domaine à configurer avant Phase 3 (Traefik)
 - ⚠️ Secrets à générer avant Phase 4 (Application)
-- ⚠️ Snapshot à créer après Phase 2 (avant déploiement)
+- ⚠️ Snapshot à créer après Phase 3 (avant déploiement application)
 
 ---
 
