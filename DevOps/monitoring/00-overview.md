@@ -155,6 +155,7 @@ L'ordre suivant respecte les dépendances entre outils :
 Étape 3 — Grafana              (dépend de Prometheus)
 Étape 4 — Loki + Promtail      (dépend de Grafana pour la datasource)
 Étape 5 — Instrumentation Go   (dépend de Prometheus pour le scrape)
+Étape 6 — Monitoring fail2ban  (surveillance attaques SSH)
 ```
 
 **Pourquoi cet ordre** :
@@ -162,6 +163,7 @@ L'ordre suivant respecte les dépendances entre outils :
 - Prometheus avant Grafana : Grafana ne peut pas être configuré sans source de données.
 - Loki après Grafana : la datasource Loki est ajoutée dans Grafana à la fin.
 - L'instrumentation Go peut être faite à tout moment, mais les métriques n'apparaîtront dans Grafana qu'une fois Prometheus configuré.
+- Monitoring fail2ban en dernier : nécessite Prometheus + Grafana pour visualiser les attaques SSH et bannissements.
 
 ---
 

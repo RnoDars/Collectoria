@@ -20,6 +20,36 @@ Les tâches ici sont :
 
 ## Index des Tâches Futures
 
+### Design & UX
+
+#### Custom Icons Design System
+- **Fichier** : `custom-icons-design-system.md`
+- **Priorité** : MEDIUM (après validation redesign mobile)
+- **Effort** : 2-4 heures
+- **Contexte** : Session mobile redesign 2026-04-28
+
+**Objectif** : Remplacer les icônes emoji Unicode (🏠🎴📚🎲) par un jeu d'icônes custom SVG cohérent avec "The Digital Curator" design system.
+
+**Problème** : Emojis actuels ont rendu inconsistant selon OS/browser, pas de cohérence design system, qualité visuelle limitée.
+
+**Solution** : Demander à Stitch génération d'icônes custom SVG (line icons + filled variants) alignées avec design system Collectoria.
+
+**Déclencheurs** (démarrer après validation redesign mobile) :
+- [x] Redesign mobile 2026-04-28 appliqué
+- [ ] Score design mobile confirmé 95+/100
+- [ ] Utilisateur approuve priorité
+- [ ] Temps disponible : 2-4 heures
+
+**Bénéfices** :
+- Rendu consistent tous OS/browsers
+- 100% cohérent design system
+- Score design mobile : +5-10 points potentiel
+- Identité visuelle unique
+
+**Réévaluation** : Après validation redesign mobile 2026-04-28
+
+---
+
 ### Architecture
 
 #### Migration Kafka Activités
@@ -77,6 +107,9 @@ Collection Service → Kafka Topic → Activity Service → API
 ---
 
 ## Tâches à Ajouter
+
+### Design & UX
+- [x] Custom Icons Design System (documenté 2026-04-28)
 
 ### Sécurité
 - [ ] Migration vers HTTPS (Let's Encrypt)
@@ -203,12 +236,13 @@ Quand les déclencheurs sont atteints :
 
 | Catégorie | Nombre de Tâches | Effort Total |
 |-----------|------------------|--------------|
+| Design & UX | 1 | 2-4 heures |
 | Architecture | 1 | 3-5 jours |
 | Sécurité | 0 | - |
 | Performance | 0 | - |
 | Fonctionnalités | 0 | - |
 | DevOps | 0 | - |
-| **TOTAL** | **1** | **3-5 jours** |
+| **TOTAL** | **2** | **3.5-5.5 jours** |
 
 ---
 
@@ -232,6 +266,21 @@ _Aucune pour l'instant_
 
 ---
 
-**Dernière Mise à Jour** : 2026-04-21  
+## Changelog
+
+### 2026-04-28
+- ✅ Ajouté : Custom Icons Design System (2-4h, MEDIUM)
+  - Contexte : Redesign mobile session
+  - Problème : Emojis Unicode inconsistents
+  - Solution : SVG custom alignés design system
+
+### 2026-04-21
+- ✅ Ajouté : Migration Kafka Activités (3-5 jours, MEDIUM)
+  - Contexte : ADR-002 architecture activités
+  - Solution : Event-driven architecture
+
+---
+
+**Dernière Mise à Jour** : 2026-04-28  
 **Maintenu par** : Agent Suivi de Projet  
-**Prochaine Réévaluation** : 2026-06-21
+**Prochaine Réévaluation** : 2026-06-28

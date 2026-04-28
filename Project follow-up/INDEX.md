@@ -14,6 +14,7 @@
 - [Workflow Status Sync](workflow-status-sync.md) - Processus de mise à jour STATUS.md
 
 ### Résumés et Rapports
+- [SUMMARY 2026-04-28](SUMMARY-2026-04-28.md) - État projet après mobile redesign (ACTUEL)
 - [SUMMARY 2026-04-21](SUMMARY-2026-04-21.md) - Résumé décision architecture activités
 
 ---
@@ -35,7 +36,8 @@
 **Répertoire** : `future-tasks/`
 
 - [Index des Tâches Futures](future-tasks/README.md)
-- [Migration Kafka Activités](future-tasks/migration-kafka-activities.md)
+- [Custom Icons Design System](future-tasks/custom-icons-design-system.md) - Remplacement emojis par SVG custom
+- [Migration Kafka Activités](future-tasks/migration-kafka-activities.md) - Event-driven architecture
 
 **Philosophie** : "Don't over-engineer for scale you don't have yet"
 
@@ -62,11 +64,23 @@ Ces tâches ne sont PAS urgentes. Elles seront déclenchées quand les besoins r
 ### 4. Rapports d'Avancement
 **Répertoire** : `reports/`
 
+#### 2026-04-28
+- [Mobile Redesign Session](reports/2026-04-28_mobile-redesign-session.md) - Redesign mobile complet (41 CSS modifications)
+
+#### 2026-04-23
+- [Security Phase 2 Session](reports/2026-04-23_session-security-phase2.md) - Phase 2 sécurité complétée (9.0/10)
+
+#### 2026-04-22
+- [Corrections Infrastructure](reports/2026-04-22_corrections-infrastructure.md) - Corrections infra
+
 #### 2026-04-21
 - [Synthèse Journée](reports/2026-04-21_synthese-journee.md) - TL;DR des 6 grandes réalisations
 - [Rapport Session Complète](reports/2026-04-21_rapport-session-complete.md) - Détails complets
 - [Décision Architecture Activités](reports/2026-04-21_decision-activities-architecture.md) - Rapport décision
 - [Status Sync](reports/status-sync-2026-04-21.md) - Mise à jour STATUS.md
+
+#### 2026-04-20
+- [Rapport Avancement](reports/2026-04-20_rapport-avancement.md) - État projet
 
 **Fréquence** : À chaque milestone atteint ou tous les 10 commits
 
@@ -99,6 +113,46 @@ _À créer : Définir les milestones du projet_
 ---
 
 ## Organisation par Date
+
+### 2026-04-28
+**Thème** : Redesign Mobile Complet
+
+**Documents créés** :
+- Rapport : Mobile Redesign Session
+- TODO : Custom Icons Design System
+
+**Tâches complétées** :
+1. Application 41 modifications CSS pour mobile redesign
+2. Phase 1 Quick Wins (background, shadows, typography, progress bar, glassmorphism)
+3. Phase 2 Polish (spacing, descriptions, active states, micro-interactions)
+4. Phase 3 Refinements (badges, icons, touch targets)
+5. Frontend redémarré avec cache nettoyé
+
+**Métriques** :
+- 1 commit (2593512)
+- 41 modifications CSS appliquées
+- ~150 lignes Tailwind modifiées
+- Score design mobile : 60/100 → 95+/100 (cible)
+
+---
+
+### 2026-04-23
+**Thème** : Security Phase 2 Complétée (9.0/10)
+
+**Tâches complétées** :
+1. Rate Limiting (3 niveaux) + 9 tests
+2. SQL Injection Audit complet (0 vulnérabilités)
+3. 105 tests SQL injection (7 suites × 15 payloads)
+4. Infrastructure tests d'intégration
+5. Planification Phase 3 (vers 10.0/10)
+
+**Métriques** :
+- 5 commits
+- Score sécurité : 8.0/10 → 9.0/10
+- Tests : +92 tests sécurité
+- Documentation : +2,460 lignes
+
+---
 
 ### 2026-04-21
 **Thème** : Décision Architecture Activités + 6 Grandes Réalisations
@@ -149,6 +203,10 @@ _À créer : Définir les milestones du projet_
 
 ## Recherche par Sujet
 
+### Design & UX
+- [Rapport Mobile Redesign](reports/2026-04-28_mobile-redesign-session.md) - 41 CSS modifications
+- [TODO Custom Icons](future-tasks/custom-icons-design-system.md) - Remplacement emojis par SVG
+
 ### Architecture
 - [Vision du Projet](vision.md)
 - [Roadmap](roadmap.md)
@@ -156,6 +214,7 @@ _À créer : Définir les milestones du projet_
 - [Migration Kafka](future-tasks/migration-kafka-activities.md)
 
 ### Sécurité
+- [Rapport Security Phase 2](reports/2026-04-23_session-security-phase2.md) - Score 9.0/10
 - [Rapport Session 21 avril](reports/2026-04-21_rapport-session-complete.md) - Section Sécurité
 - [ADR-001 : CORS](decisions/2026-04-21_cors-patch-method.md)
 
@@ -206,19 +265,19 @@ _À créer : Définir les milestones du projet_
 | Type | Nombre | Dernier Ajout |
 |------|--------|---------------|
 | ADR | 2 | 2026-04-21 |
-| Tâches Futures | 1 | 2026-04-21 |
+| Tâches Futures | 2 | 2026-04-28 |
 | Tâches Actives | 1 | 2026-04-21 |
 | Tâches Passées | 6 | 2026-04-14 |
-| Rapports | 4 | 2026-04-21 |
+| Rapports | 9 | 2026-04-28 |
 | Checklists | 1 | 2026-04-21 |
 | Métriques | 1 | 2026-04-21 |
-| **TOTAL** | **16** | **2026-04-21** |
+| **TOTAL** | **22** | **2026-04-28** |
 
-### Dernière Session (2026-04-21)
-- Documents créés : 8 fichiers
-- Lignes documentées : ~21,700 lignes
-- Taille totale : ~56 KB
-- Temps passé : ~45 minutes
+### Dernière Session (2026-04-28)
+- Documents créés : 2 fichiers
+- Lignes documentées : ~1,800 lignes
+- Focus : Mobile Redesign + Custom Icons Planning
+- Modifications frontend : 41 CSS changes
 
 ---
 
@@ -288,5 +347,23 @@ _À créer : Définir les milestones du projet_
 ---
 
 **Index Créé le** : 2026-04-21  
+**Dernière Mise à Jour** : 2026-04-28  
 **Par** : Agent Suivi de Projet  
-**Version** : 1.0
+**Version** : 1.2
+
+## Changelog Index
+
+### Version 1.2 (2026-04-28)
+- Ajouté : Rapport Mobile Redesign Session
+- Ajouté : Future-task Custom Icons Design System
+- Mis à jour : Statistiques globales (22 documents)
+- Mis à jour : Organisation chronologique
+- Ajouté : Section Design & UX dans recherche par sujet
+
+### Version 1.1 (2026-04-23)
+- Ajouté : Rapport Security Phase 2 Session
+- Ajouté : Rapports 2026-04-20, 2026-04-22
+
+### Version 1.0 (2026-04-21)
+- Création initiale de l'index
+- Structure complète du répertoire Project follow-up
