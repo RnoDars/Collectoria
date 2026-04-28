@@ -1,0 +1,512 @@
+═══════════════════════════════════════════════════════════════════════════════
+PROMPT STITCH - MOBILE HOMEPAGE COLLECTORIA (Mise à jour 2026-04-28)
+═══════════════════════════════════════════════════════════════════════════════
+
+Créer 3 VARIANTES de maquettes mobile pour la page d'accueil de Collectoria, application de gestion de collections de jeux (cartes MECCG, livres Royaumes Oubliés, jeux D&D 5e).
+
+Format : iPhone portrait, 375px width × 812px height.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 1 : CONTEXTE DU PROJET
+═══════════════════════════════════════════════════════════════════════════════
+
+### Identité de l'Application
+Collectoria est une application de gestion de collections personnelles pour collectionneurs de cartes à jouer, livres, et jeux de rôle. L'utilisateur peut suivre sa progression, consulter ses collections, et explorer ses items.
+
+### Creative North Star : "The Digital Curator"
+L'application n'est PAS une base de données utilitaire, c'est une **galerie d'exposition muséale haut de gamme**. Chaque collection est une exposition de qualité.
+
+**Objectif émotionnel** : Fournir un sentiment d'**autorité tranquille** à travers :
+- Espace de respiration (whitespace généreux, même sur mobile)
+- Absence de lignes structurelles rigides (No-Line Rule)
+- Profondeur tonale (Tonal Layering)
+- Typographie haute contraste (Dual-Type : Manrope + Inter)
+- Focus sur les visuels de la collection (images hero)
+
+### CLARIFICATION IMPORTANTE
+Le "hero progress" (section de statistiques globales en haut de page) a été **délibérément supprimé** sur le web. Ce n'est PAS un gap à combler, mais un **choix de design validé** pour l'expérience utilisateur. Le focus est mis directement sur les collections individuelles.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 2 : ÉTAT ACTUEL IMPLÉMENTÉ WEB (Base de Référence)
+═══════════════════════════════════════════════════════════════════════════════
+
+### Ce qui est implémenté et validé sur le web actuel :
+
+**Bottom Navigation (4 collections)** :
+- 4 onglets : 🏠 Accueil, 🎴 MECCG, 📚 Royaumes Oubliés, 🎲 D&D 5e
+- Height : 64px
+- Background : #ffffff (surface-container-lowest)
+- Shadow subtile vers le haut
+- Onglet actif : Couleur primary (#667eea), background tonal subtil
+- Onglets inactifs : Couleur on-surface-variant (#44474a)
+
+**Collection Cards (approche galerie visuelle)** :
+- Layout : 1 colonne verticale
+- Espacement entre cards : 16px
+- Padding horizontal container : 16px
+- Structure d'une card :
+  - **Image hero** : 120px height, full-width, border-radius-top 16px, qualité haute
+  - **Titre collection** : Manrope, 1.25rem (20px), weight 700, color #191c1d
+  - **Description** : Inter, 0.875rem (14px), 1 ligne, color #44474a, truncate
+  - **Progress bar** : 6px height, gradient violet (#667eea → #764ba2), track #e1e3e4
+  - **Stats** : Inter, 0.875rem, format "X / Y cards | Z%"
+  - Background : #ffffff (surface-container-lowest)
+  - Border radius : 16px (lg)
+  - Padding : 16px (bottom/sides), 0 (top - image full-width)
+
+**Top de page** :
+- Pas de header distinct (commence directement par les collection cards)
+- Pas de logo visible
+- Pas de section "hero progress" (supprimé volontairement)
+
+**Background principal** :
+- #f8f9fa (surface)
+
+**Exemples de collections affichées** :
+1. Middle-earth CCG (artwork fantasy sombre)
+2. Royaumes Oubliés (artwork fantasy épique)
+3. Dungeons & Dragons 5e (artwork fantasy heroic)
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 3 : DESIGN SYSTEM "THE DIGITAL CURATOR"
+═══════════════════════════════════════════════════════════════════════════════
+
+### Règle Fondamentale : No-Line Rule 🚫
+
+**INTERDIT** : Utiliser des bordures 1px solides pour sectionner le contenu.
+
+**À LA PLACE** : Définir les frontières par changements de fond (Tonal Layering).
+
+### Palette de Couleurs
+
+**Surfaces (Tonal Layering)** :
+- Background principal : #f8f9fa (surface)
+- Cards collection : #ffffff (surface-container-lowest)
+- Bottom navigation : #ffffff (surface-container-lowest)
+- Sections intermédiaires (si présentes) : #f3f4f5 (surface-container-low)
+- Shadow bottom nav : 0 -4px 16px rgba(25, 28, 29, 0.06) (vers le haut)
+
+**Primary (Violet signature)** :
+- Gradient : #667eea → #764ba2 (angle 135deg ou 90deg selon contexte)
+- Usage : CTAs, progress bars, états actifs bottom nav
+- Utilisation avec PARCIMONIE (ne pas surcharger)
+
+**Text** :
+- Primary : #191c1d (on-surface)
+- Secondary : #44474a (on-surface-variant)
+- On primary : #ffffff
+
+### Typography (Dual-Type System)
+
+**Manrope** (Headlines, autorité, premium) :
+- Titres de collections : 1.25rem (20px), weight 700
+- Headlines de sections : 1.125rem (18px), weight 700
+
+**Inter** (Body, métadonnées, navigation) :
+- Métadonnées, descriptions : 0.875rem (14px), weight 400
+- Labels bottom nav : 0.625rem (10px), weight 400/600 (inactif/actif)
+
+### Principes Visuels
+
+1. **No-Line Rule** : Aucune bordure 1px solide. Définir les frontières par changements de fond (Tonal Layering).
+2. **Tonal Layering** : Cards blanches (#ffffff) sur background gris clair (#f8f9fa) = "soft lift" architectural.
+3. **Border Radius** : lg (16px) minimum pour cards, bottom nav, sections.
+4. **Spacing** : Généreux mais adapté mobile (12-16px gaps, 16px padding).
+5. **Gradient** : Avec parcimonie (progress bars, CTAs, onglet actif).
+6. **Whitespace** : Le whitespace est un élément de design, pas un accident. Si ça ne rentre pas avec respiration, repenser le layout.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 4 : VARIANTES À GÉNÉRER (3 maquettes)
+═══════════════════════════════════════════════════════════════════════════════
+
+### VARIANTE 1 : Base Actuelle (État Implémenté)
+
+**Objectif** : Représenter fidèlement l'implémentation web actuelle.
+
+**Composition (de haut en bas)** :
+1. **Background** : #f8f9fa (surface)
+2. **Collection Cards** (démarrage immédiat, pas de header) :
+   - 3 cards visibles (ou 2.5 avec scroll hint)
+   - Structure : Image hero (120px) + titre + description (1 ligne) + progress bar + stats
+   - Espacement vertical : 16px entre cards
+   - Padding horizontal container : 16px
+3. **Bottom Navigation** (fixed bottom, 64px) :
+   - 4 onglets : Accueil (actif), MECCG, Royaumes, D&D 5e
+   - Shadow vers le haut
+4. **Padding bottom** : 80px pour éviter chevauchement avec bottom nav
+
+**Pas de** :
+- ❌ Header distinct
+- ❌ Logo
+- ❌ Hero progress section (supprimé volontairement)
+- ❌ Recent Activity
+
+**Focus** : Approche galerie, visuels de collections mis en avant immédiatement.
+
+---
+
+### VARIANTE 2 : + Mini-Header avec Logo
+
+**Objectif** : Explorer l'ajout d'un mini-header pour renforcer l'identité de marque.
+
+**Composition (de haut en bas)** :
+1. **Mini-Header** (48-56px height) :
+   - Background : #ffffff (surface-container-lowest)
+   - Shadow subtile : 0 2px 8px rgba(25, 28, 29, 0.04) (vers le bas)
+   - Contenu :
+     - Logo "Collectoria" à gauche (texte Manrope, 1.125rem, gradient violet #667eea → #764ba2, ou icône compacte)
+     - Optionnel : Icône recherche ou menu à droite (icône 24px, couleur #44474a)
+   - Padding horizontal : 16px
+   - Alignement vertical : centré
+2. **Background** : #f8f9fa (surface) (commence sous le header)
+3. **Collection Cards** (même structure que Variante 1) :
+   - 3 cards (ou 2.5 avec scroll hint)
+   - Structure : Image hero + titre + description + progress bar + stats
+   - Espacement : 16px entre cards, 16px padding horizontal
+4. **Bottom Navigation** (identique Variante 1) :
+   - 4 onglets, 64px height, fixed bottom
+
+**Ajout** :
+- ✅ Mini-header avec logo (identité de marque)
+- Optionnel : Icône recherche ou menu
+
+**Conservé** :
+- ✅ Bottom nav (4 collections)
+- ✅ Collection cards (approche galerie)
+- ❌ Pas de hero progress
+- ❌ Pas de recent activity
+
+---
+
+### VARIANTE 3 : + Mini-Header + Recent Activity
+
+**Objectif** : Explorer l'ajout d'une section "Activité Récente" pour engagement utilisateur.
+
+**Composition (de haut en bas)** :
+1. **Mini-Header** (48-56px height) :
+   - Identique Variante 2 (logo + optionnel recherche/menu)
+2. **Background** : #f8f9fa (surface)
+3. **Section "Recent Activity"** (entre header et cards) :
+   - **Card conteneur** :
+     - Background : #ffffff (surface-container-lowest)
+     - Border-radius : 16px
+     - Padding : 16px
+     - Margin horizontal : 16px
+     - Margin top : 16px (gap avec header)
+     - Margin bottom : 16px (gap avec cards)
+   - **Titre section** :
+     - "Activité Récente"
+     - Manrope, 1.125rem (18px), weight 700, color #191c1d
+     - Margin bottom : 12px
+   - **Items récents** (2-3 items) :
+     - Chaque item :
+       - Icône à gauche (24px, couleur gradient violet ou #667eea) : 🎴, 📚, ou 🎲
+       - Texte court : "Ajouté [Nom Item]" ou "Complété [Nom Collection]"
+       - Timestamp : "Il y a 2h" (Inter, 0.75rem, color #44474a)
+       - Espacement vertical entre items : 8px
+       - Pas de bordures (No-Line Rule), espacement suffit
+   - **Optionnel : Bouton "Voir tout"** :
+     - Position : bottom-right de la card
+     - Style : Texte Inter, 0.875rem, color #667eea, weight 600
+     - Background transparent
+     - Padding : 4px 8px
+4. **Collection Cards** (même structure, potentiellement moins visibles) :
+   - 2 cards visibles (ou 1.5 avec scroll hint, car Recent Activity prend de l'espace)
+   - Structure identique Variante 1
+5. **Bottom Navigation** (identique Variante 1) :
+   - 4 onglets, 64px height, fixed bottom
+
+**Ajout** :
+- ✅ Mini-header avec logo
+- ✅ Section "Recent Activity" (engagement utilisateur)
+
+**Conservé** :
+- ✅ Bottom nav (4 collections)
+- ✅ Collection cards (approche galerie, mais moins de cards visibles sans scroll)
+- ❌ Pas de hero progress
+
+**Trade-off** : La Recent Activity ajoute de l'engagement mais réduit l'espace visible pour les collection cards (scroll nécessaire).
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 5 : SPÉCIFICATIONS TECHNIQUES DÉTAILLÉES
+═══════════════════════════════════════════════════════════════════════════════
+
+### Format de Sortie
+
+- **Résolution** : 375px width × 812px height (iPhone portrait standard)
+- **Format** : PNG haute résolution (2x ou 3x pour netteté Retina)
+- **Annotations** (si possible) : Indiquer spacing clés (16px padding, 64px bottom nav height, 48-56px header height)
+
+### Bottom Navigation (Toutes Variantes)
+
+**Position** :
+- Fixed bottom
+- Width : 100%
+- Height : 64px
+- Background : #ffffff (surface-container-lowest)
+- Shadow : 0 -4px 16px rgba(25, 28, 29, 0.06) (vers le haut)
+- Border-top : none (No-Line Rule)
+
+**Layout** :
+- 4 onglets équidistants (flex, space-around)
+- Padding vertical : 8px
+- Padding horizontal par onglet : 12px
+
+**Structure onglet** :
+  [Icône 24px]
+     [Label]
+
+**Onglets** :
+1. **Accueil** (Actif) :
+   - Icône : Maison (🏠 ou icon similaire)
+   - Label : "Accueil"
+   - Color : #667eea (primary)
+   - Background : rgba(102, 126, 234, 0.08) (tonal layer subtil, border-radius 12px, padding 8px)
+   - Font : Inter, 0.625rem (10px), weight 600
+
+2. **MECCG** (Inactif) :
+   - Icône : Cartes (🎴 ou icon similaire)
+   - Label : "MECCG"
+   - Color : #44474a (on-surface-variant)
+   - Background : transparent
+   - Font : Inter, 0.625rem (10px), weight 400
+
+3. **Royaumes** (Inactif) :
+   - Icône : Livre (📚 ou icon similaire)
+   - Label : "Royaumes"
+   - Color : #44474a
+   - Background : transparent
+   - Font : Inter, 0.625rem (10px), weight 400
+
+4. **D&D 5e** (Inactif) :
+   - Icône : Dé (🎲 ou icon similaire)
+   - Label : "D&D 5e"
+   - Color : #44474a
+   - Background : transparent
+   - Font : Inter, 0.625rem (10px), weight 400
+
+### Mini-Header (Variantes 2 et 3)
+
+**Dimensions** :
+- Height : 48-56px
+- Width : 100%
+- Position : Top de la page (fixed ou static selon implémentation future)
+
+**Style** :
+- Background : #ffffff (surface-container-lowest)
+- Shadow : 0 2px 8px rgba(25, 28, 29, 0.04) (vers le bas)
+- Border-bottom : none (No-Line Rule)
+
+**Contenu** :
+- **Logo "Collectoria"** :
+  - Position : Gauche (ou centré selon choix)
+  - Font : Manrope, 1.125rem (18px), weight 700
+  - Couleur : Gradient violet #667eea → #764ba2 (effet texte)
+  - Padding left : 16px (si position gauche)
+- **Icône recherche ou menu** (optionnel) :
+  - Position : Droite
+  - Size : 24px
+  - Color : #44474a (on-surface-variant)
+  - Padding right : 16px
+
+### Collection Cards (Toutes Variantes)
+
+**Layout** :
+- 1 colonne verticale
+- Spacing entre cards : 16px
+- Padding horizontal container : 16px
+- Padding bottom container : 80px (pour éviter chevauchement avec bottom nav)
+
+**Structure d'une card** :
+
+┌─────────────────────────────────┐
+│  [Image Hero - 120px height]    │ ← Ratio ~16:9, border-radius-top 16px
+├─────────────────────────────────┤ (Pas de bordure visible, juste changement de contenu)
+│  Titre Collection               │ ← Manrope, 1.25rem, #191c1d
+│  Description courte...           │ ← Inter, 0.875rem, #44474a, 1 ligne, truncate
+│  ▓▓▓▓░░░░░░░░░░░░░░░░            │ ← Progress bar (gradient violet)
+│  1,234 / 5,400 cards  |  23%    │ ← Inter, 0.875rem, #44474a
+└─────────────────────────────────┘
+
+**Détails card** :
+- Background : #ffffff (surface-container-lowest)
+- Border radius : 16px (lg)
+- Padding : 16px (sides + bottom), 0 (top - image full-width)
+- Box-shadow : none (utiliser Tonal Layering plutôt que shadows)
+
+**Image hero** :
+- Height : 120px
+- Width : 100% (full card width)
+- Border-radius : 16px 16px 0 0 (top corners only)
+- Object-fit : cover
+- Qualité visuelle haute (artwork de cartes/livres/jeux)
+
+**Titre** :
+- Manrope, 1.25rem (20px), weight 700
+- Color : #191c1d
+- Margin-top : 12px
+- Line-height : 1.3
+
+**Description** :
+- Inter, 0.875rem (14px), weight 400
+- Color : #44474a
+- Margin-top : 4px
+- Max-lines : 1 (truncate avec ellipsis si trop long)
+
+**Progress bar** :
+- Height : 6px
+- Border-radius : 3px
+- Track : #e1e3e4 (surface-container-highest)
+- Indicator : linear-gradient(90deg, #667eea, #764ba2)
+- Inner-glow : 0 0 6px rgba(118, 75, 162, 0.3) (effet énergie liquide subtil)
+- Margin-top : 8px
+- Margin-bottom : 8px
+
+**Stats** :
+- Inter, 0.875rem (14px), weight 400
+- Color : #44474a
+- Format : "X / Y cards  |  Z%"
+
+### Recent Activity Section (Variante 3 uniquement)
+
+**Card conteneur** :
+- Background : #ffffff (surface-container-lowest)
+- Border-radius : 16px (lg)
+- Padding : 16px
+- Margin horizontal : 16px
+- Margin top : 16px (gap avec header)
+- Margin bottom : 16px (gap avec collection cards)
+- Height variable (~150px total avec 2-3 items)
+
+**Titre section** :
+- "Activité Récente"
+- Manrope, 1.125rem (18px), weight 700
+- Color : #191c1d (on-surface)
+- Margin bottom : 12px
+
+**Items récents** (2-3 items) :
+- Layout : Horizontal (icône + texte + timestamp)
+- Spacing entre items : 8px vertical (pas de bordures)
+- Chaque item :
+  - **Icône** :
+    - Size : 24px
+    - Position : Left
+    - Color : Gradient violet (#667eea) ou solid #667eea
+    - Exemples : 🎴 (carte), 📚 (livre), 🎲 (dé)
+  - **Texte action** :
+    - Font : Inter, 0.875rem (14px), weight 400
+    - Color : #191c1d
+    - Exemples : "Ajouté Aragorn Ranger", "Complété MECCG"
+  - **Timestamp** :
+    - Font : Inter, 0.75rem (12px), weight 400
+    - Color : #44474a (on-surface-variant)
+    - Exemples : "Il y a 2h", "Hier"
+    - Position : Right ou below (selon espace disponible)
+
+**Bouton "Voir tout"** (optionnel) :
+- Position : Bottom-right de la card conteneur
+- Font : Inter, 0.875rem (14px), weight 600
+- Color : #667eea (primary)
+- Background : transparent
+- Padding : 4px 8px
+- Border-radius : 8px (hover state futur)
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 6 : STYLE ET AMBIANCE
+═══════════════════════════════════════════════════════════════════════════════
+
+**Mood** : Galerie d'art contemporaine, sophistiquée, premium, tranquille.
+
+**Imagery** : Les images des collection cards doivent évoquer :
+- Qualité musée
+- Artwork haute résolution
+- Couleurs riches (fantasy pour MECCG et Royaumes Oubliés, heroic fantasy pour D&D)
+- Détails visibles (visages de personnages, textures de cartes, couvertures de livres)
+
+**Exemples visuels recommandés** :
+- **MECCG** : Artwork fantastique sombre (Terre du Milieu, cartes JCC Tolkien)
+- **Royaumes Oubliés** : Couvertures de livres fantasy épiques (TSR, Wizards of the Coast)
+- **D&D 5e** : Artwork heroic fantasy (manuels D&D, monstres, personnages)
+
+**Whitespace** : Généreux mais adapté mobile. Si ça ne rentre pas avec breathing room, simplifier. Le whitespace est un élément de design actif, pas un accident.
+
+**Pas de** :
+- ❌ Bordures 1px solides (No-Line Rule)
+- ❌ Noir pur (#000000) pour texte → Toujours #191c1d (on-surface)
+- ❌ Drop shadows standards → Utiliser Tonal Layering
+- ❌ Overcrowding
+- ❌ Hero progress section (supprimé volontairement)
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 7 : NOTES IMPORTANTES
+═══════════════════════════════════════════════════════════════════════════════
+
+### Ce qui est VALIDÉ (ne pas changer)
+
+- ✅ **Bottom nav avec 4 collections** : Approche collections validée (pas de nav générique Home/Explore/Profile/Settings)
+- ✅ **Collection cards avec images hero** : Approche galerie muséale premium validée
+- ✅ **Layout vertical** des cards (1 colonne mobile)
+- ✅ **Pas de hero progress section** : Supprimé volontairement, focus sur les collections directement
+
+### Ce qui est exploré (variantes)
+
+- 🤔 **Mini-header avec logo** (Variante 2) : Explorer l'impact du branding sur l'expérience mobile
+- 🤔 **Recent Activity** (Variante 3) : Explorer l'engagement utilisateur avec l'historique des actions
+
+### Objectif des Variantes
+
+Les 3 variantes permettront à l'utilisateur de décider quelle direction prendre :
+- **Variante 1** : Approche minimaliste, focus collections (état actuel web)
+- **Variante 2** : Approche avec identité de marque (mini-header logo)
+- **Variante 3** : Approche avec engagement utilisateur (mini-header + recent activity)
+
+### Trade-offs à Visualiser
+
+**Variante 1** :
+- ✅ Plus d'espace pour les collection cards (3 visibles)
+- ✅ Démarrage immédiat, pas de friction
+- ❌ Pas de branding logo visible
+- ❌ Pas d'engagement via historique
+
+**Variante 2** :
+- ✅ Identité de marque renforcée (logo)
+- ✅ Espace pour recherche/menu futur
+- ✅ ~2.5-3 collection cards visibles
+- ❌ Pas d'engagement via historique
+
+**Variante 3** :
+- ✅ Identité de marque renforcée
+- ✅ Engagement utilisateur (recent activity)
+- ✅ Sentiment de "vivant" (activité récente)
+- ❌ Moins d'espace pour collection cards (~2 visibles, scroll requis)
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 8 : CHECKLIST DE VALIDATION
+═══════════════════════════════════════════════════════════════════════════════
+
+Pour chaque variante, vérifier :
+
+- [ ] **Format** : 375px × 812px (iPhone portrait)
+- [ ] **No-Line Rule** : Aucune bordure 1px visible (sauf si absolument nécessaire pour accessibilité)
+- [ ] **Tonal Layering** : Surface hierarchy respectée (#f8f9fa background, #ffffff cards)
+- [ ] **Typography** : Manrope (titres) + Inter (body/métadonnées/navigation)
+- [ ] **Gradient violet** : Utilisé avec parcimonie (progress bars, onglet actif)
+- [ ] **Border radius** : lg (16px) minimum pour cards et sections
+- [ ] **Spacing** : Généreux, whitespace comme élément de design
+- [ ] **Bottom nav** : 64px height, 4 onglets, shadow vers le haut
+- [ ] **Collection cards** : Image 120px, titre Manrope, stats Inter, progress bar gradient
+- [ ] **Mini-header** (V2/V3) : 48-56px height, logo visible, shadow vers le bas
+- [ ] **Recent Activity** (V3) : Card blanche, 2-3 items, pas de bordures internes
+- [ ] **Pas de hero progress** : Section absente (choix validé)
+
+═══════════════════════════════════════════════════════════════════════════════
+NOTE FINALE
+═══════════════════════════════════════════════════════════════════════════════
+
+"La beauté de ce système réside dans sa retenue. Laissez la collection de l'utilisateur fournir la couleur ; notre UI fournit le cadre élégant et discret."
+
+Les 3 variantes représentent des niveaux progressifs d'ajout de features (logo, recent activity) sur la base minimaliste actuelle. L'utilisateur décidera quelle direction correspond le mieux à l'expérience mobile souhaitée pour Collectoria.
+
+═══════════════════════════════════════════════════════════════════════════════
+FIN DU PROMPT - Copier/Coller dans Stitch
+═══════════════════════════════════════════════════════════════════════════════

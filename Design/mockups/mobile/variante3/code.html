@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Collectoria - Votre Galerie Personnelle</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#191c1d",
+                    "inverse-surface": "#2e3132",
+                    "primary-container": "#546cd7",
+                    "on-tertiary-fixed-variant": "#004a7a",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#dcb8ff",
+                    "background": "#f8f9fa",
+                    "on-tertiary-fixed": "#001d34",
+                    "on-primary-fixed-variant": "#1f3ba6",
+                    "on-primary-fixed": "#001356",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b9c3ff",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#754aa1",
+                    "on-secondary-fixed": "#2c0051",
+                    "on-surface-variant": "#444653",
+                    "surface-dim": "#d9dadb",
+                    "primary-fixed-dim": "#b9c3ff",
+                    "primary": "#3953bd",
+                    "on-secondary-fixed-variant": "#5c3187",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-tint": "#3c55bf",
+                    "surface-container-low": "#f3f4f5",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#dde1ff",
+                    "tertiary": "#005f9c",
+                    "surface-container-high": "#e7e8e9",
+                    "secondary-container": "#ce9ffd",
+                    "tertiary-container": "#0079c3",
+                    "on-secondary-container": "#5a3086",
+                    "outline-variant": "#c5c5d5",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#f0dbff",
+                    "on-primary-container": "#fffbff",
+                    "surface-bright": "#f8f9fa",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#d0e4ff",
+                    "surface-container": "#edeeef",
+                    "outline": "#757684",
+                    "surface": "#f8f9fa",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-tertiary-container": "#fdfcff",
+                    "on-surface": "#191c1d",
+                    "tertiary-fixed-dim": "#9bcbff",
+                    "surface-variant": "#e1e3e4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8f9fa]/70 dark:bg-[#191c1d]/70 backdrop-blur-2xl">
+<div class="flex justify-between items-center px-6 h-14 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#667eea] dark:text-[#764ba2]">museum</span>
+<span class="font-['Manrope'] font-black text-transparent bg-clip-text bg-gradient-to-br from-[#667eea] to-[#764ba2] text-xl">Collectoria</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-200 transition-colors hover:bg-[#e1e3e4] dark:hover:bg-[#2a2b2c] p-2 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-14 px-4">
+<!-- Hero Welcome Section -->
+<section class="mt-8 mb-6">
+<h1 class="text-3xl font-black text-on-surface tracking-tight mb-2">Bon retour, Curator</h1>
+<p class="text-on-surface-variant font-medium">Votre galerie s'agrandit aujourd'hui.</p>
+</section>
+<!-- Recent Activity Card (Transactional Layering) -->
+<section class="bg-surface-container-low rounded-2xl p-4 mb-8">
+<h2 class="text-[18px] font-bold text-on-surface mb-4">Activité Récente</h2>
+<div class="space-y-4">
+<!-- Activity Item 1 -->
+<div class="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-xl">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="style">style</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-on-surface">Ajouté Aragorn Ranger</p>
+<p class="text-xs text-on-surface-variant">Il y a 2h</p>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-xl">
+<div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="auto_stories">auto_stories</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-on-surface">Mis à jour Manuel D&amp;D</p>
+<p class="text-xs text-on-surface-variant">Il y a 5h</p>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-xl">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary" data-icon="casino">casino</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-on-surface">Nouvelle série de dés acquise</p>
+<p class="text-xs text-on-surface-variant">Hier</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Collections Bento Grid -->
+<section class="grid grid-cols-2 gap-4 mb-8">
+<h2 class="col-span-2 text-xl font-bold text-on-surface">Vos Trésors</h2>
+<!-- Featured Card (Asymmetric) -->
+<div class="col-span-2 relative h-48 rounded-2xl overflow-hidden group">
+<img alt="MECCG Collection" class="absolute inset-0 w-full h-full object-cover" data-alt="close-up of ornate fantasy card game illustrations with gold foil details in a dimly lit library atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmqpfo5KmHP4XcanZxEZwXTJ9Hja049Q9tZvi__aQKe5KI_5KDDPgmO1jXbkqN0Vj1s7nduLIUdwH_wK45tQSKcBYQAk6sJa-6aDXRml72z2ORk0Ljq64LY3XYJbzmIHKSuQAG4zNi84x_eDYoOvGEsOiwjO0sdbr3dhrfXKkY55GPLZvHlnuZI0DY8U-jZW0jomBVWjFsYys2WI-_PANZBib5J7pJg3nvuUEtR5UG5Ox5kcuApPOaSZjOlZGJkWaGc9TWpP9HSw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<span class="text-[10px] uppercase tracking-widest text-white/70 font-bold mb-1 block">Rare Collection</span>
+<h3 class="text-xl font-bold text-white">MECCG Master Set</h3>
+</div>
+</div>
+<!-- D&D Card -->
+<div class="bg-surface-container-low rounded-2xl p-4 flex flex-col justify-between h-40">
+<div class="flex justify-between">
+<span class="material-symbols-outlined text-primary" data-icon="swords">swords</span>
+<span class="text-xs font-bold text-on-surface-variant">12 Items</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">D&amp;D 5e</h3>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] w-3/4 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Kingdoms Card -->
+<div class="bg-surface-container-low rounded-2xl p-4 flex flex-col justify-between h-40">
+<div class="flex justify-between">
+<span class="material-symbols-outlined text-secondary" data-icon="castle">castle</span>
+<span class="text-xs font-bold text-on-surface-variant">5 Items</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">Royaumes</h3>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider mt-1">Nouveau set</p>
+</div>
+</div>
+</section>
+<!-- Glassmorphism Filter Chips (The Curator's Lens) -->
+<section class="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+<button class="flex-none px-6 py-2 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-full text-sm font-semibold shadow-lg shadow-indigo-500/20">
+                Tout voir
+            </button>
+<button class="flex-none px-6 py-2 bg-[#f8f9fa]/80 backdrop-blur-xl border border-outline-variant/10 rounded-full text-sm font-semibold text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                Cartes
+            </button>
+<button class="flex-none px-6 py-2 bg-[#f8f9fa]/80 backdrop-blur-xl border border-outline-variant/10 rounded-full text-sm font-semibold text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                Livres
+            </button>
+<button class="flex-none px-6 py-2 bg-[#f8f9fa]/80 backdrop-blur-xl border border-outline-variant/10 rounded-full text-sm font-semibold text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                Accessoires
+            </button>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-20 w-14 h-14 bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-2xl shadow-xl shadow-indigo-500/30 flex items-center justify-center text-white active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-[#f8f9fa]/80 dark:bg-[#191c1d]/80 backdrop-blur-2xl h-[64px] z-50 flex justify-around items-center px-4 pb-2 shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+<!-- Active Tab: Accueil -->
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-2xl px-4 py-1.5 shadow-lg shadow-indigo-500/20 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">Accueil</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#747778] dark:text-[#8e9192] px-4 py-1.5 active:scale-90 transition-transform hover:text-[#667eea]" href="#">
+<span class="material-symbols-outlined">gallery_thumbnail</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">MECCG</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#747778] dark:text-[#8e9192] px-4 py-1.5 active:scale-90 transition-transform hover:text-[#667eea]" href="#">
+<span class="material-symbols-outlined">castle</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">Royaumes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#747778] dark:text-[#8e9192] px-4 py-1.5 active:scale-90 transition-transform hover:text-[#667eea]" href="#">
+<span class="material-symbols-outlined">swords</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">D&amp;D 5e</span>
+</a>
+</nav>
+</body></html>

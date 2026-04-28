@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#191c1d",
+                        "inverse-surface": "#2e3132",
+                        "primary-container": "#546cd7",
+                        "on-tertiary-fixed-variant": "#004a7a",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#dcb8ff",
+                        "background": "#f8f9fa",
+                        "on-tertiary-fixed": "#001d34",
+                        "on-primary-fixed-variant": "#1f3ba6",
+                        "on-primary-fixed": "#001356",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#b9c3ff",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary": "#754aa1",
+                        "on-secondary-fixed": "#2c0051",
+                        "on-surface-variant": "#444653",
+                        "surface-dim": "#d9dadb",
+                        "primary-fixed-dim": "#b9c3ff",
+                        "primary": "#3953bd",
+                        "on-secondary-fixed-variant": "#5c3187",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-tint": "#3c55bf",
+                        "surface-container-low": "#f3f4f5",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#dde1ff",
+                        "tertiary": "#005f9c",
+                        "surface-container-high": "#e7e8e9",
+                        "secondary-container": "#ce9ffd",
+                        "tertiary-container": "#0079c3",
+                        "on-secondary-container": "#5a3086",
+                        "outline-variant": "#c5c5d5",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#f0dbff",
+                        "on-primary-container": "#fffbff",
+                        "surface-bright": "#f8f9fa",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#d0e4ff",
+                        "surface-container": "#edeeef",
+                        "outline": "#757684",
+                        "surface": "#f8f9fa",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-container": "#fdfcff",
+                        "on-surface": "#191c1d",
+                        "tertiary-fixed-dim": "#9bcbff",
+                        "surface-variant": "#e1e3e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-nav {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-secondary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8f9fa]/70 dark:bg-[#191c1d]/70 backdrop-blur-2xl flex justify-between items-center px-6 h-14 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#667eea] dark:text-[#764ba2]">museum</span>
+<h1 class="font-['Manrope'] font-black text-transparent bg-clip-text bg-gradient-to-br from-[#667eea] to-[#764ba2] text-xl">Collectoria</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#e1e3e4] dark:hover:bg-[#2a2b2c] transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#444748] dark:text-[#c4c7c8]">search</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-24 px-6 max-w-md mx-auto">
+<!-- Hero Section / Welcome -->
+<section class="mb-10">
+<h2 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface mb-2">Ma Galerie</h2>
+<p class="font-body text-on-surface-variant text-sm leading-relaxed">Bienvenue, Conservateur. Vos pièces maîtresses n'attendent que votre regard.</p>
+</section>
+<!-- Collection List (1-column layout) -->
+<div class="space-y-8">
+<!-- Card 1: Middle-Earth CCG -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(25,28,29,0.04)] active:scale-[0.98] transition-transform duration-200">
+<div class="h-[120px] overflow-hidden">
+<img alt="Fantasy card collection background" class="w-full h-full object-cover grayscale-[20%] contrast-110" data-alt="dramatic close-up of fantasy trading cards spread across an ancient oak table with soft candlelight and dust motes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLDKIq2bEMuE45CqUGTK955lupbZMRevRH0JiJ2AfDAxI6Qhmv8bSf_FpTmCZxP84cAd1KxOQUNFkLtluL8qQr-goBmj_aeRj1abUgsJS-e7tC4xFFyPNDeAA_mqbDPOMlYzDhfq89lDVJkmyxy8WG3g-uANYSKRJW_3TctYx1av2AiaS_UmuvPUhuJheqB5CW1GYP5fYV4OJSBZB9nTxnA_qTByrUkQeoLVpHwqC1aQeTkE63Sj_piJ_bq7dejbtfhIXz5MIc1Q"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline font-bold text-xl text-on-surface">MECCG</h3>
+<p class="font-body text-xs text-on-surface-variant uppercase tracking-widest font-semibold mt-0.5">Le Seigneur des Anneaux</p>
+</div>
+<span class="bg-surface-container-high px-3 py-1 rounded-full text-[10px] font-bold text-primary">COMPLÉTION 82%</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant mb-6 line-clamp-2">Collection complète des extensions Wizards et The Lidless Eye. État Near Mint uniquement.</p>
+<!-- Progress Bar -->
+<div class="mb-5">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-[10px] font-bold font-label text-on-surface-variant">PROGRESSION</span>
+<span class="text-[10px] font-bold font-label text-primary">482 / 588</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full shadow-[inset_0_0_8px_rgba(255,255,255,0.3)] w-[82%]"></div>
+</div>
+</div>
+<!-- Stats -->
+<div class="flex gap-4 border-t border-outline-variant/10 pt-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">layers</span>
+<span class="font-headline font-bold text-sm">482 Cartes</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">workspace_premium</span>
+<span class="font-headline font-bold text-sm">12 Rares Or</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 2: Les Royaumes Oubliés -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(25,28,29,0.04)] active:scale-[0.98] transition-transform duration-200">
+<div class="h-[120px] overflow-hidden">
+<img alt="Tabletop miniature collection" class="w-full h-full object-cover grayscale-[10%]" data-alt="expertly painted miniature silver dragon perched on a mountain peak base with mist and cinematic blue lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp1HN0J7jE-egkQj8jstldUxbh5PqdA5Ppt6Fzc7OTMXi5u26FxHjl5xD1w3uOkqVUTtedcJ4j5oq9asqYaHwrBaO3iohG2iuO_vzh4rjVj-kxRBlzru5e3uVT7MSBVe5T41pdIvVwn9LkOzdvR1raRaMMoFejIqfvPPY1M9uXjI8nPZf6ojXWgMPzBi-bY-ezQ7ytPfZwt4EIcgQ2qcW9V7xLvK71CB7aqC_niVpCvPhvVWHAB7j1NCGCYTeYTX_gQ7t_Z3NUgQ"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline font-bold text-xl text-on-surface">Royaumes</h3>
+<p class="font-body text-xs text-on-surface-variant uppercase tracking-widest font-semibold mt-0.5">D&amp;D Miniatures</p>
+</div>
+<span class="bg-surface-container-high px-3 py-1 rounded-full text-[10px] font-bold text-primary">COMPLÉTION 45%</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant mb-6 line-clamp-2">Figurines en métal et résine peintes à la main. Focus sur les Grands Dragons.</p>
+<div class="mb-5">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-[10px] font-bold font-label text-on-surface-variant">PROGRESSION</span>
+<span class="text-[10px] font-bold font-label text-primary">15 / 33</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full shadow-[inset_0_0_8px_rgba(255,255,255,0.3)] w-[45%]"></div>
+</div>
+</div>
+<div class="flex gap-4 border-t border-outline-variant/10 pt-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">swords</span>
+<span class="font-headline font-bold text-sm">15 Modèles</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">palette</span>
+<span class="font-headline font-bold text-sm">Peint</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 3: Dungeons & Dragons 5e -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(25,28,29,0.04)] active:scale-[0.98] transition-transform duration-200">
+<div class="h-[120px] overflow-hidden">
+<img alt="Rare leather books" class="w-full h-full object-cover" data-alt="collection of leather-bound fantasy books with gold leaf lettering on a dark wooden shelf in a library setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBThnBBoqSvIOS9A1wiEbXIWoPgp-t1d_8OZyNhweXZBiE_uaiZGQSRamuUHDRvWAyd2X6OQtVnTAx57Nocyff0Jemf-PV4U6FLLX42W0vxfSfS6inY2MGQzW-6h6yEEn1hg65NRrcLiUnrSTT4FzH8vgBq4NXbhRYcKtSm8ceAn6JhsEvM6OJa3vYn7yYSAr7NfTdzpFP1NpSNmil0cFNripYlcELk_hd1R4mMoM94Fd5f65AhiVNGKuy44MJaxWPl4VofNWf5Gg"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline font-bold text-xl text-on-surface">D&amp;D 5e</h3>
+<p class="font-body text-xs text-on-surface-variant uppercase tracking-widest font-semibold mt-0.5">Livres de Règles</p>
+</div>
+<span class="bg-surface-container-high px-3 py-1 rounded-full text-[10px] font-bold text-primary">COMPLÉTION 95%</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant mb-6 line-clamp-2">Toute la gamme officielle en éditions Collector. Couvertures alternatives uniquement.</p>
+<div class="mb-5">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-[10px] font-bold font-label text-on-surface-variant">PROGRESSION</span>
+<span class="text-[10px] font-bold font-label text-primary">22 / 23</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full shadow-[inset_0_0_8px_rgba(255,255,255,0.3)] w-[95%]"></div>
+</div>
+</div>
+<div class="flex gap-4 border-t border-outline-variant/10 pt-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">auto_stories</span>
+<span class="font-headline font-bold text-sm">22 Livres</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">star_half</span>
+<span class="font-headline font-bold text-sm">LTD Edition</span>
+</div>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-2 bg-[#f8f9fa]/80 dark:bg-[#191c1d]/80 backdrop-blur-2xl h-[64px] z-50 shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+<!-- Accueil - Active State -->
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-2xl px-4 py-1.5 shadow-lg shadow-indigo-500/20 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">Accueil</span>
+</a>
+<!-- MECCG - Inactive -->
+<a class="flex flex-col items-center justify-center text-[#747778] dark:text-[#8e9192] px-4 py-1.5 hover:text-[#667eea] dark:hover:text-[#764ba2] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">gallery_thumbnail</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">MECCG</span>
+</a>
+<!-- Royaumes - Inactive -->
+<a class="flex flex-col items-center justify-center text-[#747778] dark:text-[#8e9192] px-4 py-1.5 hover:text-[#667eea] dark:hover:text-[#764ba2] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">castle</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">Royaumes</span>
+</a>
+<!-- D&D 5e - Inactive -->
+<a class="flex flex-col items-center justify-center text-[#747778] dark:text-[#8e9192] px-4 py-1.5 hover:text-[#667eea] dark:hover:text-[#764ba2] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">swords</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest mt-0.5">D&amp;D 5e</span>
+</a>
+</nav>
+</body></html>
