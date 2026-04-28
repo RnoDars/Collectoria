@@ -85,7 +85,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
             color: '#ffffff',
             padding: '6px 12px',
-            borderRadius: '12px',
+            borderRadius: '16px',
             fontFamily: 'Inter, sans-serif',
             fontSize: '0.75rem',
             fontWeight: '700',
@@ -106,7 +106,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
             background: 'rgba(255, 255, 255, 0.9)',
             color: '#43474e',
             padding: '6px 12px',
-            borderRadius: '12px',
+            borderRadius: '16px',
             fontFamily: 'Inter, sans-serif',
             fontSize: '0.75rem',
             fontWeight: '600',
@@ -157,15 +157,18 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
         marginBottom: '12px',
         position: 'relative',
       }}>
-        <div style={{
-          width: `${percentage}%`,
-          height: '100%',
-          background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
-          borderRadius: '9999px',
-          position: 'relative',
-          boxShadow: percentage > 0 ? '0 0 8px rgba(102, 126, 234, 0.5)' : 'none',
-          transition: 'width 0.6s ease-in-out',
-        }} />
+        <div
+          className="collection-card-progress-bar"
+          style={{
+            width: `${percentage}%`,
+            height: '100%',
+            background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '9999px',
+            position: 'relative',
+            boxShadow: percentage > 0 ? '0 0 8px rgba(102, 126, 234, 0.5)' : 'none',
+            transition: 'width 0.6s ease-in-out',
+          }}
+        />
       </div>
 
       {/* Stats */}

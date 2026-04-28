@@ -3,6 +3,7 @@ import { Providers } from './providers'
 import Sidebar from '@/components/layout/Sidebar'
 import TopNav from '@/components/layout/TopNav'
 import BottomNav from '@/components/layout/BottomNav'
+import MobileHeader from '@/components/layout/MobileHeader'
 import { Toaster } from 'react-hot-toast'
 import './globals.css'
 
@@ -38,6 +39,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Sidebar />
+          <MobileHeader />
           <div className="main-content-wrapper">
             <TopNav />
             <main>{children}</main>

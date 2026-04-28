@@ -121,11 +121,23 @@ a {
   min-height: 100vh;
 }
 
-/* Mobile: Remove sidebar offset, add padding for bottom nav */
+/* Mobile: Remove sidebar offset, add padding for mobile header and bottom nav */
 @media (max-width: 767px) {
   .main-content-wrapper {
     margin-left: 0;
-    padding-bottom: 80px;
+    padding-top: 56px; /* Header mobile */
+    padding-bottom: 80px; /* Bottom nav */
+  }
+}
+
+/* Mobile Header - hidden on desktop, visible on mobile */
+.mobile-header {
+  display: none; /* Caché par défaut (desktop) */
+}
+
+@media (max-width: 767px) {
+  .mobile-header {
+    display: flex;
   }
 }
 
@@ -221,10 +233,12 @@ a {
   font-size: 1.5rem;
 }
 
-/* Mobile: Réduire titre à 1.25rem */
+/* Mobile: Garder 1.5rem mais augmenter le weight pour plus de contraste */
 @media (max-width: 767px) {
   .collection-card-title {
-    font-size: 1.25rem !important;
+    font-size: 1.5rem !important; /* Headline-md = 24px */
+    font-weight: 700 !important; /* Augmenter weight */
+    line-height: 1.2 !important;
   }
 }
 
@@ -239,4 +253,26 @@ a {
     min-height: 21px !important;
     font-size: 0.8125rem !important;
   }
+}
+
+/* Progress Bar - Effet shimmer pour "énergie liquide" */
+.collection-card-progress-bar {
+  transition: width 0.6s ease-in-out;
+  overflow: hidden;
+}
+
+.collection-card-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
