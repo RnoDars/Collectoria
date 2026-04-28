@@ -6,13 +6,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { getUserEmail } from '@/lib/auth'
 import { useEffect, useState } from 'react'
 
-const NAV_LINKS = [
-  { href: '/', label: 'Accueil' },
-  { href: '/cards', label: 'Cartes' },
-  { href: '/books', label: 'Livres' },
-  { href: '/dnd5', label: 'D&D 5e' },
-]
-
 export default function TopNav() {
   const pathname = usePathname()
   const { isAuthenticated, logout } = useAuth()
@@ -41,14 +34,14 @@ export default function TopNav() {
       zIndex: 100,
     }}>
       <div style={{
-        maxWidth: '860px',
-        margin: '0 auto',
-        padding: '0 1.5rem',
+        maxWidth: '100%',
+        padding: '0 2rem',
         display: 'flex',
         alignItems: 'center',
-        gap: '2rem',
+        justifyContent: 'space-between',
         height: '56px',
       }}>
+        {/* Logo - Visible uniquement pour cohérence, mais la sidebar a aussi le logo */}
         <span style={{
           fontFamily: 'Manrope, sans-serif',
           fontWeight: '800',
@@ -60,31 +53,6 @@ export default function TopNav() {
         }}>
           Collectoria
         </span>
-
-        <div style={{ display: 'flex', gap: '0.25rem', flex: 1 }}>
-          {NAV_LINKS.map(({ href, label }) => {
-            const active = pathname === href
-            return (
-              <Link
-                key={href}
-                href={href}
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '0.875rem',
-                  fontWeight: active ? '600' : '500',
-                  color: active ? '#667eea' : 'var(--on-surface-variant)',
-                  padding: '0.375rem 0.75rem',
-                  borderRadius: '8px',
-                  background: active ? 'rgba(102, 126, 234, 0.08)' : 'transparent',
-                  textDecoration: 'none',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {label}
-              </Link>
-            )
-          })}
-        </div>
 
         {/* Auth Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

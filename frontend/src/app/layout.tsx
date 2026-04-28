@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Providers } from './providers'
+import Sidebar from '@/components/layout/Sidebar'
 import TopNav from '@/components/layout/TopNav'
 import { Toaster } from 'react-hot-toast'
 import './globals.css'
@@ -23,8 +24,11 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          <TopNav />
-          {children}
+          <Sidebar />
+          <div style={{ marginLeft: '240px' }}>
+            <TopNav />
+            <main>{children}</main>
+          </div>
           <Toaster position="bottom-right" />
         </Providers>
       </body>
