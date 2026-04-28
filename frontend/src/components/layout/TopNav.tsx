@@ -38,22 +38,9 @@ export default function TopNav() {
         padding: '0 2rem',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         height: '56px',
       }}>
-        {/* Logo - Visible uniquement pour cohérence, mais la sidebar a aussi le logo */}
-        <span style={{
-          fontFamily: 'Manrope, sans-serif',
-          fontWeight: '800',
-          fontSize: '1rem',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-        }}>
-          Collectoria
-        </span>
-
         {/* Auth Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {mounted && isAuthenticated() ? (

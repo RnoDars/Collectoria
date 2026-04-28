@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation'
 
 const NAV_LINKS = [
   { href: '/', label: 'Accueil', icon: '🏠' },
-  { href: '/cards', label: 'Cartes', icon: '🎴' },
-  { href: '/books', label: 'Livres', icon: '📚' },
+  { href: '/cards', label: 'MECCG', icon: '🎴' },
+  { href: '/books', label: 'Royaumes Oubliés', icon: '📚' },
   { href: '/dnd5', label: 'D&D 5e', icon: '🎲' },
 ]
 
