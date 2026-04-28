@@ -8,6 +8,18 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Collectoria - Gestionnaire de Collections',
   description: 'Gérez vos collections de cartes, livres, jeux et figurines',
+  icons: {
+    icon: [
+      {
+        url: '/icon.png',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/icon-dark.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
