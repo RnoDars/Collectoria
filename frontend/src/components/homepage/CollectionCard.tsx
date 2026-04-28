@@ -42,15 +42,15 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
       onMouseLeave={() => setIsHovered(false)}
       style={{
         background: '#ffffff',
-        borderRadius: '24px',
-        padding: '24px',
+        borderRadius: '20px', // Réduit de 24px - Plus raffiné
+        padding: '20px', // Réduit de 24px - Plus dense
         position: 'relative',
         overflow: 'hidden',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         transform: isHovered ? 'scale(1.02)' : 'scale(1)',
         boxShadow: isHovered
-          ? '0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04)'
-          : '0 4px 8px rgba(0, 0, 0, 0.02)',
+          ? '0 12px 32px rgba(25, 28, 29, 0.12), 0 4px 16px rgba(25, 28, 29, 0.06)'
+          : '0 8px 24px rgba(25, 28, 29, 0.08)', // BEAUCOUP PLUS VISIBLE - 4x opacity
         cursor: 'pointer',
       }}
     >
@@ -61,9 +61,9 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
           position: 'relative',
           width: '100%',
           height: '160px',
-          borderRadius: '16px',
-          background: '#eaebec',
-          marginBottom: '16px',
+          borderRadius: '12px', // Réduit de 16px
+          background: '#e8eaed', // Ton plus froid
+          marginBottom: '12px', // Réduit de 16px
           overflow: 'hidden',
         }}
       >
@@ -84,13 +84,13 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
             right: '12px',
             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
             color: '#ffffff',
-            padding: '6px 12px',
-            borderRadius: '16px',
+            padding: '4px 10px', // Plus compact
+            borderRadius: '12px', // Moins rond
             fontFamily: 'Inter, sans-serif',
-            fontSize: '0.75rem',
+            fontSize: '0.6875rem', // 11px
             fontWeight: '700',
             textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            letterSpacing: '0.08em', // Plus espacé pour lisibilité
             boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
           }}>
             Complete
@@ -122,11 +122,12 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
         className="collection-card-title"
         style={{
           fontFamily: 'Manrope, sans-serif',
-          fontSize: '1.5rem',
+          fontSize: '1.25rem', // 20px - Rééquilibre hiérarchie
           fontWeight: '700',
           color: '#191c1d',
-          marginBottom: '8px',
+          marginBottom: '6px', // Réduit de 8px
           lineHeight: '1.2',
+          letterSpacing: '-0.01em', // Compression typographique premium
         }}
       >
         {collection.name}
@@ -137,10 +138,10 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
         className="collection-card-description"
         style={{
           fontFamily: 'Inter, sans-serif',
-          fontSize: '0.875rem',
-          color: '#43474e',
-          marginBottom: '16px',
-          lineHeight: '1.5',
+          fontSize: '0.8125rem', // 13px - Moins compétitif avec titre
+          color: '#5f6368', // Plus clair pour distinction
+          marginBottom: '12px', // Réduit de 16px
+          lineHeight: '1.4', // Plus dense
           minHeight: '42px', // 2 lines minimum for consistency
         }}
       >
@@ -150,11 +151,11 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
       {/* Progress Bar */}
       <div style={{
         width: '100%',
-        height: '8px',
+        height: '10px', // Augmenté de 8px - 25% plus haute
         background: '#e8e9ea',
         borderRadius: '9999px',
         overflow: 'hidden',
-        marginBottom: '12px',
+        marginBottom: '10px', // Réduit de 12px
         position: 'relative',
       }}>
         <div
@@ -165,7 +166,9 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
             background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
             borderRadius: '9999px',
             position: 'relative',
-            boxShadow: percentage > 0 ? '0 0 8px rgba(102, 126, 234, 0.5)' : 'none',
+            boxShadow: percentage > 0
+              ? 'inset 0 1px 2px rgba(0, 0, 0, 0.08), 0 0 12px rgba(102, 126, 234, 0.6)'
+              : 'none', // Inner shadow + outer glow prononcé
             transition: 'width 0.6s ease-in-out',
           }}
         />
@@ -207,7 +210,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
 
         <div style={{
           fontFamily: 'Inter, sans-serif',
-          fontSize: '1.25rem',
+          fontSize: '0.75rem', // 12px - Accent subtil, pas dominant
           fontWeight: '700',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           WebkitBackgroundClip: 'text',
