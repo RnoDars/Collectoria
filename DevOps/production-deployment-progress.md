@@ -6,6 +6,46 @@
 
 ---
 
+## 🚨 PRÉREQUIS PROCHAINE SESSION — ACTION BLOQUANTE
+
+> **À faire EN PREMIER, AVANT toute autre action de déploiement.**
+
+### Ajouter la clé SSH du deuxième ordinateur sur le serveur
+
+**Pourquoi** : La Phase 4 (déploiement application) sera effectuée depuis le deuxième ordinateur. Sans cette clé, l'accès SSH est impossible depuis cette machine.
+
+**Depuis le PREMIER ordinateur (déjà autorisé)** :
+
+```bash
+# 1. Se connecter au serveur depuis le premier ordi
+ssh collectoria@51.159.161.31
+
+# 2. Ajouter la clé du deuxième ordi dans authorized_keys
+echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBQ/D9jx47ahVjDgnfR/cM8SsGordgfmJ1W3uS2C8cwz arnaud.dars+git@gmail.com" >> ~/.ssh/authorized_keys
+
+# 3. Vérifier que les deux clés sont présentes
+cat ~/.ssh/authorized_keys
+# Attendu : 2 lignes (une par ordi)
+```
+
+**Vérification depuis le deuxième ordinateur** :
+
+```bash
+ssh collectoria@51.159.161.31
+# Attendu : connexion acceptée sans mot de passe
+```
+
+**Clés autorisées après l'opération** :
+
+| Ordi | Clé publique | Statut |
+|------|-------------|--------|
+| Premier ordi | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO4MwvpoBlmtLk0G27sT/yyjHUOu6AzzDM44iJ2aMT/P` | ✅ Déjà en place |
+| Deuxième ordi (machine actuelle) | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBQ/D9jx47ahVjDgnfR/cM8SsGordgfmJ1W3uS2C8cwz arnaud.dars+git@gmail.com` | ⏸️ À ajouter |
+
+> Une fois la clé ajoutée, cocher cette case et passer à la Phase 4.
+
+---
+
 ## Vue d'Ensemble
 
 | Phase | Statut | Durée | Complétion |

@@ -69,15 +69,22 @@
 | **PasswordAuthentication** | no |
 | **PubkeyAuthentication** | yes |
 
-### Clé SSH Publique Autorisée
+### Clés SSH Autorisées
 
-```
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO4MwvpoBlmtLk0G27sT/yyjHUOu6AzzDM44iJ2aMT/P
-```
-
-**Type** : ED25519  
 **Emplacement** : `/home/collectoria/.ssh/authorized_keys`  
 **Permissions** : 600 (collectoria:collectoria)
+
+| # | Machine | Clé publique | Statut |
+|---|---------|-------------|--------|
+| 1 | Premier ordinateur | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO4MwvpoBlmtLk0G27sT/yyjHUOu6AzzDM44iJ2aMT/P` | ✅ En place |
+| 2 | Deuxième ordinateur (`arnaud.dars+git@gmail.com`) | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBQ/D9jx47ahVjDgnfR/cM8SsGordgfmJ1W3uS2C8cwz arnaud.dars+git@gmail.com` | ⏸️ EN ATTENTE D'AJOUT |
+
+> **ACTION REQUISE** : La clé #2 n'a pas encore été ajoutée au serveur.
+> Depuis le premier ordinateur, se connecter en SSH puis exécuter :
+> ```bash
+> echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBQ/D9jx47ahVjDgnfR/cM8SsGordgfmJ1W3uS2C8cwz arnaud.dars+git@gmail.com" >> ~/.ssh/authorized_keys
+> ```
+> Voir `production-deployment-progress.md` section "PRÉREQUIS PROCHAINE SESSION" pour la procédure complète.
 
 ### Connexion SSH
 
@@ -392,5 +399,5 @@ Si nécessaire, snapshot Scaleway à créer AVANT déploiement Phase 3.
 
 ---
 
-*Document maintenu par l'Agent DevOps - Dernière mise à jour : 2026-04-28*
+*Document maintenu par l'Agent DevOps - Dernière mise à jour : 2026-04-28 (clé SSH deuxième ordi en attente d'ajout)*
 *Confidentialité : CRITIQUE - Ne pas partager publiquement*
