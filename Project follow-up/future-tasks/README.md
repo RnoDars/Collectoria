@@ -22,6 +22,23 @@ Les tâches ici sont :
 
 ### Design & UX
 
+#### Corrections Responsive Mobile
+- **Fichier** : `responsive-fixes.md`
+- **Priorité** : MEDIUM
+- **Effort** : 2-4 heures
+- **Contexte** : Session 2026-04-28
+
+**Objectif** : Corriger les problèmes d'affichage restants en vue mobile sur les pages principales (`/`, `/cards`, `/books`, `/dnd5`, `/login`).
+
+**Plan** : Audit visuel page par page (375px/768px) → liste des problèmes → corrections CSS Tailwind → validation cross-browser.
+
+**Déclencheurs** :
+- [x] Redesign mobile 2026-04-28 appliqué
+- [x] Bug BottomNav desktop corrigé (display:flex inline supprimé)
+- [ ] Session dédiée planifiée
+
+---
+
 #### Custom Icons Design System
 - **Fichier** : `custom-icons-design-system.md`
 - **Priorité** : MEDIUM (après validation redesign mobile)
@@ -109,6 +126,7 @@ Collection Service → Kafka Topic → Activity Service → API
 ## Tâches à Ajouter
 
 ### Design & UX
+- [x] Corrections Responsive Mobile (documenté 2026-04-28)
 - [x] Custom Icons Design System (documenté 2026-04-28)
 
 ### Sécurité
@@ -236,13 +254,13 @@ Quand les déclencheurs sont atteints :
 
 | Catégorie | Nombre de Tâches | Effort Total |
 |-----------|------------------|--------------|
-| Design & UX | 1 | 2-4 heures |
+| Design & UX | 2 | 4-8 heures |
 | Architecture | 1 | 3-5 jours |
 | Sécurité | 0 | - |
 | Performance | 0 | - |
 | Fonctionnalités | 0 | - |
 | DevOps | 0 | - |
-| **TOTAL** | **2** | **3.5-5.5 jours** |
+| **TOTAL** | **3** | **3.5-6 jours** |
 
 ---
 
@@ -269,6 +287,9 @@ _Aucune pour l'instant_
 ## Changelog
 
 ### 2026-04-28
+- ✅ Ajouté : Corrections Responsive Mobile (2-4h, MEDIUM)
+  - Contexte : Problèmes d'affichage persistants après redesign mobile
+  - Bug BottomNav desktop déjà corrigé (display:flex inline)
 - ✅ Ajouté : Custom Icons Design System (2-4h, MEDIUM)
   - Contexte : Redesign mobile session
   - Problème : Emojis Unicode inconsistents

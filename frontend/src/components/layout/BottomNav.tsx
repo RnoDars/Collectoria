@@ -27,7 +27,6 @@ export default function BottomNav() {
         WebkitBackdropFilter: 'blur(16px)', // Safari support
         boxShadow: '0 -6px 20px rgba(25, 28, 29, 0.10)', // Plus prononcée
         zIndex: 100,
-        display: 'flex', // Ajouté pour cohérence
         justifyContent: 'space-around',
         alignItems: 'center',
       }}

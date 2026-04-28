@@ -277,6 +277,12 @@ sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d co
 
 sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
   < migrations/009_fix_all_meccg_names_from_csv.sql  # 1679 corrections complètes depuis meccg_all_cards_review.csv
+
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
+  < migrations/010_add_dnd5_collection.sql  # Table dnd5_books + 53 livres D&D 5e + possession initiale (19 FR + 17 EN)
+
+sg docker -c "docker exec -i collectoria-collection-db psql -U collectoria -d collection_management" \
+  < migrations/011_separate_collections.sql  # Refactoring : tables forgottenrealms_novels / dnd5_books séparées
 ```
 
 **Note** : La migration 004 est idempotente (`ON CONFLICT DO NOTHING`). Elle peut être rejouée sans risque sur une base qui a déjà des données de possession.
