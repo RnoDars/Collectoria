@@ -1,0 +1,36 @@
+# Audit Sécurité - Commit 6ccc542
+
+**Date** : 2026-04-28
+**Commit** : 6ccc542
+**Déclencheur** : Hook post-commit automatique
+
+## Fichiers Modifiés
+
+```
+frontend/src/app/globals.css
+frontend/src/app/layout.tsx
+frontend/src/components/homepage/CollectionCard.tsx
+frontend/src/components/layout/MobileHeader.tsx
+```
+
+## Résultat
+
+**TODO** : Audit à compléter par Agent Security
+
+### Checklist Audit
+
+- [ ] Pas de secrets hardcodés (API keys, passwords, tokens)
+- [ ] Validation des inputs utilisateur
+- [ ] Gestion des erreurs sécurisée (pas de stack traces exposées)
+- [ ] Authentification/Authorization correcte
+- [ ] Pas de vulnérabilités OWASP Top 10
+- [ ] Dépendances à jour (pas de CVE connus)
+
+## Actions Recommandées
+
+_À compléter après audit manuel_
+
+---
+
+*Rapport généré automatiquement par hook post-commit.*
+*Pour audit complet, exécuter: `Security/audit-mvp.sh`*
