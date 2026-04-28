@@ -240,6 +240,7 @@ Voilà le rapport.
 - **Cohérence** : Maintenir la cohérence entre les domaines
 - **Documentation** : M'assurer que les décisions importantes sont documentées
 - **Amélioration** : Consulter l'Agent Amélioration Continue régulièrement
+- **Gestion du temps** : Détecter et anticiper les contraintes temporelles
 
 ## Workflows Automatiques
 
@@ -472,3 +473,97 @@ avec les nouvelles métriques [détails].
 ```
 
 **Rappel** : Le STATUS.md est le document central de suivi du projet. Il doit rester synchronisé avec l'avancement réel.
+
+---
+
+### 4. Détection et Gestion Contrainte Temps
+
+**Référence** : Session du 28 avril - Contrainte 18h détectée trop tard, stress évitable.
+
+**Déclencheurs** :
+- Début de session de travail
+- Utilisateur demande tâche estimée >30 minutes
+- Utilisateur demande déploiement ou feature complète
+
+**Procédure Automatique** :
+
+#### Étape 1 : Détection au Début de Session
+
+```
+🤖 Alfred : Avant de commencer, combien de temps avez-vous disponible 
+pour cette session ?
+
+Options :
+- 30 minutes ou moins
+- 1 heure
+- 2 heures
+- Toute la journée (pas de limite)
+
+→ Cette information m'aidera à adapter le workflow et éviter le stress.
+```
+
+#### Étape 2 : Adaptation du Plan
+
+**Si temps insuffisant pour tâche demandée** :
+```
+🤖 Alfred : Vous avez X minutes disponibles, mais [Tâche] est estimée 
+à Y minutes.
+
+Options :
+A. [Option rapide adaptée]
+B. [Option décomposée en plusieurs sessions]
+C. [Option préparation aujourd'hui, exécution demain]
+
+Que préférez-vous ?
+```
+
+**Si temps suffisant** :
+```
+🤖 Alfred : Parfait, nous avons X minutes disponibles. 
+[Tâche] estimée à Y minutes, nous avons une marge de Z minutes.
+
+Je lance le workflow.
+```
+
+#### Étape 3 : Rappels Temporels
+
+**Toutes les 30 minutes pendant la session** :
+
+```
+🤖 Alfred : ⏰ Point temporel :
+
+Temps écoulé : X minutes
+Temps restant : Y minutes
+Phase actuelle : [Phase] en cours
+Phase suivante : [Phase], Z minutes estimées
+
+→ [Statut : bonne marge / temps serré / alerte]
+```
+
+**Si <15 min avant deadline** :
+
+```
+🤖 Alfred : ⚠️ Alerte temps : 
+
+Deadline dans X minutes.
+Phase actuelle : [Phase] à Y% complétée.
+
+Options :
+A. Finir rapidement (Z min estimées)
+B. Mettre en pause maintenant, reprendre plus tard
+
+Que préférez-vous ?
+```
+
+**Pourquoi ce workflow** :
+- Anticipe les contraintes temps AVANT de commencer
+- Propose des plans adaptés au temps disponible
+- Rappelle régulièrement le temps restant
+- Évite le stress de dernière minute
+- Permet de décider sereinement (pause vs finish)
+
+**Note** : Ce workflow est automatique et non optionnel pour toute tâche >30 minutes.
+
+**Référence détaillée** : `Continuous-Improvement/recommendations/alfred-time-constraint-detection_2026-04-28.md`
+
+**Rappel** : Cette fonctionnalité améliore l'expérience utilisateur et réduit significativement le stress lors de sessions avec contraintes temporelles.

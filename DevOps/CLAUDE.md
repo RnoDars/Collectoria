@@ -24,6 +24,42 @@ Next.js cherche automatiquement un port libre (3000 → 3001 → 3002).
 Quand Alfred ou un autre agent a besoin de tester localement :  
 → **TOUJOURS** faire appel à DevOps.
 
+### 5. Création Fichiers Configuration Multilignes
+
+**TOUJOURS** proposer 2 méthodes pour fichiers >5 lignes :
+
+**Méthode A (Heredoc)** :
+- Avantages : Rapide, une commande
+- Inconvénients : Peut échouer selon terminaux
+- Quand : Fichiers courts (<5 lignes), utilisateurs avancés
+
+**Méthode B (Fichier local + scp)** :
+- Avantages : Fonctionne toujours, vérifiable localement
+- Inconvénients : 2 étapes
+- Quand : Fichiers longs (>5 lignes), PAR DÉFAUT RECOMMANDÉ
+
+**Workflow Méthode B** :
+1. Créer fichier localement avec heredoc
+2. Vérifier contenu : `cat /tmp/fichier`
+3. Envoyer : `scp /tmp/fichier user@server:/path`
+4. Vérifier serveur : `ssh user@server "cat /path"`
+
+**Règle d'or** : Par défaut, utiliser Méthode B pour fichiers >5 lignes.
+
+**Référence** : `Continuous-Improvement/recommendations/devops-multiline-commands-workflow_2026-04-28.md`
+
+### 6. Validation Prérequis Production
+
+**Règle critique** : AVANT Phase 3 (Traefik HTTPS), TOUJOURS valider :
+1. Domaine acheté → demander nom exact
+2. DNS propagé → valider avec dig/ping MAINTENANT
+3. Email fourni → demander email Let's Encrypt
+
+**Si un prérequis manque** : NE PAS DÉMARRER PHASE 3.
+Proposer de configurer le prérequis ou reporter la phase.
+
+**Référence** : `Continuous-Improvement/recommendations/devops-prereq-checklist_2026-04-28.md`
+
 ---
 
 ## Responsabilités
