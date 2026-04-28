@@ -36,6 +36,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
 
   return (
     <div
+      className="collection-card-container"
       onClick={() => router.push(getCollectionRoute(collection.slug))}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -54,15 +55,18 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
       }}
     >
       {/* Hero Image Background */}
-      <div style={{
-        position: 'relative',
-        width: '100%',
-        height: '160px',
-        borderRadius: '16px',
-        background: '#eaebec',
-        marginBottom: '16px',
-        overflow: 'hidden',
-      }}>
+      <div
+        className="collection-card-hero"
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '160px',
+          borderRadius: '16px',
+          background: '#eaebec',
+          marginBottom: '16px',
+          overflow: 'hidden',
+        }}
+      >
         {collectionImages[collection.slug] && (
           <Image
             src={collectionImages[collection.slug]}
@@ -114,26 +118,32 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
       </div>
 
       {/* Collection Name */}
-      <h3 style={{
-        fontFamily: 'Manrope, sans-serif',
-        fontSize: '1.5rem',
-        fontWeight: '700',
-        color: '#191c1d',
-        marginBottom: '8px',
-        lineHeight: '1.2',
-      }}>
+      <h3
+        className="collection-card-title"
+        style={{
+          fontFamily: 'Manrope, sans-serif',
+          fontSize: '1.5rem',
+          fontWeight: '700',
+          color: '#191c1d',
+          marginBottom: '8px',
+          lineHeight: '1.2',
+        }}
+      >
         {collection.name}
       </h3>
 
       {/* Description */}
-      <p style={{
-        fontFamily: 'Inter, sans-serif',
-        fontSize: '0.875rem',
-        color: '#43474e',
-        marginBottom: '16px',
-        lineHeight: '1.5',
-        minHeight: '42px', // 2 lines minimum for consistency
-      }}>
+      <p
+        className="collection-card-description"
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '0.875rem',
+          color: '#43474e',
+          marginBottom: '16px',
+          lineHeight: '1.5',
+          minHeight: '42px', // 2 lines minimum for consistency
+        }}
+      >
         {collection.description}
       </p>
 

@@ -112,3 +112,131 @@ a {
   letter-spacing: 0.05em;
   color: var(--on-surface-variant);
 }
+
+/* Responsive Layout */
+
+/* Main content wrapper with sidebar offset on desktop */
+.main-content-wrapper {
+  margin-left: 240px;
+  min-height: 100vh;
+}
+
+/* Mobile: Remove sidebar offset, add padding for bottom nav */
+@media (max-width: 767px) {
+  .main-content-wrapper {
+    margin-left: 0;
+    padding-bottom: 80px;
+  }
+}
+
+/* Sidebar - visible on desktop, hidden on mobile */
+.sidebar-desktop {
+  display: flex;
+}
+
+@media (max-width: 767px) {
+  .sidebar-desktop {
+    display: none !important;
+  }
+}
+
+/* Bottom Navigation - hidden on desktop, visible on mobile */
+.bottom-nav-mobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .bottom-nav-mobile {
+    display: flex;
+  }
+}
+
+/* TopNav - Responsive adjustments */
+.topnav-container {
+  padding: 0 2rem;
+}
+
+@media (max-width: 640px) {
+  .topnav-container {
+    padding: 0 1rem !important;
+  }
+}
+
+.topnav-email {
+  display: inline;
+}
+
+@media (max-width: 640px) {
+  .topnav-email {
+    display: none;
+  }
+}
+
+.topnav-button-text-full {
+  display: inline;
+}
+
+.topnav-button-text-short {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .topnav-button-text-full {
+    display: none;
+  }
+
+  .topnav-button-text-short {
+    display: inline;
+  }
+}
+
+/* CollectionCard - Responsive adjustments */
+
+/* Desktop: Hero image height 160px (actuel) */
+.collection-card-hero {
+  height: 160px;
+}
+
+/* Mobile: Réduire la hero image à 120px */
+@media (max-width: 767px) {
+  .collection-card-hero {
+    height: 120px !important;
+  }
+}
+
+/* Desktop: Padding 24px (actuel) */
+.collection-card-container {
+  padding: 24px;
+}
+
+/* Mobile: Réduire padding à 16px */
+@media (max-width: 767px) {
+  .collection-card-container {
+    padding: 16px !important;
+  }
+}
+
+/* Desktop: Titre 1.5rem (actuel) */
+.collection-card-title {
+  font-size: 1.5rem;
+}
+
+/* Mobile: Réduire titre à 1.25rem */
+@media (max-width: 767px) {
+  .collection-card-title {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Desktop: Description min-height 42px (2 lignes) */
+.collection-card-description {
+  min-height: 42px;
+}
+
+/* Mobile: Réduire à 1 ligne (21px) */
+@media (max-width: 767px) {
+  .collection-card-description {
+    min-height: 21px !important;
+    font-size: 0.8125rem !important;
+  }
+}

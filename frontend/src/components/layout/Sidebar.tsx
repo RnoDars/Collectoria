@@ -14,7 +14,7 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside style={{
+    <aside className="sidebar-desktop" style={{
       position: 'fixed',
       left: 0,
       top: 0,

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Providers } from './providers'
 import Sidebar from '@/components/layout/Sidebar'
 import TopNav from '@/components/layout/TopNav'
+import BottomNav from '@/components/layout/BottomNav'
 import { Toaster } from 'react-hot-toast'
 import './globals.css'
 
@@ -37,10 +38,11 @@ export default function RootLayout({
       <body>
         <Providers>
           <Sidebar />
-          <div style={{ marginLeft: '240px' }}>
+          <div className="main-content-wrapper">
             <TopNav />
             <main>{children}</main>
           </div>
+          <BottomNav />
           <Toaster position="bottom-right" />
         </Providers>
       </body>

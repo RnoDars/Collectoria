@@ -33,7 +33,7 @@ export default function TopNav() {
       top: 0,
       zIndex: 100,
     }}>
-      <div style={{
+      <div className="topnav-container" style={{
         maxWidth: '100%',
         padding: '0 2rem',
         display: 'flex',
@@ -47,7 +47,7 @@ export default function TopNav() {
             <>
               {/* User Email */}
               {userEmail && (
-                <span style={{
+                <span className="topnav-email" style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: '0.875rem',
                   fontWeight: '500',
@@ -73,7 +73,8 @@ export default function TopNav() {
                   transition: 'all 0.15s',
                 }}
               >
-                Se déconnecter
+                <span className="topnav-button-text-full">Se déconnecter</span>
+                <span className="topnav-button-text-short">Déco</span>
               </button>
             </>
           ) : (
