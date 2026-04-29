@@ -24,29 +24,65 @@ Next.js cherche automatiquement un port libre (3000 → 3001 → 3002).
 Quand Alfred ou un autre agent a besoin de tester localement :  
 → **TOUJOURS** faire appel à DevOps.
 
-### 5. Création Fichiers Configuration Multilignes
+### 5. Création Fichiers Configuration Multilignes en SSH
 
-**TOUJOURS** proposer 2 méthodes pour fichiers >5 lignes :
+**RÈGLE PAR DÉFAUT** : Pour les fichiers >5 lignes en SSH, TOUJOURS utiliser nano ou scp, PAS heredoc.
 
-**Méthode A (Heredoc)** :
-- Avantages : Rapide, une commande
-- Inconvénients : Peut échouer selon terminaux
-- Quand : Fichiers courts (<5 lignes), utilisateurs avancés
+**Pourquoi** :
+- Heredoc échoue régulièrement en copier-coller web → SSH
+- Caractères invisibles, EOF non reconnu
+- Perte de temps, confusion utilisateur
 
-**Méthode B (Fichier local + scp)** :
-- Avantages : Fonctionne toujours, vérifiable localement
-- Inconvénients : 2 étapes
-- Quand : Fichiers longs (>5 lignes), PAR DÉFAUT RECOMMANDÉ
+**Méthode RECOMMANDÉE (nano)** :
+```bash
+# 1. Créer/ouvrir fichier avec nano
+nano /path/to/file
 
-**Workflow Méthode B** :
-1. Créer fichier localement avec heredoc
-2. Vérifier contenu : `cat /tmp/fichier`
-3. Envoyer : `scp /tmp/fichier user@server:/path`
-4. Vérifier serveur : `ssh user@server "cat /path"`
+# 2. Coller contenu (Ctrl+Shift+V ou clic droit)
 
-**Règle d'or** : Par défaut, utiliser Méthode B pour fichiers >5 lignes.
+# 3. Sauvegarder : Ctrl+O, Enter
 
-**Référence** : `Continuous-Improvement/recommendations/devops-multiline-commands-workflow_2026-04-28.md`
+# 4. Quitter : Ctrl+X
+
+# 5. Vérifier
+cat /path/to/file
+```
+
+**Avantages** :
+- Fonctionne toujours (pas de problème encodage)
+- Vérifiable immédiatement
+- Éditable après création
+- Familier pour tous les utilisateurs
+
+**Méthode ALTERNATIVE (fichier local + scp)** :
+```bash
+# 1. Créer fichier localement
+cat > /tmp/fichier << EOF
+contenu multilignes
+EOF
+
+# 2. Vérifier contenu local
+cat /tmp/fichier
+
+# 3. Envoyer vers serveur
+scp /tmp/fichier user@server:/path/to/file
+
+# 4. Vérifier sur serveur
+ssh user@server "cat /path/to/file"
+```
+
+**Méthode À ÉVITER (heredoc direct en SSH)** :
+```bash
+# ❌ NE PAS UTILISER en SSH (copier-coller web → terminal)
+cat > /path/to/file << EOF
+contenu
+EOF
+```
+**Problèmes** : EOF non reconnu, caractères invisibles, commande jamais terminée
+
+**Exception** : Heredoc OK si commande tapée manuellement dans terminal (pas copier-coller web).
+
+**Référence** : Incident Phase 4 (2026-04-29) - Heredoc échec en SSH
 
 ### 6. Validation Prérequis Production
 
@@ -59,6 +95,78 @@ Quand Alfred ou un autre agent a besoin de tester localement :
 Proposer de configurer le prérequis ou reporter la phase.
 
 **Référence** : `Continuous-Improvement/recommendations/devops-prereq-checklist_2026-04-28.md`
+
+### 7. Cohérence Healthcheck Dockerfile ↔ docker-compose
+
+**Règle critique** : Les healthchecks doivent être cohérents ET compatibles avec les endpoints backend.
+
+**Piège docker-compose** : 
+- docker-compose.prod.yml OVERRIDE le healthcheck du Dockerfile
+- Modifier uniquement le Dockerfile est INSUFFISANT si docker-compose définit aussi un healthcheck
+
+**Méthode HTTP** :
+- ❌ `wget --spider` → Requête HTTP HEAD
+- ✅ `wget -O /dev/null` → Requête HTTP GET
+- Les endpoints Go `router.GET(...)` n'acceptent QUE GET
+
+**Validation OBLIGATOIRE** :
+```bash
+# Avant Phase 4
+bash DevOps/scripts/validate-healthchecks.sh
+```
+
+**Référence** : Incident Phase 4 (2026-04-29) - 1h de debug healthcheck
+
+### 8. Validation Fichiers Production AVANT Phase 4
+
+**Règle critique** : Les fichiers Docker de production (Dockerfiles, docker-compose.prod.yml) doivent être créés, validés et testés LOCALEMENT avant d'aller sur le serveur.
+
+**Workflow** :
+Phase 3 → **Phase 3.5 (Validation fichiers)** → Phase 4 (Déploiement)
+
+**Checklist obligatoire** :
+- [ ] Dockerfiles créés et buildables localement
+- [ ] docker-compose.prod.yml créé et testable localement
+- [ ] Healthchecks validés (script validate-healthchecks.sh)
+- [ ] Versions cohérentes (go.mod ↔ Dockerfile)
+- [ ] Tous containers healthy en local
+
+**Pourquoi** :
+- Découverte d'erreurs en local (pas en production)
+- Temps de correction serein (pas de stress)
+- Phase 4 rapide et fiable
+
+**Documentation Phase 3.5** : `DevOps/phase3.5-production-files-validation.md`
+
+**Référence** : Incident Phase 4 (2026-04-29) - Fichiers créés tardivement
+
+### 9. Convention Fichier .env Production
+
+**Règle** : En production, utiliser `.env` (pas `.env.production`)
+
+**Pourquoi** :
+- Docker Compose charge automatiquement `.env`
+- Simplifie toutes les commandes (pas de `--env-file` nécessaire)
+- Convention standard de l'industrie
+
+**Implémentation** :
+```bash
+# Sur serveur production
+cat > .env << EOF
+# Variables d'environnement production
+POSTGRES_USER=collectoria_prod
+POSTGRES_PASSWORD=xxx
+...
+EOF
+
+# Commandes simplifiées
+docker compose up -d
+docker compose ps
+```
+
+**Alternative** : Si distinction visuelle dev/prod nécessaire, utiliser un script wrapper `deploy.sh`
+
+**Référence** : Incident Phase 4 (2026-04-29) - Confusion .env.production
 
 ---
 
