@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-27 (matin) - Environnement + Préparation Collection D&D 5e  
-**Focus du jour** : Démarrage environnement complet (PostgreSQL + Backend + Frontend), analyse fichier source 53 livres D&D 5e officiels, enrichissement données avec abréviations, validation complète  
-**Prochaine session** : Génération migration 010 D&D 5e (après-midi)
+**Date** : 2026-04-29 (soir) - Phase 4 Déploiement Production  
+**Focus du jour** : Déploiement complet stack Collectoria sur Scaleway (PostgreSQL + Backend + Frontend)  
+**Prochaine session** : Finalisation Phase 5 + Diagnostics erreurs frontend
 
 ---
 
@@ -880,14 +880,30 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 
 **Résultat** : Application production-ready avec score 9.0/10 (+100% depuis début Phase 1)
 
-### Priorité 1 — Collection D&D 5e (EN COURS)
+### Priorité 1 — Finalisation Phase 4 & Phase 5 Déploiement (URGENT)
+1. **Diagnostiquer erreurs frontend** (1-2h)
+   - Vérifier variables d'environnement (`NEXT_PUBLIC_API_BASE_URL`)
+   - Vérifier erreurs CORS backend
+   - Vérifier logs : `sg docker -c 'docker logs collectoria-prod-frontend'`
+2. **Finir Phase 5** : Tests complets (2-3h)
+   - Tests authentification (login/logout)
+   - Tests navigation (homepage, /cards, /books)
+   - Tests cartes (liste, filtres, tri, toggle possession)
+   - Tests responsive (mobile, tablet, desktop)
+3. **Implémenter améliorations continues** (3-4h)
+   - Script `validate-healthchecks.sh` (1h)
+   - Templates Dockerfile production (30 min)
+   - Phase 3.5 dans workflow Alfred (1h)
+   - Documentation DevOps/CLAUDE.md enrichie (1h)
+
+### Priorité 2 — Collection D&D 5e
 - ✅ **Spécification v1.2** (26 avril) — Modèle de données, possession bilingue, UI
 - ✅ **Préparation données** (27 avril matin) — 53 livres officiels, enrichissement, validation
-- 🚧 **Migration 010** (27 avril après-midi) — Génération SQL avec seed data complet
+- 🚧 **Migration 010** — Génération SQL avec seed data complet
 - 🔜 **Backend D&D 5e** : Endpoints API + service + repository
 - 🔜 **Frontend D&D 5e** : Page `/dnd5` + composant `DnD5BookCard` + filtres
 
-### Priorité 2 — Améliorations UX/Fonctionnelles
+### Priorité 3 — Améliorations UX/Fonctionnelles
 - ✅ **Modal de confirmation toggle (1-2h)** - **COMPLÉTÉ le 22 avril**
   - ✅ Composant ConfirmToggleModal complet (302 lignes)
   - ✅ 20 tests Vitest (tous passants)
@@ -1172,8 +1188,32 @@ Collectoria/
 - ✅ 5 recommandations DevOps documentées
 - ✅ 5 patterns réutilisables identifiés
 
-**Prochaine étape** :
-- ⏳ Génération migration 010 D&D 5e (après-midi)
+### 🚀 Déploiement Production - Phase 4 (29 avril, ~75% complété)
+- ✅ Serveur Scaleway opérationnel (51.159.161.31 - darsling.fr)
+- ✅ Phases 1, 2, 3 terminées (Provisioning, Docker, Traefik HTTPS)
+- ✅ Fichiers Docker production créés :
+  - `frontend/Dockerfile` (multi-stage Next.js standalone)
+  - `docker-compose.prod.yml` (stack complète)
+  - `.env.production.template`
+- ✅ Stack déployée et healthy :
+  - PostgreSQL 15-alpine (5432)
+  - Backend Go (8080) avec JWT
+  - Frontend Next.js (3000)
+  - Traefik reverse proxy (80/443)
+- ✅ Migrations SQL appliquées (1679 cartes MECCG + 9 tables)
+- ✅ Backend API fonctionnel : https://api.darsling.fr
+- ✅ Frontend déployé : https://darsling.fr (page s'affiche)
+- ✅ HTTPS Let's Encrypt opérationnel
+- ⏸️ Erreurs frontend à diagnostiquer (console)
+
+**Problèmes résolus** : 5 problèmes majeurs (Go 1.23, healthcheck, structure Next.js, etc.)
+**Temps debug** : ~75 minutes (documenté et analysé)
+**Améliorations** : 4 recommandations + Phase 3.5 créée
+
+**Métriques** :
+- Commit session : 5 commits (corrections + améliorations)
+- Documentation : 11 fichiers créés (rapports + recommandations)
+- Lignes ajoutées : 2837+ lignes
 
 ### 🚀 Préparation Production (26 avril) ⭐ NOUVEAU
 
