@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for Collection Management
+  postgres-collection:
+    image: postgres:15-alpine
+    container_name: collectoria-collection-db-prod
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_collection_data:/var/lib/postgresql/data
+      - ./backend/collection-management/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - collectoria_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend API - Collection Management
+  backend-collection:
+    build:
+      context: ./backend/collection-management
+      dockerfile: Dockerfile
+    container_name: collectoria-backend-collection-prod
+    environment:
+      # Database configuration
+      DB_HOST: postgres-collection
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      # Server configuration
+      SERVER_PORT: 8080
+      # JWT configuration
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_HOURS: ${JWT_EXPIRATION_HOURS:-24}
+      JWT_ISSUER: ${JWT_ISSUER:-collectoria-api}
+    depends_on:
+      postgres-collection:
+        condition: service_healthy
+    networks:
+      - collectoria_internal
+      - collectoria_proxy
+    labels:
+      # Traefik configuration
+      - "traefik.enable=true"
+      - "traefik.docker.network=collectoria_proxy"
+      # HTTP router
+      - "traefik.http.routers.collectoria-backend.rule=Host(`api.darsling.fr`)"
+      - "traefik.http.routers.collectoria-backend.entrypoints=websecure"
+      - "traefik.http.routers.collectoria-backend.tls=true"
+      - "traefik.http.routers.collectoria-backend.tls.certresolver=letsencrypt"
+      # Service
+      - "traefik.http.services.collectoria-backend.loadbalancer.server.port=8080"
+      # Middleware (optional CORS, rate limiting, etc.)
+      - "traefik.http.routers.collectoria-backend.middlewares=backend-headers"
+      - "traefik.http.middlewares.backend-headers.headers.accesscontrolalloworiginlist=https://darsling.fr"
+      - "traefik.http.middlewares.backend-headers.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
+      - "traefik.http.middlewares.backend-headers.headers.accesscontrolallowheaders=Content-Type,Authorization"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: collectoria-frontend-prod
+    environment:
+      # Next.js configuration
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+      # Backend API URL (internal)
+      NEXT_PUBLIC_API_URL: https://api.darsling.fr
+    depends_on:
+      backend-collection:
+        condition: service_healthy
+    networks:
+      - collectoria_proxy
+    labels:
+      # Traefik configuration
+      - "traefik.enable=true"
+      - "traefik.docker.network=collectoria_proxy"
+      # HTTP router
+      - "traefik.http.routers.collectoria-frontend.rule=Host(`darsling.fr`)"
+      - "traefik.http.routers.collectoria-frontend.entrypoints=websecure"
+      - "traefik.http.routers.collectoria-frontend.tls=true"
+      - "traefik.http.routers.collectoria-frontend.tls.certresolver=letsencrypt"
+      # Service
+      - "traefik.http.services.collectoria-frontend.loadbalancer.server.port=3000"
+      # Security headers
+      - "traefik.http.routers.collectoria-frontend.middlewares=frontend-security"
+      - "traefik.http.middlewares.frontend-security.headers.sslredirect=true"
+      - "traefik.http.middlewares.frontend-security.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.frontend-security.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.frontend-security.headers.stsPreload=true"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+networks:
+  # Internal network for service-to-service communication
+  collectoria_internal:
+    driver: bridge
+
+  # External network for Traefik (must be created before: docker network create collectoria_proxy)
+  collectoria_proxy:
+    external: true
+
+volumes:
+  postgres_collection_data:
+    driver: local
