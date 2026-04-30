@@ -1,8 +1,8 @@
 # 📍 État Actuel du Projet Collectoria
 
-**Date** : 2026-04-29 (soir) - Phase 4 Déploiement Production  
-**Focus du jour** : Déploiement complet stack Collectoria sur Scaleway (PostgreSQL + Backend + Frontend)  
-**Prochaine session** : Finalisation Phase 5 + Diagnostics erreurs frontend
+**Dernière mise à jour** : 2026-04-30 — Corrections bugs production + outillage déploiement  
+**Focus du jour (30/04)** : Corrections bugs authentication (`ProtectedRoute`) + tooling déploiement Scaleway  
+**Prochaine session** : Déployer les corrections en production (git pull + merge-env.sh + rebuild containers)
 
 ---
 
@@ -880,21 +880,22 @@ curl http://localhost:8080/api/v1/collections/summary | jq
 
 **Résultat** : Application production-ready avec score 9.0/10 (+100% depuis début Phase 1)
 
-### Priorité 1 — Finalisation Phase 4 & Phase 5 Déploiement (URGENT)
-1. **Diagnostiquer erreurs frontend** (1-2h)
-   - Vérifier variables d'environnement (`NEXT_PUBLIC_API_BASE_URL`)
-   - Vérifier erreurs CORS backend
-   - Vérifier logs : `sg docker -c 'docker logs collectoria-prod-frontend'`
-2. **Finir Phase 5** : Tests complets (2-3h)
-   - Tests authentification (login/logout)
-   - Tests navigation (homepage, /cards, /books)
-   - Tests cartes (liste, filtres, tri, toggle possession)
-   - Tests responsive (mobile, tablet, desktop)
-3. **Implémenter améliorations continues** (3-4h)
-   - Script `validate-healthchecks.sh` (1h)
-   - Templates Dockerfile production (30 min)
-   - Phase 3.5 dans workflow Alfred (1h)
-   - Documentation DevOps/CLAUDE.md enrichie (1h)
+### Priorité 1 — Déploiement Production (URGENT) ⚠️ COMMITS NON DÉPLOYÉS
+
+> **État** : Corrections committées sur `main` le 30/04 — **PAS encore déployées** sur Scaleway
+
+**Procédure de déploiement à effectuer** :
+1. `git pull` sur le serveur Scaleway (51.159.161.31)
+2. Exécuter `DevOps/scripts/merge-env.sh` pour fusionner template + `.env.production`
+3. Rebuild + redémarrage des containers : `docker compose -f docker-compose.prod.yml up -d --build`
+4. Vérifier que le `ProtectedRoute` fonctionne sur `/`, `/cards`, `/books`, `/dnd5`
+
+**Commits à déployer** :
+- `40f7959` — ProtectedRoute ajouté sur les 4 pages
+- Commits outillage déploiement (`.env.production.template`, `merge-env.sh`)
+
+**Après déploiement** :
+- Phase 5 : Tests complets en production (auth, navigation, cartes, responsive)
 
 ### Priorité 2 — Collection D&D 5e
 - ✅ **Spécification v1.2** (26 avril) — Modèle de données, possession bilingue, UI
@@ -1034,6 +1035,40 @@ Collectoria/
 - Frontend : Next.js + TypeScript (environnement prêt)
 - Dev : Docker Compose local ✅ (PostgreSQL opérationnel)
 - Prod : Fly.io ($5-10/mois)
+
+---
+
+### 🚀 Corrections Bugs Production (30 avril) ⭐ NOUVEAU
+
+> **Important** : Corrections committées sur `main` — **PAS encore déployées sur le serveur Scaleway**
+
+#### Bug #1 — ProtectedRoute manquant sur les pages publiques (commit `40f7959`)
+- ✅ `ProtectedRoute` ajouté sur les 4 pages : `/`, `/cards`, `/books`, `/dnd5`
+- ✅ Toutes les pages requièrent désormais une authentification JWT
+- ✅ Cohérence avec le composant `ProtectedRoute` déjà en place
+
+#### Bug #2 — NEXT_PUBLIC_API_URL (non applicable)
+- ✓ Variable `NEXT_PUBLIC_API_URL=https://api.darsling.fr` vérifiée : correcte
+- ✓ DNS `api.darsling.fr` résolu → 51.159.161.31 : confirmé
+
+#### Bug #3 — CORS (non applicable)
+- ✓ CORS géré via middleware Traefik en production : configuration confirmée
+
+#### Outillage déploiement (commité, NON déployé)
+- ✅ `DevOps/.env.production.template` créé avec les valeurs pour darsling.fr
+- ✅ `DevOps/scripts/merge-env.sh` créé : script de fusion template + `.env.production`
+
+#### Architecture production confirmée
+| Composant | Valeur |
+|-----------|--------|
+| Frontend | `darsling.fr` |
+| Backend | `api.darsling.fr` |
+| DNS backend | 51.159.161.31 (confirmé) |
+| CORS | Middleware Traefik |
+| Variable frontend | `NEXT_PUBLIC_API_URL=https://api.darsling.fr` |
+
+#### Prochaine action requise
+> **Déployer en production** sur Scaleway : `git pull` + `merge-env.sh` + rebuild containers
 
 ---
 
@@ -1266,6 +1301,19 @@ Collectoria/
   - 298 noms propres identiques EN/FR (normal)
 - **Documentation DevOps** : `testing-local.md` mis à jour avec migrations 005-009
 
+### Productivité du 30 avril 2026 ⭐ NOUVEAU
+
+> **Commits sur main — NON déployés en production**
+
+- **2 corrections bugs** analysées et traitées :
+  - Bug #1 résolu : `ProtectedRoute` ajouté sur les 4 pages (commit `40f7959`)
+  - Bug #2 et #3 : non applicables (DNS et CORS confirmés corrects)
+- **2 fichiers outillage déploiement** créés :
+  - `DevOps/.env.production.template`
+  - `DevOps/scripts/merge-env.sh`
+- **Architecture production vérifiée** : DNS `api.darsling.fr` → 51.159.161.31 confirmé
+- **Prochaine étape bloquante** : Déploiement sur Scaleway (git pull + rebuild)
+
 ### Productivité du 27 avril 2026 (matin) ⭐ NOUVEAU
 - **Session démarrage environnement** (09:41 - 10:30, ~50 min) :
   - PostgreSQL recréé proprement avec extension `unaccent`
@@ -1404,4 +1452,4 @@ Collectoria/
 
 ---
 
-**Prochaine session** : Fournir liste livres D&D 5 → implémenter collection D&D 5 (Backend + Frontend)
+**Prochaine session** : Déployer en production sur Scaleway (git pull + merge-env.sh + rebuild containers) — puis implémenter collection D&D 5 (Backend + Frontend)
