@@ -4,12 +4,14 @@ import CollectionsGrid from '@/components/homepage/CollectionsGrid'
 import RecentActivityWidget from '@/components/homepage/RecentActivityWidget'
 import { useCollections } from '@/hooks/useCollections'
 import { useActivities } from '@/hooks/useActivities'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 export default function Home() {
   const { data: collections, isLoading: collectionsLoading, error: collectionsError } = useCollections()
   const { data: activities, isLoading: activitiesLoading, error: activitiesError } = useActivities(5)
 
   return (
+    <ProtectedRoute>
     <main style={{
       minHeight: '100vh',
       background: 'var(--surface)',
@@ -58,5 +60,6 @@ export default function Home() {
 
       </div>
     </main>
+    </ProtectedRoute>
   )
 }

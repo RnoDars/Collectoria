@@ -7,6 +7,7 @@ import { DnD5Filters, DnD5Book } from '@/lib/api/dnd5'
 import Link from 'next/link'
 import DnD5BookCard from '@/components/books/DnD5BookCard'
 import DnD5BookConfirmModal from '@/components/books/DnD5BookConfirmModal'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 // Skeleton Loading
 function BookSkeleton() {
@@ -246,6 +247,7 @@ export default function DnD5Page() {
   }
 
   return (
+    <ProtectedRoute>
     <div style={pageStyle}>
       <div style={containerStyle}>
         {/* Header */}
@@ -452,5 +454,6 @@ export default function DnD5Page() {
         />
       )}
     </div>
+    </ProtectedRoute>
   )
 }

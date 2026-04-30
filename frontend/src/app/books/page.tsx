@@ -7,6 +7,7 @@ import { NovelFilters, ForgottenRealmsNovel } from '@/lib/api/forgottenrealms'
 import Link from 'next/link'
 import BookCard from '@/components/books/BookCard'
 import BookConfirmModal from '@/components/books/BookConfirmModal'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 // ─── Skeleton Loading ─────────────────────────────────────────────────────────
 
@@ -228,6 +229,7 @@ export default function BooksPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
+    <ProtectedRoute>
     <div style={pageStyle}>
       <div style={containerStyle}>
         {/* Header */}
@@ -438,5 +440,6 @@ export default function BooksPage() {
         />
       )}
     </div>
+    </ProtectedRoute>
   )
 }

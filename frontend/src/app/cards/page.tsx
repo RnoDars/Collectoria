@@ -6,6 +6,7 @@ import { useCardToggle } from '@/hooks/useCardToggle'
 import { CardFilters, Card, SortBy, SortDir } from '@/lib/api/collections'
 import Link from 'next/link'
 import ConfirmToggleModal from '@/components/cards/ConfirmToggleModal'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 // ─── Données statiques ────────────────────────────────────────────────────────
 
@@ -447,6 +448,7 @@ export default function AddCardsPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
+    <ProtectedRoute>
     <>
       {confirmModal && (
         <ConfirmToggleModal
@@ -664,5 +666,6 @@ export default function AddCardsPage() {
       </div>
     </div>
     </>
+    </ProtectedRoute>
   )
 }
