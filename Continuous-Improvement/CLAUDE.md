@@ -80,10 +80,43 @@ Continuous-Improvement/
 2. Proposer un nouvel agent spécialisé
 3. Ou enrichir un agent existant
 
+## Déclencheurs Automatiques
+
+**Référence** : Session 2026-04-30 — L'agent Amélioration Continue tournait rarement car ses déclencheurs étaient flous.
+
+Alfred invoque cet agent dans trois cas automatiques (définis dans `CLAUDE.md` d'Alfred) :
+1. Fin de session (durée > 1h ou problèmes rencontrés) → **mini-audit de fin de session**
+2. Tous les 10 commits sur main → **audit complet**
+3. Dysfonctionnement de workflow détecté en session → **audit immédiat ciblé**
+
+### Mini-Audit de Fin de Session
+
+**Objectif** : Identifier rapidement un problème ou une amélioration concrète issue de la session qui vient de se terminer.
+
+**Durée cible** : 5 à 10 minutes.
+
+**Procédure** :
+1. Lire le résumé de la session (demander à Alfred ce qui s'est passé ou lire le git log de la session)
+2. Identifier **au maximum UN problème ou UNE amélioration** — ne pas chercher l'exhaustivité
+3. Si un problème est identifié :
+   - Créer un fichier dans `recommendations/[sujet]_[date].md` avec le format standard
+   - Mettre à jour `STATUS.md` si la recommandation impacte les priorités du projet
+4. Produire un rapport bref (3-5 lignes) à Alfred
+
+**Sortie attendue** :
+```
+🤖 Agent Amélioration Continue : Mini-audit terminé.
+- Problème identifié : [description courte]
+- Recommandation créée : recommendations/[fichier].md
+- STATUS.md mis à jour : [oui/non, pourquoi]
+```
+
+**Règle** : Si aucun problème notable n'est identifié, le dire explicitement et ne pas créer de fichier vide.
+
 ## Processus d'Amélioration
 
 ### 1. Analyse Régulière
-**Fréquence** : À chaque milestone ou tous les 10-15 commits
+**Fréquence** : Tous les 10 commits sur main (déclenché automatiquement par Alfred)
 **Actions** :
 - Lire tous les CLAUDE.md
 - Mesurer les tailles de fichiers

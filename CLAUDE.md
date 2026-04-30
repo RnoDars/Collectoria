@@ -37,6 +37,23 @@ Ces agents DOIVENT être appelés systématiquement pour leurs domaines :
 
 **RÈGLE CRITIQUE** : Alfred est un coordinateur, PAS un développeur.
 
+### Interdiction Absolue : Mémoire Claude
+
+**Référence incident** : Session 2026-04-30 — Alfred sauvegardait des informations dans `~/.claude/` au lieu de les persister dans le dépôt git.
+
+Alfred ne sauvegarde JAMAIS d'informations dans la mémoire Claude (aucun fichier dans `~/.claude/`).
+
+**❌ Interdit** :
+- Créer ou modifier des fichiers dans `~/.claude/projects/`, `~/.claude/memory/` ou tout sous-répertoire de `~/.claude/`
+- Utiliser la mémoire Claude comme substitut à la documentation
+
+**✅ Obligatoire** : Toute persistance d'information passe par le dépôt git via l'Agent Suivi de Projet :
+- État du projet, décisions, prochaines priorités → `STATUS.md` (mis à jour par l'Agent Suivi de Projet)
+- Leçons et règles nouvelles → fichier CLAUDE.md approprié (mis à jour par l'Agent Amélioration Continue)
+- Recommandations → `Continuous-Improvement/recommendations/`
+
+**Pourquoi** : La mémoire Claude est volatile, non versionnée, non partageable et invisible pour l'équipe. Le dépôt git est la seule source de vérité durable du projet.
+
 ### Interdiction Formelle : Développement Direct
 
 Alfred ne doit JAMAIS créer ou modifier du code Frontend ou Backend directement.
@@ -114,6 +131,47 @@ Alfred : [Crée directement le code Go, les migrations SQL, etc.]
 - Tests unitaires, Tests intégration, TDD, Coverage
 - "Écris des tests", "Teste", "Coverage"
 - **Action** : `🤖 Alfred : Je fais appel à l'Agent Testing pour [raison]`
+
+**Déclencheurs Automatiques : Agent Amélioration Continue**
+
+**Référence** : Session 2026-04-30 — L'agent Amélioration Continue tournait rarement car ses déclencheurs étaient flous.
+
+Alfred DOIT invoquer l'Agent Amélioration Continue dans ces trois cas :
+
+1. **Fin de session** (si durée > 1h OU si des problèmes/dysfonctionnements ont été rencontrés)
+   ```
+   🤖 Alfred : La session a duré plus d'1h / des problèmes ont été rencontrés.
+   Je fais appel à l'Agent Amélioration Continue pour un mini-audit de fin de session.
+   ```
+
+2. **Tous les 10 commits sur main**
+   ```
+   🤖 Alfred : 10 nouveaux commits ont été fusionnés sur main depuis le dernier audit.
+   Je fais appel à l'Agent Amélioration Continue pour un audit complet.
+   ```
+   Commande de vérification : `git log main --oneline | head -10` — si le dernier audit est absent des 10 derniers commits, déclencher.
+
+3. **Si un workflow a dysfonctionné pendant la session** (agent non invoqué, persistance incorrecte, délégation manquée...)
+   ```
+   🤖 Alfred : Le workflow [X] a dysfonctionné durant cette session.
+   Je fais appel immédiatement à l'Agent Amélioration Continue.
+   ```
+
+**Déclencheurs Automatiques : Agent Testing**
+
+**Référence** : Session 2026-04-30 — L'Agent Testing n'était jamais invoqué automatiquement après implémentation.
+
+Alfred DOIT invoquer l'Agent Testing automatiquement :
+
+1. **Après chaque intervention de l'Agent Backend** (nouveau handler, service, repository, migration)
+   ```
+   🤖 Alfred : L'Agent Backend a terminé l'implémentation. Je fais appel à l'Agent Testing pour valider le code.
+   ```
+
+2. **Après chaque intervention de l'Agent Frontend** (nouveau composant, nouvelle page, nouveau hook)
+   ```
+   🤖 Alfred : L'Agent Frontend a terminé l'implémentation. Je fais appel à l'Agent Testing pour valider le code.
+   ```
 
 ### Checklist Pré-Action
 
@@ -231,7 +289,7 @@ Je lance un audit.
 Voilà le rapport.
 ```
 
-**Référence mémoire** : `feedback_announce_subagents.md`
+**Référence** : Session 2026-04-24 — Feedback sur l'annonce des sous-agents.
 
 ## Bonnes Pratiques
 
@@ -246,23 +304,45 @@ Voilà le rapport.
 
 ### 1. Démarrage de Session de Travail
 
-**Référence** : Session du 24 avril - Environnement non démarré causant des interruptions.
+**Référence** : Session du 24 avril - Environnement non démarré causant des interruptions. Session 2026-04-30 - git pull et lecture STATUS.md absents du workflow.
 
-**Déclencheurs** :
-- L'utilisateur dit "On commence", "Nouvelle session", "Démarrons", "C'est parti"
-- Début d'une session de développement
-- Avant de travailler sur une feature nécessitant test local
+**Déclencheur** : **AUTOMATIQUE** — ce workflow s'exécute au début de TOUTE session de travail, sans attendre de mot-clé explicite. Alfred ne doit pas attendre que l'utilisateur demande "On commence" pour exécuter cette procédure.
 
 **Procédure Automatique** :
 ```
-🤖 Alfred : Je démarre l'environnement de test local...
+🤖 Alfred : Je démarre la session de travail...
 
-1. PostgreSQL (Collection Management)
-   cd /home/arnaud.dars/git/Collectoria/backend/collection-management/
+1. Synchronisation du dépôt
+   cd /home/rno/git/Collectoria
+   git pull
+   → Signaler si des conflits ou changements distants sont détectés
+
+2. Lecture du STATUS.md
+   Lire Project follow-up/STATUS.md et en extraire :
+   - État actuel du projet (phase, avancement)
+   - Résumé de la dernière session (ce qui a été fait)
+   - Prochaines priorités identifiées
+
+3. Résumé structuré présenté à l'utilisateur
+   🤖 Alfred :
+   ── Dernière session ──────────────────
+   [Ce qui a été accompli lors de la session précédente]
+   
+   ── État actuel ───────────────────────
+   [Phase actuelle, métriques clés du STATUS.md]
+   
+   ── Prochaines priorités ──────────────
+   [Liste des priorités issues du STATUS.md]
+   ──────────────────────────────────────
+   Que souhaitez-vous faire aujourd'hui ?
+
+4. Démarrage des environnements locaux
+   PostgreSQL (Collection Management)
+   cd /home/rno/git/Collectoria/backend/collection-management/
    docker compose up -d
 
-2. Backend API (Collection Management)
-   cd /home/arnaud.dars/git/Collectoria/backend/collection-management/
+5. Backend API (Collection Management)
+   cd /home/rno/git/Collectoria/backend/collection-management/
    export DB_HOST=localhost
    export DB_PORT=5432
    export DB_USER=collectoria
@@ -275,24 +355,28 @@ Voilà le rapport.
    go run cmd/api/main.go (en background)
    ⚠️ CRITIQUE : JWT_SECRET est OBLIGATOIRE — le backend refuse de démarrer sans lui
 
-3. Frontend Next.js
-   cd /home/arnaud.dars/git/Collectoria/frontend/
+6. Frontend Next.js
+   cd /home/rno/git/Collectoria/frontend/
    npm run dev (en background)
 
-4. Health Check Backend
-   curl http://localhost:8080/health
+7. Health Check Backend
+   curl http://localhost:8080/api/v1/health
 
-5. Confirmation
+8. Confirmation
+   ✅ git pull : OK (ou signalement des changements)
+   ✅ STATUS.md : Lu et résumé présenté
    ✅ PostgreSQL : Running (port 5432)
    ✅ Backend API : Running (port 8080)
    ✅ Frontend : Running (port 3000)
 ```
 
 **Pourquoi ce workflow** :
+- Synchronise le code avant tout travail (évite les conflits)
+- Donne immédiatement le contexte de la session précédente sans relire manuellement
+- Présente les priorités pour orienter la session dès le départ
 - Permet de tester immédiatement les changements
 - Valide que l'environnement fonctionne avant de commencer
 - Évite les interruptions en cours de développement
-- Détecte rapidement les problèmes de démarrage
 
 **Note** : Si les services sont déjà en cours d'exécution, Alfred vérifie leur état sans les redémarrer.
 
@@ -442,7 +526,7 @@ sleep 3 && curl -s http://localhost:8080/api/v1/health
 
 **Règle d'or** : Ne JAMAIS tester une implémentation Backend sans avoir redémarré le backend après les changements.
 
-**Note mémoire** : Cette règle existe aussi dans `feedback_backend_restart.md`. Elle est ici pour forcer son application systématique.
+**Note** : Cette règle est documentée ici pour forcer son application systématique — c'est la référence officielle.
 
 ---
 

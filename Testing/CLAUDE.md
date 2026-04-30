@@ -202,7 +202,72 @@ tests/
 - Guide complet : `Testing/patterns/frontend-testing.md`
 - Guide rapide : `frontend/README-TESTING.md`
 
+## Test Minimal Obligatoire après Implémentation
+
+**Référence** : Session 2026-04-30 — L'Agent Testing n'était jamais invoqué car ses déclencheurs étaient purement réactifs (demande explicite de l'utilisateur uniquement).
+
+Alfred invoque désormais automatiquement l'Agent Testing après chaque intervention de l'Agent Backend ou Frontend. Ce qui suit définit le contenu minimal attendu à chaque invocation automatique.
+
+### Déclenchement Automatique
+
+Cet agent est invoqué par Alfred avec le message :
+```
+🤖 Alfred : L'Agent [Backend/Frontend] a terminé l'implémentation. Je fais appel à l'Agent Testing pour valider le code.
+```
+
+### Contenu du Test Minimal Obligatoire
+
+Lors d'une invocation automatique post-implémentation, l'Agent Testing doit **au minimum** :
+
+#### 1. Tests unitaires sur la logique principale (OBLIGATOIRE)
+
+**Backend** : Pour chaque nouveau handler, service ou repository :
+- Un test unitaire couvrant le cas nominal (happy path)
+- Un test unitaire couvrant le cas d'erreur principal (validation, not found, etc.)
+- Les mocks des dépendances doivent être utilisés (gomock, go-sqlmock)
+
+**Frontend** : Pour chaque nouveau composant ou hook :
+- Tester les 4 états si applicable : Loading, Error, Empty, Success (pattern établi)
+- Un test pour l'interaction principale si présente (clic, soumission de formulaire)
+
+#### 2. Exécution des tests existants pour détecter les régressions (OBLIGATOIRE)
+
+**Backend** :
+```bash
+cd /home/rno/git/Collectoria/backend/collection-management
+go test ./...
+```
+→ Tous les tests existants doivent passer. Si un test échoue, bloquer et signaler avant tout commit.
+
+**Frontend** :
+```bash
+cd /home/rno/git/Collectoria/frontend
+npm test
+```
+→ Tous les tests existants doivent passer. Si un test échoue, bloquer et signaler avant tout commit.
+
+### Rapport de Test Minimal
+
+```
+🤖 Agent Testing : Tests post-implémentation terminés.
+
+Tests créés :
+- [liste des nouveaux fichiers de test]
+
+Résultats tests existants :
+- Backend : X tests, X passed, X failed
+- Frontend : X tests, X passed, X failed
+
+Régressions détectées : [oui/non]
+→ [Si oui : description et fichiers concernés]
+
+Couverture nouveaux composants : [approximation]
+```
+
+**Règle** : Si des régressions sont détectées, l'Agent Testing doit les signaler à Alfred qui BLOQUE le commit jusqu'à résolution.
+
 ## Interaction avec autres agents
+- **Alfred** : Invoque automatiquement cet agent après Backend et Frontend (session 2026-04-30)
 - **Backend** : Tests des API et logique métier
 - **Frontend** : Tests des composants et UI (pattern établi)
 - **DevOps** : Intégration dans CI/CD
