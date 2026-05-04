@@ -1,8 +1,44 @@
 # Backlog d'Améliorations - Collectoria
 
-**Dernière mise à jour** : 2026-04-22
+**Dernière mise à jour** : 2026-05-04
 
 Ce fichier regroupe les idées d'améliorations identifiées mais non prioritaires pour le moment.
+
+**Note** : Pour les tâches en cours ou urgentes, consulter le [Plan d'Action 2026-05-04](Project%20follow-up/PLAN-ACTION-2026-05-04.md).
+
+---
+
+## ⚠️ Tâches Urgentes (En Cours)
+
+Ces tâches ont été déplacées vers le plan d'action actif :
+
+### SESSION 1 (CRITIQUE - En cours)
+- **Fix Page /cards Production** → `Project follow-up/tasks/2026-05-04_fix-cards-page-production.md`
+  - Priorité : CRITIQUE (BLOQUANT)
+  - Effort : 1-2h
+  - Status : 📋 TODO
+
+### SESSION 2-3 (HAUTE - Planifiées)
+- **Séparation Données par Environnement** → `Project follow-up/tasks/2026-05-04_separation-donnees-environnement.md`
+  - Priorité : HAUTE
+  - Effort : 4-6h
+  - Status : 📋 TODO
+
+- **Scripts Déploiement Automatisés** → `Project follow-up/tasks/2026-05-04_scripts-deploiement-production.md`
+  - Priorité : HAUTE
+  - Effort : 3-4h
+  - Status : 📋 TODO
+
+### SESSION 4-6 (MEDIUM - Planifiées)
+- **Audit Factorisation Collections** → `Project follow-up/tasks/2026-05-04_audit-factorisation-collections.md`
+  - Priorité : MEDIUM
+  - Effort : 6-8h
+  - Status : 📋 TODO
+
+- **Audit Sécurité Production** → `Project follow-up/tasks/2026-05-04_audit-securite-production.md`
+  - Priorité : MEDIUM
+  - Effort : 3-4h
+  - Status : 📋 TODO
 
 ---
 

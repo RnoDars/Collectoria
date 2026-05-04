@@ -20,6 +20,8 @@ Les tâches ici sont :
 
 ## Index des Tâches Futures
 
+**Note** : Les tâches urgentes/prioritaires ont été déplacées vers le [Plan d'Action 2026-05-04](../PLAN-ACTION-2026-05-04.md) et sont en cours de traitement.
+
 ### Design & UX
 
 #### Corrections Responsive Mobile
