@@ -14,6 +14,22 @@ Ce projet utilise un système d'agents spécialisés basé sur des fichiers `CLA
 - **Rôle** : C'est l'agent avec lequel vous interagissez principalement. Il analyse vos demandes et les dispatche aux agents spécialisés appropriés.
 - **Important** : Alfred est un COORDINATEUR, pas un développeur. Il ne doit JAMAIS créer ou modifier du code Frontend/Backend directement, mais toujours déléguer aux agents spécialisés.
 
+## Agent Superviseur
+
+### Agent Meta (Superviseur)
+- **Localisation** : `Meta-Agent/`
+- **Fichier** : `Meta-Agent/CLAUDE.md`
+- **Spécialité** : Audit de conformité, vérification workflows, supervision du système multi-agents
+- **Invocation** : Automatique par Alfred (début session, après implémentation, fin session) ou manuel si dysfonctionnement détecté
+- **Rôle** : Vérifie que tous les agents (dont Alfred) appliquent correctement leurs règles et workflows. Produit des rapports de conformité et alerte sur les manquements.
+- **Responsabilités** :
+  - Auditer l'exécution des workflows obligatoires
+  - Vérifier le respect des règles critiques
+  - Détecter les manquements et dysfonctionnements
+  - Produire rapports de conformité
+  - Alerter et bloquer si manquement critique
+- **Important** : Agent Meta ne modifie JAMAIS le code ou les CLAUDE.md directement. Il recommande et alerte uniquement.
+
 ## Agents de Gestion
 
 ### 1. Agent de Suivi de Projet

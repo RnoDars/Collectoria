@@ -331,3 +331,95 @@ Première mission : Auditer le microservice Collection Management qui vient d'ê
 2. Analyser les dépendances avec `govulncheck`
 3. Vérifier les pratiques de sécurité (SQL injection, validation des entrées)
 4. Générer un rapport de sécurité initial
+
+---
+
+## Checklist de Vérification Agent Security (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer un audit de sécurité.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### AUDIT CODE
+
+**OWASP Top 10** :
+- [ ] Injection (SQL, NoSQL, Command) : Paramètres préparés vérifiés
+- [ ] Broken Authentication : JWT validé, session management sécurisé
+- [ ] XSS : Échappement données utilisateur vérifié
+- [ ] Insecure Direct Object References : Contrôles d'accès vérifiés
+- [ ] Security Misconfiguration : Configuration sécurisée validée
+- [ ] Sensitive Data Exposure : Aucune donnée sensible exposée
+- [ ] Missing Function Level Access Control : Autorisations vérifiées
+- [ ] CSRF : Protections CSRF vérifiées
+- [ ] Using Components with Known Vulnerabilities : Dépendances auditées
+- [ ] Unvalidated Redirects : Redirections validées
+
+**Backend (Go)** :
+- [ ] SQL Injection : Paramètres préparés (sqlx)
+- [ ] Authentication : JWT validé
+- [ ] Authorization : Contrôles d'accès vérifiés
+- [ ] Input validation : Toutes entrées validées
+- [ ] Error handling : Aucune info sensible dans erreurs
+- [ ] Logging : Aucun secret logué
+
+**Frontend (React/Next.js)** :
+- [ ] XSS : Échappement données utilisateur
+- [ ] CSRF : Protections CSRF
+- [ ] Content Security Policy : Headers appropriés
+- [ ] Secure storage : Aucune donnée sensible en clair
+
+### AUDIT DÉPENDANCES
+
+**Backend** :
+- [ ] `govulncheck ./...` exécuté
+- [ ] `go list -m all` exécuté
+- [ ] Vulnérabilités critiques : aucune
+- [ ] Mises à jour recommandées listées
+
+**Frontend** :
+- [ ] `npm audit` exécuté
+- [ ] `npm outdated` exécuté
+- [ ] Vulnérabilités critiques : aucune
+- [ ] Mises à jour recommandées listées
+
+### RAPPORT
+
+- [ ] Rapport créé dans `Security/reports/YYYY-MM-DD_audit-*.md`
+- [ ] Template `Security/audit-logs/TEMPLATE.md` utilisé
+- [ ] Vulnérabilités documentées avec criticité (Critique/Élevée/Moyenne/Faible)
+- [ ] Actions prioritaires listées avec timeline (immédiat/court/moyen/long terme)
+- [ ] Score de sécurité actuel indiqué (X/10)
+- [ ] Rapport fourni à Alfred
+
+**Sections obligatoires du rapport** :
+- [ ] Résumé Exécutif avec tableau de criticité
+- [ ] Vulnérabilités détaillées (Type, CWE, CVE, Localisation, PoC, Impact, Recommandation)
+- [ ] Dépendances vulnérables (Backend Go + Frontend npm)
+- [ ] Actions prioritaires avec timeline
+- [ ] Tests de sécurité effectués (checklist OWASP)
+- [ ] Métriques d'audit
+- [ ] Signatures
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis dans `Security/reports/` ?
+- [ ] Ai-je mis à jour les fichiers existants si nécessaire ?
+
+### QUALITÉ & TESTS
+
+- [ ] Ai-je vérifié toutes les vulnérabilités OWASP Top 10 ?
+- [ ] Ai-je exécuté les outils d'analyse (govulncheck, npm audit) ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je BLOQUÉ si vulnérabilité critique détectée ?
+- [ ] Ai-je indiqué les prochaines étapes (actions prioritaires) ?
+
+---

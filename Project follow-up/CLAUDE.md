@@ -126,6 +126,85 @@ Fréquence : à chaque milestone atteint, ou tous les 10 commits.
 
 ---
 
+## Checklist de Vérification Agent Suivi de Projet (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une mise à jour de suivi.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### MISE À JOUR STATUS.md
+
+**Déclencheurs** :
+- [ ] Après tâche majeure complétée
+- [ ] En fin de session si >2h ou plusieurs tâches
+- [ ] Lors de changements de direction (priorités, architecture)
+
+**Contenu** :
+- [ ] Métriques actualisées (avancement, stats)
+- [ ] Dernière session résumée
+- [ ] État actuel du projet décrit
+- [ ] Prochaines priorités identifiées clairement
+- [ ] Blocages documentés si présents
+
+### DOCUMENTATION DÉCISION
+
+**Déclencheurs** :
+- [ ] Décision architecturale prise
+- [ ] Décision technique structurante prise
+
+**Contenu** :
+- [ ] Fichier créé dans `decisions/`
+- [ ] Format ADR simplifié respecté
+- [ ] Fichier nommé `YYYY-MM-DD_sujet-decision.md`
+- [ ] Contexte, décision, conséquences documentés
+- [ ] Référencé dans rapport d'avancement
+
+### RAPPORT AVANCEMENT
+
+**Déclencheurs** :
+- [ ] À chaque milestone atteint
+- [ ] Tous les 10 commits sur main
+
+**Contenu** :
+- [ ] Format standard respecté
+- [ ] Tâches complétées listées
+- [ ] Tâches en cours listées avec ETA
+- [ ] Blocages identifiés avec actions prévues
+- [ ] Prochaines étapes claires
+- [ ] Décisions prises référencées
+
+### GESTION TÂCHES
+
+- [ ] Tâches dans `tasks/` mises à jour en temps réel
+- [ ] Statut correct (TODO/En cours/Terminé/Bloqué)
+- [ ] Agent responsable indiqué
+- [ ] Lien vers spec si applicable
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis (reports/, decisions/, tasks/) ?
+- [ ] Ai-je mis à jour STATUS.md si nécessaire ?
+- [ ] Tous documents datés et versionnés via Git
+
+### QUALITÉ & VALIDATION
+
+- [ ] Ai-je vérifié que mes documents sont clairs et structurés ?
+- [ ] Format Markdown validé ?
+- [ ] Références croisées correctes ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je indiqué les prochaines étapes si nécessaire ?
+
+---
+
 ## Instructions spécifiques
 - Toujours dater vos mises à jour
 - Utiliser le format Markdown pour tous les documents

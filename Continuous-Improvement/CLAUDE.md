@@ -368,3 +368,96 @@ Fichiers dans `subdivisions/[agent-name]_plan_[date].md` :
 - Nouvelle structure proposée
 - Migration des contenus
 - Impact sur les autres agents
+
+---
+
+## Checklist de Vérification Agent Amélioration Continue (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer un audit ou une recommandation.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### MINI-AUDIT FIN DE SESSION
+
+**Référence** : `/Continuous-Improvement/CLAUDE.md` lignes 92-114
+
+- [ ] Résumé session lu (git log ou demande Alfred)
+- [ ] AU MAXIMUM UN problème/amélioration identifié (pas d'exhaustivité)
+- [ ] Si problème : fichier créé dans `recommendations/[sujet]_[date].md`
+- [ ] FORMAT standard respecté (Problème / Impact / Solution / Plan d'Action)
+- [ ] STATUS.md mis à jour si impact priorités
+- [ ] Rapport bref (3-5 lignes) fourni à Alfred
+
+**Sortie attendue** :
+```
+🤖 Agent Amélioration Continue : Mini-audit terminé.
+- Problème identifié : [description courte]
+- Recommandation créée : recommendations/[fichier].md
+- STATUS.md mis à jour : [oui/non, pourquoi]
+```
+
+**Règle** : Si aucun problème notable, le dire explicitement et ne pas créer de fichier vide.
+
+### AUDIT COMPLET (TOUS LES 10 COMMITS)
+
+- [ ] Tous CLAUDE.md lus
+- [ ] Tailles fichiers mesurées
+- [ ] Historique Git analysé (par répertoire)
+- [ ] Patterns d'utilisation identifiés
+- [ ] Rapport créé dans `reports/YYYY-MM-DD_report.md`
+- [ ] Métriques documentées (lignes, complexité, fréquence)
+
+### DÉTECTION PROBLÈMES CRITIQUES
+
+**Alfred développe directement** :
+- [ ] Détecté : Alfred crée fichiers `.go`, `.ts`, `.tsx`, `.sql`
+- [ ] Action : ARRÊTER immédiatement l'action
+- [ ] Rappeler : Alfred ne développe JAMAIS directement
+- [ ] Rediriger : vers agent approprié (Backend/Frontend)
+- [ ] Documenter : incident dans `recommendations/`
+
+**Environnement non démarré** :
+- [ ] Détecté : Session commence sans services
+- [ ] Action : Rappeler workflow de démarrage
+- [ ] Documenter : si récurrent
+
+**Manque délégation agents critiques** :
+- [ ] Détecté : Tests sans DevOps, commit sans Security, implémentation sans Testing
+- [ ] Action : Rappeler agents critiques obligatoires
+- [ ] Bloquer : action si agent critique non appelé
+- [ ] Documenter : pattern problématique
+
+### RECOMMANDATION D'AMÉLIORATION
+
+**Format** :
+- [ ] Fichier créé dans `recommendations/[sujet]_[date].md`
+- [ ] Sections obligatoires : Problème / Impact / Solution / Plan d'Action / Agents Impactés
+- [ ] Problème clairement identifié
+- [ ] Impact évalué (criticité, conséquences)
+- [ ] Solution proposée concrète
+- [ ] Plan d'action avec étapes
+- [ ] Agents impactés listés
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+- [ ] Ai-je coordonné avec Agent Meta si dysfonctionnement détecté ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis dans `recommendations/` ou `reports/` ?
+- [ ] Ai-je mis à jour STATUS.md si nécessaire ?
+
+### QUALITÉ & VALIDATION
+
+- [ ] Ai-je vérifié que mes recommandations sont concrètes et actionnables ?
+- [ ] Ai-je priorisé les améliorations (ROI clair) ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je indiqué les prochaines étapes si nécessaire ?
+
+---

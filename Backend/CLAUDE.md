@@ -402,6 +402,65 @@ CREATE TABLE dnd5_books (
 
 ---
 
+## Checklist de Vérification Agent Backend (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une implémentation.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### AVANT DE COMMENCER
+
+- [ ] Ai-je lu la spec technique complète ?
+- [ ] Ai-je identifié les tests à écrire (TDD) ?
+- [ ] Ai-je compris l'architecture DDD (domain/application/infrastructure) ?
+
+### PENDANT L'IMPLÉMENTATION
+
+- [ ] Tests unitaires écrits AVANT le code (TDD : Red → Green → Refactor)
+- [ ] Architecture DDD respectée (domain/application/infrastructure)
+- [ ] Gestion d'erreurs explicite (pas de panic en production)
+- [ ] Logging structuré ajouté (zerolog/zap)
+- [ ] Code suit conventions Go (gofmt, golint, go vet)
+- [ ] Contextes (context.Context) utilisés pour timeout/cancellation
+
+### APRÈS L'IMPLÉMENTATION
+
+- [ ] Tous tests passent : `go test ./...`
+- [ ] Coverage >80% pour code domaine
+- [ ] Code compilé sans erreur
+- [ ] Informer Alfred : "Implémentation terminée, prêt pour tests"
+
+### REDÉMARRAGE BACKEND (CRITIQUE)
+
+- [ ] Rappeler à Alfred de redémarrer backend si code Go modifié
+- [ ] Attendre confirmation backend redémarré avant dire "terminé"
+- [ ] Ne JAMAIS tester sans redémarrage après modifications
+
+**Pourquoi critique** : Le code Go compilé en mémoire ne reflète pas les modifications tant que le processus n'est pas redémarré. Tester sans redémarrage donne des résultats obsolètes.
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis ?
+- [ ] Ai-je mis à jour les fichiers existants si nécessaire ?
+
+### QUALITÉ & TESTS
+
+- [ ] Ai-je vérifié que mon travail fonctionne ?
+- [ ] Ai-je rappelé à Alfred d'appeler Agent Testing ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je indiqué les prochaines étapes (redémarrage backend requis) ?
+
+---
+
 ## Interaction avec autres agents
 - **Frontend** : Définition des contrats API (snake_case backend, conversion camelCase frontend)
 - **DevOps** : Configuration de déploiement, tests locaux

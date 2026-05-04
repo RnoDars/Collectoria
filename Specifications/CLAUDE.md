@@ -355,3 +355,72 @@ Quand tu spécifies une nouvelle page de collection, **TOUJOURS référencer `/c
 **Mémoires complètes** :
 - Backend : `~/.claude/projects/-home-arnaud-dars/memory/project_architecture_table_per_collection.md`
 - Frontend : `~/.claude/projects/-home-arnaud-dars/memory/project_frontend_reference_cards_page.md`
+
+---
+
+## Checklist de Vérification Agent Spécifications (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une spécification.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### CRÉATION SPEC
+
+- [ ] Spec datée et versionnée (v1.0, v1.1, etc.)
+- [ ] Ubiquitous Language DDD utilisé (termes métier)
+- [ ] Bounded context identifié (quel microservice ?)
+- [ ] Building blocks DDD identifiés (Entities, Value Objects, Aggregates, Domain Events)
+- [ ] Contrats API définis (OpenAPI specs)
+- [ ] Critères d'acceptation clairs et mesurables
+- [ ] Tests requis listés (unitaires, intégration, E2E)
+
+### PATTERN ARCHITECTURE
+
+**Backend** :
+- [ ] Table dédiée par collection (PAS de table générique avec discriminateur)
+- [ ] Domaine séparé par collection
+- [ ] Repository séparé par collection
+- [ ] Routes API dédiées par collection
+
+**Frontend** :
+- [ ] Référencer `/cards/page.tsx` si nouvelle collection
+- [ ] Patterns UI standards inclus (switch langue, filtres, tri)
+- [ ] Ordre d'affichage dynamique (primaryName/secondaryName)
+- [ ] Recherche avec debounce (300ms)
+
+### VALIDATION
+
+- [ ] Complétude vérifiée (toutes sections remplies)
+- [ ] Clarté validée (compréhensible par tous agents)
+- [ ] Ambiguïtés identifiées et résolues
+- [ ] Exemples concrets inclus
+- [ ] Diagrammes ajoutés si nécessaire
+
+### DISTRIBUTION
+
+- [ ] Distribution aux agents concernés (via Alfred)
+- [ ] Référencé dans suivi de projet si applicable
+- [ ] Fichier placé dans `Specifications/` (functional/technical/ui-ux/api)
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis dans `Specifications/` ?
+- [ ] Ai-je mis à jour les fichiers existants si nécessaire ?
+
+### QUALITÉ & TESTS
+
+- [ ] Ai-je vérifié que ma spec est complète et claire ?
+- [ ] Ai-je anticipé les cas limites et erreurs ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je indiqué les prochaines étapes (quels agents doivent intervenir) ?
+
+---

@@ -651,3 +651,77 @@ Que préférez-vous ?
 **Référence détaillée** : `Continuous-Improvement/recommendations/alfred-time-constraint-detection_2026-04-28.md`
 
 **Rappel** : Cette fonctionnalité améliore l'expérience utilisateur et réduit significativement le stress lors de sessions avec contraintes temporelles.
+
+---
+
+## Checklist de Vérification Alfred (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une tâche ou en fin de session.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### DÉBUT DE SESSION
+
+- [ ] Exécuter `git pull origin main`
+- [ ] Lire `Project follow-up/STATUS.md`
+- [ ] Présenter résumé structuré (dernière session / état actuel / priorités)
+- [ ] Démarrer PostgreSQL : `docker compose up -d`
+- [ ] Démarrer Backend avec TOUTES variables env (DB + JWT + CORS + LOG)
+- [ ] Démarrer Frontend : `npm run dev`
+- [ ] Health check Backend : `curl http://localhost:8080/api/v1/health`
+- [ ] Confirmer tous services opérationnels
+
+### PENDANT LA SESSION
+
+**Communication** :
+- [ ] Préfixer TOUS mes messages avec "🤖 Alfred :"
+- [ ] Annoncer AVANT chaque appel agent : "Je fais appel à [Agent] pour [raison]"
+
+**Développement** :
+- [ ] NE JAMAIS développer code directement (Backend/Frontend/SQL)
+- [ ] TOUJOURS déléguer aux agents spécialisés
+
+**Post-Implémentation** :
+- [ ] Après Backend/Frontend → Appeler Agent Testing
+- [ ] Après modifications Frontend importantes → Nettoyer cache .next
+- [ ] Après modifications Backend → Redémarrer backend
+- [ ] Après commit majeur → Vérifier Agent Security appelé
+
+**Délégation (Checklist Pré-Action)** :
+
+Avant d'agir directement, répondre OUI à ces 5 questions :
+- [ ] Cette tâche n'est dans les responsabilités d'AUCUN agent spécialiste ?
+- [ ] Cette tâche est simple (<5 min) et ne nécessite aucune expertise ?
+- [ ] Cette tâche n'implique aucun mot-clé déclencheur ?
+- [ ] Cette tâche n'est PAS du développement de code ?
+- [ ] Cette tâche n'est PAS la rédaction d'une spécification ?
+
+Si UNE SEULE réponse est NON → DÉLÉGUER à l'agent approprié.
+
+### FIN DE SESSION
+
+- [ ] Appeler Agent Amélioration Continue si session >1h ou problèmes
+- [ ] Mettre à jour STATUS.md (ou demander à Agent Suivi)
+- [ ] Vérifier que tous commits ont "Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+- [ ] Fournir résumé final à l'utilisateur
+- [ ] Appeler Agent Meta pour audit de conformité
+
+### WORKFLOWS SPÉCIFIQUES
+
+**Cache Next.js** (détails lignes 385-499) :
+
+Déclencheurs nettoyage obligatoire :
+- [ ] Suppression composants React
+- [ ] Ajout/suppression pages `/app`
+- [ ] Modification `page.tsx` ou `layout.tsx`
+- [ ] Refactoring structure
+- [ ] ≥3 fichiers `.tsx` modifiés
+
+**Redémarrage Backend** (détails lignes 501-530) :
+
+Déclencheurs obligatoires :
+- [ ] Agent Backend a terminé implémentation
+- [ ] Code Go modifié
+- [ ] Migration SQL appliquée
+
+---

@@ -266,6 +266,91 @@ Couverture nouveaux composants : [approximation]
 
 **Règle** : Si des régressions sont détectées, l'Agent Testing doit les signaler à Alfred qui BLOQUE le commit jusqu'à résolution.
 
+## Checklist de Vérification Agent Testing (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une validation de tests.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### TEST MINIMAL OBLIGATOIRE
+
+**Backend** :
+- [ ] Test unitaire cas nominal (happy path) créé
+- [ ] Test unitaire cas d'erreur principal créé
+- [ ] Mocks des dépendances utilisés (gomock, go-sqlmock)
+
+**Frontend** :
+- [ ] 4 états testés si applicable (Loading/Error/Empty/Success)
+- [ ] Interaction principale testée si présente (clic, soumission)
+- [ ] @testing-library/react utilisé
+
+### EXÉCUTION TESTS EXISTANTS (OBLIGATOIRE)
+
+**Backend** :
+- [ ] `go test ./...` exécuté
+- [ ] TOUS tests passent : AUCUN test en échec
+- [ ] Si tests échouent → BLOQUER et signaler immédiatement
+
+**Frontend** :
+- [ ] `npm test` exécuté
+- [ ] TOUS tests passent : AUCUN test en échec
+- [ ] Si tests échouent → BLOQUER et signaler immédiatement
+
+### DÉTECTION RÉGRESSION
+
+- [ ] Régressions détectées : oui/non
+- [ ] Si oui : fichiers concernés listés
+- [ ] Impact des régressions évalué
+- [ ] Ne JAMAIS dire "terminé" si tests échouent
+
+### RAPPORT
+
+- [ ] Nombre de tests créés indiqué
+- [ ] Résultats tests existants (X passed, Y failed)
+- [ ] Régressions détectées : oui/non
+- [ ] Couverture approximative indiquée
+- [ ] Rapport fourni à Alfred
+
+**Template rapport** :
+```
+🤖 Agent Testing : Tests post-implémentation terminés.
+
+Tests créés :
+- [liste des nouveaux fichiers de test]
+
+Résultats tests existants :
+- Backend : X tests, X passed, X failed
+- Frontend : X tests, X passed, X failed
+
+Régressions détectées : [oui/non]
+→ [Si oui : description et fichiers concernés]
+
+Couverture nouveaux composants : [approximation]
+```
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis ?
+- [ ] Ai-je mis à jour les fichiers existants si nécessaire ?
+
+### QUALITÉ & TESTS
+
+- [ ] Ai-je vérifié que mon travail fonctionne ?
+- [ ] Ai-je exécuté TOUS les tests existants ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je BLOQUÉ si régressions détectées ?
+
+---
+
 ## Interaction avec autres agents
 - **Alfred** : Invoque automatiquement cet agent après Backend et Frontend (session 2026-04-30)
 - **Backend** : Tests des API et logique métier

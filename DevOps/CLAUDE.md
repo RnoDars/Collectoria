@@ -599,3 +599,95 @@ Voir [restart-procedures.md](restart-procedures.md) pour solutions détaillées.
 ---
 
 *Version refactorisée le 2026-04-23 - Documentation détaillée externalisée pour meilleure lisibilité*
+
+---
+
+## Checklist de Vérification Agent DevOps (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une tâche infrastructure ou déploiement.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### TESTS LOCAUX ET DÉMARRAGE
+
+- [ ] Utiliser TOUJOURS `sg docker -c "docker ..."`
+- [ ] Seed données via `docker exec`, JAMAIS `psql` direct sur hôte
+- [ ] Vérifier ports Frontend Next.js (3000/3001/3002)
+- [ ] Rapport de lancement structuré fourni
+
+**Template rapport** :
+```
+✅ Environnement de développement lancé :
+
+Backend Go
+- Port : 8080
+- URL : http://localhost:8080/api/v1/health
+- Status : Healthy
+
+Frontend Next.js
+- Port : 3001 (3000 était occupé) ← IMPORTANT : Indiquer pourquoi si ≠3000
+- URL : http://localhost:3001
+- Status : Ready
+
+Base de Données
+- Port : 5432
+- Status : Up (healthy)
+- Données : 1679 cartes MECCG
+```
+
+### DÉMARRAGE SERVICES
+
+- [ ] PostgreSQL démarré : `sg docker -c "docker compose up -d"`
+- [ ] Backend démarré avec TOUTES variables env (DB + JWT + CORS + LOG)
+- [ ] Frontend démarré : `npm run dev`
+- [ ] Health checks validés (Backend, Frontend, PostgreSQL)
+- [ ] Ports indiqués clairement dans rapport
+
+### AVANT DÉPLOIEMENT PRODUCTION
+
+- [ ] Variables `.env` complètes (aucun placeholder)
+- [ ] Espace disque >2 GB : `df -h`
+- [ ] Extensions PostgreSQL documentées et installées
+- [ ] Build args NEXT_PUBLIC_* définis dans docker-compose.prod.yml
+- [ ] Healthchecks cohérents Dockerfile ↔ docker-compose
+- [ ] Fichiers Docker testés LOCALEMENT avant production (Phase 3.5)
+
+**Référence** : `DevOps/phase3.5-production-files-validation.md`
+
+### PENDANT DÉPLOIEMENT
+
+- [ ] Suivre checklist : `devops-production-deployment-checklist_2026-05-04.md`
+- [ ] Logs surveillés pendant rebuild
+- [ ] Backup créé avant changements critiques
+- [ ] `git pull` exécuté sur serveur
+
+### APRÈS DÉPLOIEMENT
+
+- [ ] Health checks tous services : backend, frontend, DB
+- [ ] Pages principales testées
+- [ ] Aucune erreur critique dans logs
+- [ ] Extensions PostgreSQL vérifiées : `bash DevOps/scripts/verify-postgres-extensions.sh`
+- [ ] Rapport de déploiement fourni à Alfred
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis ?
+- [ ] Ai-je mis à jour les fichiers existants si nécessaire ?
+
+### QUALITÉ & TESTS
+
+- [ ] Ai-je vérifié que mon travail fonctionne ?
+- [ ] Ai-je validé que tous services sont opérationnels ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je indiqué les prochaines étapes si nécessaire ?
+
+---

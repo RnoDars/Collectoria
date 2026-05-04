@@ -432,6 +432,74 @@ if (language === 'fr') {
 
 **Mémoire complète** : `~/.claude/projects/-home-arnaud-dars/memory/project_frontend_reference_cards_page.md`
 
+## Checklist de Vérification Agent Frontend (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une implémentation.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### AVANT DE COMMENCER
+
+- [ ] Ai-je lu le design system "The Digital Curator" ? (`Design/design-system/Ethos-V1-2026-04-15.md`)
+- [ ] Ai-je vérifié les variables CSS disponibles dans `globals.css` ?
+- [ ] Ai-je consulté `/cards/page.tsx` si nouvelle collection ?
+
+### PENDANT L'IMPLÉMENTATION
+
+- [ ] Pattern des 4 états appliqué (Loading/Error/Empty/Success)
+- [ ] Tests créés avec @testing-library/react
+- [ ] Design system respecté (No-Line Rule, Tonal Layering)
+- [ ] Variables CSS UNIQUEMENT celles définies dans `globals.css` (PAS de variables inventées)
+- [ ] Accessibilité WCAG 2.1 AA respectée
+- [ ] Dual-Type System : Manrope (headlines) + Inter (body)
+
+### APRÈS L'IMPLÉMENTATION
+
+- [ ] Tous tests passent : `npm test`
+- [ ] Composants rendus sans erreur console
+- [ ] Informer Alfred des modifications importantes
+
+### NETTOYAGE CACHE .next (CRITIQUE)
+
+Si modifications importantes détectées :
+
+- [ ] Rappeler à Alfred : "⚠️ Nettoyage cache .next requis avant redémarrage"
+- [ ] Lister modifications : composants supprimés, pages modifiées, ≥3 fichiers
+- [ ] Attendre confirmation cache nettoyé et frontend redémarré
+
+**Modifications considérées importantes** :
+- Suppression d'un ou plusieurs composants React
+- Ajout/suppression de pages dans `/app`
+- Modification de `page.tsx` ou `layout.tsx`
+- Refactoring de la structure des répertoires
+- Renommage de composants avec changement d'imports
+- Modifications massives (≥3 fichiers `.tsx` ou `.ts`)
+
+**Pourquoi critique** : Le cache Next.js (`.next/`) se corrompt après modifications structurelles, causant des erreurs "ENOENT", "build manifest", et HTTP 500.
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis ?
+- [ ] Ai-je mis à jour les fichiers existants si nécessaire ?
+
+### QUALITÉ & TESTS
+
+- [ ] Ai-je vérifié que mon travail fonctionne ?
+- [ ] Ai-je rappelé à Alfred d'appeler Agent Testing ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je indiqué les prochaines étapes (nettoyage cache si nécessaire) ?
+
+---
+
 ## Interaction avec autres agents
 - **Backend** : Consommation des API (pattern snake_case/camelCase établi)
 - **Testing** : Tests d'interface et E2E

@@ -155,6 +155,66 @@ Conséquences positives et négatives
 Alternatives envisagées
 ```
 
+## Checklist de Vérification Agent Documentation (Auto-Contrôle)
+
+**Usage** : À consulter AVANT de terminer une documentation.
+
+**Référence complète** : `Meta-Agent/checklists/INDEX.md`
+
+### DOCUMENTATION TECHNIQUE
+
+- [ ] Architecture documentée (diagrammes, C4)
+- [ ] API documentée (OpenAPI specs)
+- [ ] DDD documenté (ubiquitous language, aggregates, domain events)
+- [ ] ADR créés pour décisions architecturales importantes
+- [ ] Code snippets inclus pour exemples concrets
+
+### DOCUMENTATION UTILISATEUR
+
+- [ ] Guides clairs et structurés
+- [ ] Exemples concrets inclus
+- [ ] Troubleshooting guide mis à jour
+- [ ] FAQ à jour
+- [ ] Parcours utilisateur documentés
+
+### QUALITÉ DOCUMENTATION
+
+- [ ] Markdown validé (pas d'erreurs de syntaxe)
+- [ ] Diagrammes à jour (Mermaid, PlantUML)
+- [ ] Liens fonctionnels (pas de liens cassés)
+- [ ] Documentation versionnée avec code (cohérence)
+- [ ] Style cohérent et accessible
+
+### STRUCTURE ET ORGANISATION
+
+- [ ] Documentation placée au bon endroit (docs/ ou répertoire approprié)
+- [ ] Références croisées correctes
+- [ ] Table des matières à jour si applicable
+- [ ] README principal mis à jour si nécessaire
+
+### INTERACTIONS AVEC AUTRES AGENTS
+
+- [ ] Ai-je délégué à l'agent approprié si nécessaire ?
+- [ ] Ai-je informé Alfred de mes résultats ?
+
+### DOCUMENTATION & TRAÇABILITÉ
+
+- [ ] Ai-je documenté mes actions ?
+- [ ] Ai-je créé les fichiers requis ?
+- [ ] Ai-je mis à jour les fichiers existants si nécessaire ?
+
+### QUALITÉ & TESTS
+
+- [ ] Ai-je vérifié que ma documentation est compréhensible ?
+- [ ] Ai-je testé les liens et exemples de code ?
+
+### RAPPORT FINAL
+
+- [ ] Ai-je fourni un rapport clair à Alfred ?
+- [ ] Ai-je indiqué les prochaines étapes si nécessaire ?
+
+---
+
 ## Interaction avec autres agents
 - **Backend** : Documentation API et services
 - **Frontend** : Guides utilisateur et composants
