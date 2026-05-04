@@ -170,6 +170,59 @@ docker compose ps
 
 ---
 
+### 10. Extensions PostgreSQL Obligatoires
+
+**Règle** : Les extensions PostgreSQL requises DOIVENT être installées via la migration `000_extensions.sql` AVANT toutes autres migrations.
+
+**Extensions actuelles** :
+- `unaccent` : Normalisation texte pour recherche (CRITIQUE)
+
+**Vérification** :
+```bash
+bash DevOps/scripts/verify-postgres-extensions.sh
+```
+
+**Installation manuelle** :
+```bash
+docker compose exec postgres-collection psql -U $DB_USER -d $DB_NAME -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
+```
+
+**Ordre migrations** :
+```
+000_extensions.sql  ← TOUJOURS EN PREMIER
+001_init_schema.sql
+002_seed_meccg_cards.sql
+...
+```
+
+**Référence** : Incident 2026-05-04 - Extension unaccent manquante causant HTTP 500
+
+---
+
+### 11. Variables Next.js Build-Time (NEXT_PUBLIC_*)
+
+**Règle** : Les variables `NEXT_PUBLIC_*` DOIVENT être passées via `build.args` dans docker-compose, PAS uniquement via `environment`.
+
+**Pourquoi** : Next.js injecte ces variables au moment du BUILD, pas au runtime.
+
+**Comment** :
+```yaml
+frontend:
+  build:
+    context: ./frontend
+    args:
+      - NEXT_PUBLIC_API_URL=https://api.darsling.fr
+```
+
+**Vérification** :
+```bash
+bash DevOps/scripts/verify-nextjs-build-args.sh
+```
+
+**Référence** : Incident 2026-05-04 - Frontend appelait localhost:8080 en production
+
+---
+
 ## Responsabilités
 - **Tests locaux et environnement de développement** (PRIORITÉ)
 - Configuration de l'infrastructure (cloud, serveurs)
@@ -381,6 +434,35 @@ Base de Données
 - **1679 cartes MECCG** importées (8 séries)
 - **1661 cartes possédées** (18 non possédées)
 - Migrations : 9 fichiers SQL (001 à 009) — voir [testing-local.md](testing-local.md) pour la liste complète et à jour
+
+---
+
+## Checklist Déploiement Production
+
+### AVANT Déploiement
+- [ ] `git pull` sur le serveur
+- [ ] Variables `.env` complètes (aucun placeholder)
+- [ ] Espace disque > 2 GB : `df -h`
+- [ ] Extensions PostgreSQL documentées
+- [ ] Build args NEXT_PUBLIC_* définis dans docker-compose.prod.yml
+
+### PENDANT Déploiement
+- [ ] `docker compose -f docker-compose.prod.yml build --no-cache [service]`
+- [ ] `docker compose -f docker-compose.prod.yml up -d --no-deps [service]`
+- [ ] Suivre les logs : `docker compose -f docker-compose.prod.yml logs -f [service]`
+
+### APRÈS Déploiement
+- [ ] Health checks : `curl https://api.darsling.fr/api/v1/health`
+- [ ] Pages principales accessibles
+- [ ] Vérifier logs : pas d'erreurs critiques
+- [ ] Vérifier extensions PostgreSQL : `bash DevOps/scripts/verify-postgres-extensions.sh`
+
+### EN CAS D'ERREUR
+- [ ] Consulter `DevOps/scripts/diagnose-production.sh`
+- [ ] Vérifier les logs détaillés
+- [ ] Rollback si nécessaire
+
+**Référence détaillée** : `Continuous-Improvement/recommendations/devops-production-deployment-checklist_2026-05-04.md`
 
 ---
 
