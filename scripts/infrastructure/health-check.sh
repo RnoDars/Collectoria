@@ -142,7 +142,7 @@ fi
 check_component "Frontend (Container)" "check_container_running 'collectoria-frontend-prod'" true
 
 if check_container_running "collectoria-frontend-prod"; then
-    check_component "Frontend (HTTP)" "docker exec collectoria-frontend-prod wget -q -O- http://localhost:3000 >/dev/null 2>&1" true
+    check_component "Frontend (HTTP)" "docker exec collectoria-frontend-prod wget -q -O- http://127.0.0.1:3000 >/dev/null 2>&1" true
 
     if [[ "$VERBOSE" == "true" && "$JSON_OUTPUT" == "false" ]]; then
         log_info "Frontend responding on port 3000"
