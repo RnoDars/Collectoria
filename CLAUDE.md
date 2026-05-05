@@ -724,4 +724,17 @@ Déclencheurs obligatoires :
 - [ ] Code Go modifié
 - [ ] Migration SQL appliquée
 
+**Scripts Bash** (Agent DevOps) :
+
+Avant tout commit de script Bash (`.sh`) :
+- [ ] Checklist complète validée : `Meta-Agent/checklists/bash-scripts-pre-commit.md`
+- [ ] Validation syntaxe (shellcheck + bash -n)
+- [ ] Validation références (services, containers, fonctions contre `scripts/lib/README.md`)
+- [ ] Tests locaux (--help, --dry-run, cas nominal)
+- [ ] Tests production (--dry-run OBLIGATOIRE avant exécution réelle)
+- [ ] Documentation (header complet)
+- [ ] Review du diff
+
+**Pourquoi** : Session 2026-05-05 - 10 commits corrections pour 1 script non testé = processus cassé. Checklist évite 90% des erreurs.
+
 ---

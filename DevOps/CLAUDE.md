@@ -168,6 +168,37 @@ docker compose ps
 
 **Référence** : Incident Phase 4 (2026-04-29) - Confusion .env.production
 
+### 10. Scripts Bash = Code Production
+
+**Règle critique** : Les scripts Bash (`scripts/deploy/`, `scripts/database/`, `scripts/maintenance/`) sont du code de production et requièrent la même rigueur que Go/React.
+
+**Workflow OBLIGATOIRE avant commit** :
+1. **Validation syntaxe** : `shellcheck script.sh` + `bash -n script.sh`
+2. **Validation références** : Services, containers, fonctions existent
+3. **Tests locaux** : `--help`, `--dry-run`, cas nominal
+4. **Tests production** : `--dry-run` OBLIGATOIRE avant exécution réelle
+5. **Documentation** : Header complet, commentaires appropriés
+6. **Review** : Lecture du diff, validation manuelle
+
+**Checklist complète** : `Meta-Agent/checklists/bash-scripts-pre-commit.md`
+
+**API Reference** : `scripts/lib/README.md` (liste toutes les fonctions disponibles dans common.sh et docker-utils.sh)
+
+**Pourquoi** :
+- Session 2026-05-05 : 10 commits corrections pour 1 script non testé
+- Erreurs évitables : noms services/containers incorrects, fonctions inexistantes, ports non exposés
+- Coût : 45 min debug/script vs 5 min checklist
+
+**Métriques cibles** :
+- Scripts testés avant commit : 100%
+- Commits corrections : <10%
+- Temps debug : <2 min/script
+
+**Références** :
+- `Continuous-Improvement/recommendations/workflow-bash-scripts-testing_2026-05-05.md`
+- `Continuous-Improvement/lessons/bash-scripts-are-code.md`
+- `Continuous-Improvement/lessons/dry-run-mandatory-production.md`
+
 ---
 
 ### 10. Extensions PostgreSQL Obligatoires

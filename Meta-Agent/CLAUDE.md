@@ -332,6 +332,28 @@ L'Agent Meta se base sur les checklists définies dans les CLAUDE.md de chaque a
 
 Ce fichier liste toutes les checklists par agent avec références aux sections du CLAUDE.md.
 
+### Checklists Critiques
+
+#### Scripts Bash (Agent DevOps)
+
+**Checklist** : `Meta-Agent/checklists/bash-scripts-pre-commit.md`
+
+**Quand** : Avant tout commit de script Bash (`.sh`)
+
+**Étapes obligatoires** :
+1. Validation syntaxe (shellcheck, bash -n)
+2. Validation références (services, containers, fonctions)
+3. Tests locaux (--help, --dry-run, cas nominal)
+4. Tests production (--dry-run obligatoire)
+5. Documentation (header complet)
+6. Review (diff, validation manuelle)
+7. Commit message (convention)
+8. Push
+
+**Pourquoi** : Session 2026-05-05 - 10 commits corrections pour 1 script non testé. Cette checklist évite 90% des erreurs.
+
+**Référence** : `Continuous-Improvement/reports/audit_2026-05-05.md`
+
 ## Métriques de Conformité
 
 ### Par Agent
