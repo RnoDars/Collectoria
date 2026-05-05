@@ -36,7 +36,7 @@ source "$SCRIPT_DIR/../lib/docker-utils.sh"
 
 # Configuration
 PROJECT_DIR="${PROJECT_DIR:-/home/collectoria/Collectoria}"
-COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker-compose.prod.yml}"
+COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker compose.prod.yml}"
 
 # Parse command line arguments
 ROLLBACK_BACKEND=false
@@ -167,7 +167,7 @@ rollback_service() {
     log_step "Stopping current $service_name container..."
 
     if check_container_running "$container_name"; then
-        docker-compose -f "$COMPOSE_FILE" stop "$service_name"
+        docker compose -f "$COMPOSE_FILE" stop "$service_name"
         log_success "Container stopped"
     fi
 
@@ -175,7 +175,7 @@ rollback_service() {
     docker tag "$target_image" "${image_repository}:latest"
 
     log_step "Starting $service_name with rollback image..."
-    docker-compose -f "$COMPOSE_FILE" up -d "$service_name"
+    docker compose -f "$COMPOSE_FILE" up -d "$service_name"
 
     sleep 3
 
@@ -195,9 +195,9 @@ rollback_service() {
         # Attempt to restore current image if available
         if [[ -n "$CURRENT_IMAGE" ]]; then
             log_warning "Attempting to restore original image: $CURRENT_IMAGE"
-            docker-compose -f "$COMPOSE_FILE" stop "$service_name"
+            docker compose -f "$COMPOSE_FILE" stop "$service_name"
             docker tag "$CURRENT_IMAGE" "${image_repository}:latest"
-            docker-compose -f "$COMPOSE_FILE" up -d "$service_name"
+            docker compose -f "$COMPOSE_FILE" up -d "$service_name"
 
             if check_service_health "$service_name" "$health_url" 20 2; then
                 log_success "Original image restored"

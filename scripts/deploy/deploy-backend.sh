@@ -24,7 +24,7 @@
 #
 # Environment:
 #   PROJECT_DIR       Path to Collectoria project (default: /home/collectoria/Collectoria)
-#   COMPOSE_FILE      Docker compose file (default: docker-compose.prod.yml)
+#   COMPOSE_FILE      Docker compose file (default: docker compose.prod.yml)
 #
 
 set -e
@@ -38,7 +38,7 @@ source "$SCRIPT_DIR/../lib/docker-utils.sh"
 
 # Configuration
 PROJECT_DIR="${PROJECT_DIR:-/home/collectoria/Collectoria}"
-COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker-compose.prod.yml}"
+COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker compose.prod.yml}"
 SERVICE_NAME="backend"
 CONTAINER_NAME="collectoria-backend"
 HEALTH_URL="http://localhost:8080/api/v1/health"
@@ -181,10 +181,10 @@ if [[ "$NO_CACHE" == "true" ]]; then
 fi
 
 if [[ "$DRY_RUN" == "false" ]]; then
-    docker-compose -f "$COMPOSE_FILE" build $BUILD_ARGS "$SERVICE_NAME"
+    docker compose -f "$COMPOSE_FILE" build $BUILD_ARGS "$SERVICE_NAME"
     log_success "Image built successfully"
 else
-    log_info "[DRY-RUN] Would execute: docker-compose build $BUILD_ARGS $SERVICE_NAME"
+    log_info "[DRY-RUN] Would execute: docker compose build $BUILD_ARGS $SERVICE_NAME"
 fi
 
 # Step 4: Stop current container
@@ -192,26 +192,26 @@ log_step "Stopping current backend container..."
 
 if [[ "$DRY_RUN" == "false" ]]; then
     if check_container_running "$CONTAINER_NAME"; then
-        docker-compose -f "$COMPOSE_FILE" stop -t 10 "$SERVICE_NAME"
+        docker compose -f "$COMPOSE_FILE" stop -t 10 "$SERVICE_NAME"
         log_success "Backend stopped"
     else
         log_info "Backend is not running"
     fi
 else
-    log_info "[DRY-RUN] Would execute: docker-compose stop backend"
+    log_info "[DRY-RUN] Would execute: docker compose stop backend"
 fi
 
 # Step 5: Start new container
 log_step "Starting new backend container..."
 
 if [[ "$DRY_RUN" == "false" ]]; then
-    docker-compose -f "$COMPOSE_FILE" up -d "$SERVICE_NAME"
+    docker compose -f "$COMPOSE_FILE" up -d "$SERVICE_NAME"
     log_success "Backend started"
 
     # Wait a few seconds for startup
     sleep 3
 else
-    log_info "[DRY-RUN] Would execute: docker-compose up -d backend"
+    log_info "[DRY-RUN] Would execute: docker compose up -d backend"
 fi
 
 # Step 6: Health check
@@ -225,9 +225,9 @@ if [[ "$DRY_RUN" == "false" ]]; then
         if [[ -n "$CURRENT_IMAGE" ]]; then
             log_warning "Attempting rollback to: $CURRENT_IMAGE"
 
-            docker-compose -f "$COMPOSE_FILE" stop "$SERVICE_NAME"
+            docker compose -f "$COMPOSE_FILE" stop "$SERVICE_NAME"
             docker tag "$CURRENT_IMAGE" "${IMAGE_NAME}:rollback"
-            docker-compose -f "$COMPOSE_FILE" up -d "$SERVICE_NAME"
+            docker compose -f "$COMPOSE_FILE" up -d "$SERVICE_NAME"
 
             if check_service_health "$SERVICE_NAME" "$HEALTH_URL" 20 2; then
                 log_success "Rollback successful"
