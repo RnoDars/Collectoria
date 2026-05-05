@@ -39,9 +39,9 @@ source "$SCRIPT_DIR/../lib/docker-utils.sh"
 
 # Configuration
 BACKUP_DIR="${BACKUP_DIR:-/home/collectoria/backups}"
-DB_CONTAINER="${DB_CONTAINER:-collectoria-postgres}"
+DB_CONTAINER="${DB_CONTAINER:-collectoria-collection-db-prod}"
 DB_USER="${DB_USER:-collectoria}"
-DB_NAME="${DB_NAME:-collectoria}"
+DB_NAME="${DB_NAME:-collection_management}"
 
 # Parse command line arguments
 SKIP_CONFIRM=false

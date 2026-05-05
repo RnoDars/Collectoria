@@ -22,7 +22,7 @@
 #
 # Environment:
 #   MIGRATIONS_DIR    Directory containing SQL migration files
-#   DB_CONTAINER      Database container name (default: collectoria-postgres)
+#   DB_CONTAINER      Database container name (default: collectoria-collection-db-prod)
 #   DB_USER           Database user (default: collectoria)
 #   DB_NAME           Database name (default: collectoria)
 #
@@ -44,7 +44,7 @@ source "$SCRIPT_DIR/../lib/docker-utils.sh"
 # Configuration
 PROJECT_DIR="${PROJECT_DIR:-/home/collectoria/Collectoria}"
 MIGRATIONS_DIR="${MIGRATIONS_DIR:-$PROJECT_DIR/backend/collection-management/migrations}"
-DB_CONTAINER="${DB_CONTAINER:-collectoria-postgres}"
+DB_CONTAINER="${DB_CONTAINER:-collectoria-collection-db-prod}"
 DB_USER="${DB_USER:-collectoria}"
 DB_NAME="${DB_NAME:-collectoria}"
 
