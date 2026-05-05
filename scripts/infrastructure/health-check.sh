@@ -126,9 +126,9 @@ if [[ "$VERBOSE" == "true" && "$JSON_OUTPUT" == "false" ]]; then
 fi
 
 # 2. Check Backend
-check_component "Backend (Container)" "check_container_running 'collectoria-backend'" true
+check_component "Backend (Container)" "check_container_running 'collectoria-backend-collection-prod'" true
 
-if check_container_running "collectoria-backend"; then
+if check_container_running "collectoria-backend-collection-prod"; then
     check_component "Backend (Health Endpoint)" "curl -sf http://localhost:8080/api/v1/health >/dev/null 2>&1" true
 
     if [[ "$VERBOSE" == "true" && "$JSON_OUTPUT" == "false" ]]; then
@@ -139,9 +139,9 @@ if check_container_running "collectoria-backend"; then
 fi
 
 # 3. Check Frontend
-check_component "Frontend (Container)" "check_container_running 'collectoria-frontend'" true
+check_component "Frontend (Container)" "check_container_running 'collectoria-frontend-prod'" true
 
-if check_container_running "collectoria-frontend"; then
+if check_container_running "collectoria-frontend-prod"; then
     check_component "Frontend (HTTP)" "curl -sf http://localhost:3000 >/dev/null 2>&1" true
 
     if [[ "$VERBOSE" == "true" && "$JSON_OUTPUT" == "false" ]]; then
@@ -150,14 +150,14 @@ if check_container_running "collectoria-frontend"; then
 fi
 
 # 4. Check PostgreSQL
-check_component "PostgreSQL (Container)" "check_container_running 'collectoria-postgres'" true
+check_component "PostgreSQL (Container)" "check_container_running 'collectoria-collection-db-prod'" true
 
-if check_container_running "collectoria-postgres"; then
-    check_component "PostgreSQL (Ready)" "docker exec collectoria-postgres pg_isready -U collectoria >/dev/null 2>&1" true
+if check_container_running "collectoria-collection-db-prod"; then
+    check_component "PostgreSQL (Ready)" "docker exec collectoria-collection-db-prod pg_isready -U collectoria >/dev/null 2>&1" true
 
     if [[ "$VERBOSE" == "true" && "$JSON_OUTPUT" == "false" ]]; then
         log_info "Database connection details:"
-        docker exec collectoria-postgres psql -U collectoria -c "SELECT version();" 2>/dev/null | head -3 || echo "  Could not retrieve version"
+        docker exec collectoria-collection-db-prod psql -U collectoria -c "SELECT version();" 2>/dev/null | head -3 || echo "  Could not retrieve version"
     fi
 fi
 
