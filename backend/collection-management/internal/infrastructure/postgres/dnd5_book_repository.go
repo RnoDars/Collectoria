@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 
@@ -52,14 +53,49 @@ func (r *DnD5BookRepository) GetUserBook(ctx context.Context, userID, bookID uui
 }
 
 // UpdateBookOwnership met à jour ou crée la possession d'un livre (UPSERT)
+// Option A: SELECT état actuel + merge + UPDATE
+// Cette implémentation garantit qu'une mise à jour partielle (par ex. owned_en seulement)
+// ne réinitialise pas la valeur non fournie (owned_fr dans cet exemple).
 func (r *DnD5BookRepository) UpdateBookOwnership(ctx context.Context, userID, bookID uuid.UUID, ownedEn, ownedFr *bool) error {
-	query := `
+	// Étape 1 : Récupérer l'état actuel (si existe)
+	var currentOwnedEn, currentOwnedFr *bool
+	selectQuery := `SELECT owned_en, owned_fr FROM user_dnd5_books WHERE user_id = $1 AND book_id = $2`
+
+	var current struct {
+		OwnedEn *bool `db:"owned_en"`
+		OwnedFr *bool `db:"owned_fr"`
+	}
+
+	err := r.db.GetContext(ctx, &current, selectQuery, userID, bookID)
+	if err == nil {
+		// L'enregistrement existe, on récupère les valeurs actuelles
+		currentOwnedEn = current.OwnedEn
+		currentOwnedFr = current.OwnedFr
+	} else if err != sql.ErrNoRows {
+		// Une erreur autre que "pas de ligne" est une vraie erreur
+		return err
+	}
+	// Si err == sql.ErrNoRows (pas d'enregistrement), currentOwnedEn et currentOwnedFr restent nil
+
+	// Étape 2 : Merge - ne remplacer que les valeurs non-nil fournies
+	finalOwnedEn := ownedEn
+	if finalOwnedEn == nil {
+		finalOwnedEn = currentOwnedEn
+	}
+
+	finalOwnedFr := ownedFr
+	if finalOwnedFr == nil {
+		finalOwnedFr = currentOwnedFr
+	}
+
+	// Étape 3 : UPSERT avec les valeurs finales
+	upsertQuery := `
 		INSERT INTO user_dnd5_books (user_id, book_id, owned_en, owned_fr, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, NOW(), NOW())
 		ON CONFLICT (user_id, book_id)
 		DO UPDATE SET owned_en = $3, owned_fr = $4, updated_at = NOW()`
 
-	_, err := r.db.ExecContext(ctx, query, userID, bookID, ownedEn, ownedFr)
+	_, err = r.db.ExecContext(ctx, upsertQuery, userID, bookID, finalOwnedEn, finalOwnedFr)
 	return err
 }
 
