@@ -218,7 +218,7 @@ fi
 log_step "Checking backend health..."
 
 if [[ "$DRY_RUN" == "false" ]]; then
-    if ! check_service_health "$SERVICE_NAME" "$HEALTH_URL" 30 2; then
+    if ! check_service_health "$CONTAINER_NAME" "$HEALTH_URL" 30 2; then
         log_error "Health check failed. Rolling back..."
 
         # Rollback: restore previous image if available
@@ -229,7 +229,7 @@ if [[ "$DRY_RUN" == "false" ]]; then
             docker tag "$CURRENT_IMAGE" "${IMAGE_NAME}:rollback"
             docker compose -f "$COMPOSE_FILE" up -d "$SERVICE_NAME"
 
-            if check_service_health "$SERVICE_NAME" "$HEALTH_URL" 20 2; then
+            if check_service_health "$CONTAINER_NAME" "$HEALTH_URL" 20 2; then
                 log_success "Rollback successful"
             else
                 log_error "Rollback failed. Manual intervention required!"

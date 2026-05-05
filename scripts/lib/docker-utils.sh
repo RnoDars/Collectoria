@@ -383,6 +383,40 @@ aggressive_cleanup() {
     check_docker_disk_usage
 }
 
+# Check service health using internal container health endpoint
+check_service_health() {
+    local container_name="$1"
+    local health_url="$2"
+    local max_attempts="${3:-30}"
+    local interval="${4:-2}"
+
+    log_info "Checking health of $container_name..."
+    log_info "URL: $health_url"
+
+    local attempt=1
+
+    while [[ $attempt -le $max_attempts ]]; do
+        # Use docker exec to check health from inside the container
+        # Extract host and path from URL
+        local host_port=$(echo "$health_url" | sed -n 's|http://\([^/]*\)\(/.*\)|\1|p')
+        local path=$(echo "$health_url" | sed -n 's|http://\([^/]*\)\(/.*\)|\2|p')
+
+        if docker exec "$container_name" wget -q -O- "http://${host_port}${path}" >/dev/null 2>&1; then
+            echo ""  # New line after dots
+            log_success "$container_name is healthy"
+            return 0
+        fi
+
+        echo -n "."
+        sleep "$interval"
+        ((attempt++))
+    done
+
+    echo ""  # New line after dots
+    log_error "$container_name failed health check after $max_attempts attempts"
+    return 1
+}
+
 # Export functions for use in subshells
 export -f cleanup_dangling_images keep_latest_images
 export -f stop_and_remove_container get_container_logs
@@ -393,4 +427,4 @@ export -f pull_image tag_image get_image_created_date list_repository_images
 export -f get_container_status get_container_health
 export -f restart_service_compose start_service_compose stop_service_compose
 export -f get_compose_container_name image_exists get_image_size
-export -f show_container_stats aggressive_cleanup
+export -f show_container_stats aggressive_cleanup check_service_health
