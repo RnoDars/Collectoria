@@ -233,6 +233,44 @@ if [[ "$AGGRESSIVE" == "true" && "$LOGS_ONLY" == "false" ]]; then
     echo ""
 fi
 
+# Step 6.5: Aggressive cleanup (build cache)
+if [[ "$AGGRESSIVE" == "true" && "$LOGS_ONLY" == "false" ]]; then
+    print_header "Aggressive Cleanup - Build Cache"
+
+    # Check build cache size
+    BUILD_CACHE_SIZE=$(docker system df --format "{{.Reclaimable}}" | sed -n '4p' | sed 's/[^0-9.]//g' 2>/dev/null || echo "0")
+
+    if [[ -n "$BUILD_CACHE_SIZE" && $(echo "$BUILD_CACHE_SIZE > 0" | bc 2>/dev/null || echo 0) -eq 1 ]]; then
+        log_warning "Build cache can be cleaned (may slow down next builds)"
+
+        DO_CACHE_CLEANUP=false
+
+        if [[ "$FORCE" == "true" ]]; then
+            DO_CACHE_CLEANUP=true
+        elif [[ "$DRY_RUN" == "false" ]]; then
+            if confirm "Clean Docker build cache?"; then
+                DO_CACHE_CLEANUP=true
+            fi
+        fi
+
+        if [[ "$DO_CACHE_CLEANUP" == "true" ]]; then
+            if [[ "$DRY_RUN" == "false" ]]; then
+                log_step "Removing build cache..."
+                docker builder prune -a -f
+                log_success "Build cache cleaned"
+            else
+                log_info "[DRY-RUN] Would remove build cache"
+            fi
+        else
+            log_info "Skipping build cache cleanup"
+        fi
+    else
+        log_info "No build cache to clean"
+    fi
+
+    echo ""
+fi
+
 # Step 7: Cleanup old deployment logs (>30 days)
 if [[ "$IMAGES_ONLY" == "false" ]]; then
     print_header "Cleaning Old Deployment Logs"
