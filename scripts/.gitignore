@@ -1,0 +1,23 @@
+# Deployment history logs
+.deployment/
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log
+
+# Local configuration overrides
+*.local.sh
+
+# Environment-specific configs
+.env.local
+.env.*.local
+
+# Test outputs
+test-output/
