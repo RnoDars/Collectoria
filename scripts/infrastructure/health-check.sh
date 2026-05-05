@@ -129,11 +129,11 @@ fi
 check_component "Backend (Container)" "check_container_running 'collectoria-backend-collection-prod'" true
 
 if check_container_running "collectoria-backend-collection-prod"; then
-    check_component "Backend (Health Endpoint)" "curl -sf http://localhost:8080/api/v1/health >/dev/null 2>&1" true
+    check_component "Backend (Health Endpoint)" "docker exec collectoria-backend-collection-prod wget -q -O- http://localhost:8080/api/v1/health >/dev/null 2>&1" true
 
     if [[ "$VERBOSE" == "true" && "$JSON_OUTPUT" == "false" ]]; then
         log_info "Backend health response:"
-        curl -s http://localhost:8080/api/v1/health | jq . 2>/dev/null || curl -s http://localhost:8080/api/v1/health
+        docker exec collectoria-backend-collection-prod wget -q -O- http://localhost:8080/api/v1/health 2>/dev/null | jq . 2>/dev/null || docker exec collectoria-backend-collection-prod wget -q -O- http://localhost:8080/api/v1/health 2>/dev/null
         echo ""
     fi
 fi
@@ -142,7 +142,7 @@ fi
 check_component "Frontend (Container)" "check_container_running 'collectoria-frontend-prod'" true
 
 if check_container_running "collectoria-frontend-prod"; then
-    check_component "Frontend (HTTP)" "curl -sf http://localhost:3000 >/dev/null 2>&1" true
+    check_component "Frontend (HTTP)" "docker exec collectoria-frontend-prod wget -q -O- http://localhost:3000 >/dev/null 2>&1" true
 
     if [[ "$VERBOSE" == "true" && "$JSON_OUTPUT" == "false" ]]; then
         log_info "Frontend responding on port 3000"
