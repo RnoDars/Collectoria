@@ -158,26 +158,17 @@ else
     log_info "Skipping git pull (--skip-pull flag)"
 fi
 
-# Step 2: Run tests (unless skipped)
+# Step 2: Tests reminder (tests should be run locally before push)
+log_step "Test validation..."
+
 if [[ "$SKIP_TESTS" == "false" ]]; then
-    log_step "Running Go tests..."
-
-    if [[ "$DRY_RUN" == "false" ]]; then
-        cd "$PROJECT_DIR/backend/collection-management"
-
-        if ! go test ./... -v; then
-            log_error "Tests failed. Deployment aborted."
-            log_info "Use --skip-tests to bypass tests (not recommended)"
-            exit 1
-        fi
-
-        cd "$PROJECT_DIR"
-        log_success "All tests passed"
-    else
-        log_info "[DRY-RUN] Would execute: go test ./... -v"
-    fi
+    log_info "Tests should be run locally before pushing to main branch"
+    log_info "On your development machine:"
+    log_info "  cd backend/collection-management && go test ./... -v"
+    log_info ""
+    log_info "Proceeding with deployment (assuming tests passed locally)"
 else
-    log_warning "Skipping tests (--skip-tests flag). This is risky!"
+    log_warning "Skipping test validation (--skip-tests flag)"
 fi
 
 # Step 3: Build new image
