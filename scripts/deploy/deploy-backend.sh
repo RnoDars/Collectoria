@@ -24,7 +24,7 @@
 #
 # Environment:
 #   PROJECT_DIR       Path to Collectoria project (default: /home/collectoria/Collectoria)
-#   COMPOSE_FILE      Docker compose file (default: docker compose.prod.yml)
+#   COMPOSE_FILE      Docker compose file (default: docker-compose.prod.yml)
 #
 
 set -e
@@ -38,7 +38,7 @@ source "$SCRIPT_DIR/../lib/docker-utils.sh"
 
 # Configuration
 PROJECT_DIR="${PROJECT_DIR:-/home/collectoria/Collectoria}"
-COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker compose.prod.yml}"
+COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker-compose.prod.yml}"
 SERVICE_NAME="backend"
 CONTAINER_NAME="collectoria-backend"
 HEALTH_URL="http://localhost:8080/api/v1/health"

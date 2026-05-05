@@ -36,7 +36,7 @@ source "$SCRIPT_DIR/../lib/docker-utils.sh"
 
 # Configuration
 PROJECT_DIR="${PROJECT_DIR:-/home/collectoria/Collectoria}"
-COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker compose.prod.yml}"
+COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker-compose.prod.yml}"
 
 # Parse command line arguments
 ROLLBACK_BACKEND=false
