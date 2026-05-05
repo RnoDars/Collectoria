@@ -25,6 +25,7 @@
 #
 
 set -e
+set +e  # Disable exit on error for health checks
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
