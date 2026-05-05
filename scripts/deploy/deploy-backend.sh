@@ -39,10 +39,10 @@ source "$SCRIPT_DIR/../lib/docker-utils.sh"
 # Configuration
 PROJECT_DIR="${PROJECT_DIR:-/home/collectoria/Collectoria}"
 COMPOSE_FILE="${COMPOSE_FILE:-$PROJECT_DIR/docker-compose.prod.yml}"
-SERVICE_NAME="backend"
-CONTAINER_NAME="collectoria-backend"
+SERVICE_NAME="backend-collection"
+CONTAINER_NAME="collectoria-backend-collection-prod"
 HEALTH_URL="http://localhost:8080/api/v1/health"
-IMAGE_NAME="collectoria-backend"
+IMAGE_NAME="collectoria-backend-collection"
 KEEP_IMAGES=2
 
 # Parse command line arguments
